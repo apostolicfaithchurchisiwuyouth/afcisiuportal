@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#4a0754"
+    >
+
+    <meta
+        name="description"
+        content="AFC Isiu Youth Portal"
+    >
+
+    <title>AFC Isiu Youth Portal</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default"
+    >
+    <meta
+        name="apple-mobile-web-app-title"
+        content="AFC Isiu Youth"
+    >
+
+    <!-- Fonts -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- =========================================
+         DESKTOP / MOBILE HEADER
+    ========================================== -->
+
+    <header class="app-header">
+
+        <div class="header-left">
+
+            <button
+                class="icon-button menu-button"
+                id="menuButton"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    AFC
+                </div>
+
+                <div class="brand-text">
+                    <strong>AFC Isiu Youth</strong>
+                    <span>Youth Portal</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <button
+                class="icon-button"
+                id="notificationButton"
+                aria-label="Notifications"
+            >
+                🔔
+
+                <span
+                    class="notification-badge hidden"
+                    id="notificationBadge"
+                >
+                    0
+                </span>
+            </button>
+
+            <button
+                class="profile-mini"
+                id="profileButton"
+                aria-label="Profile"
+            >
+                <span id="profileInitial">
+                    U
+                </span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="sidebar-header">
+
+            <div class="sidebar-user">
+
+                <div
+                    class="avatar avatar-large"
+                    id="sidebarAvatar"
+                >
+                    U
+                </div>
+
+                <div>
+                    <strong id="sidebarUserName">
+                        Welcome
+                    </strong>
+
+                    <span id="sidebarUserRole">
+                        Youth Member
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="index.html"
+                class="nav-item active"
+                data-page="home"
+            >
+                <span class="nav-icon">⌂</span>
+                <span>Home</span>
+            </a>
+
+            <a
+                href="pages/lessons.html"
+                class="nav-item"
+                data-page="lessons"
+            >
+                <span class="nav-icon">📖</span>
+                <span>Lessons</span>
+            </a>
+
+            <a
+                href="pages/quiz.html"
+                class="nav-item"
+                data-page="quiz"
+            >
+                <span class="nav-icon">📝</span>
+                <span>Quizzes</span>
+            </a>
+
+            <a
+                href="pages/gallery.html"
+                class="nav-item"
+                data-page="gallery"
+            >
+                <span class="nav-icon">▦</span>
+                <span>Gallery</span>
+            </a>
+
+            <a
+                href="pages/profile.html"
+                class="nav-item"
+                data-page="profile"
+            >
+                <span class="nav-icon">◯</span>
+                <span>Profile</span>
+            </a>
+
+            <a
+                href="pages/notifications.html"
+                class="nav-item"
+                data-page="notifications"
+            >
+                <span class="nav-icon">🔔</span>
+                <span>Notifications</span>
+
+                <span
+                    class="nav-badge hidden"
+                    id="sidebarNotificationBadge"
+                >
+                    0
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <button
+                class="sidebar-footer-button"
+                id="themeButton"
+            >
+                <span>◐</span>
+                <span>Appearance</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================
+         MOBILE OVERLAY
+    ========================================== -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+
+        <div class="page-container">
+
+            <!-- Welcome -->
+            <section class="welcome-section">
+
+                <div>
+
+                    <span class="eyebrow">
+                        AFC ISIU YOUTH
+                    </span>
+
+                    <h1>
+                        Welcome back<span id="welcomeName"></span> 👋
+                    </h1>
+
+                    <p>
+                        Grow in faith, learn, connect and take your next step.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Quick Actions -->
+            <section class="quick-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            QUICK ACCESS
+                        </span>
+
+                        <h2>
+                            What would you like to do?
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="quick-grid">
+
+                    <a
+                        href="pages/lessons.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            📖
+                        </div>
+
+                        <div>
+                            <h3>Weekly Lessons</h3>
+                            <p>
+                                Read this week's lesson.
+                            </p>
+                        </div>
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/quiz.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            📝
+                        </div>
+
+                        <div>
+                            <h3>Take a Quiz</h3>
+                            <p>
+                                Test what you have learned.
+                            </p>
+                        </div>
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/profile.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            👤
+                        </div>
+
+                        <div>
+                            <h3>My Profile</h3>
+                            <p>
+                                Manage your account.
+                            </p>
+                        </div>
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/gallery.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            📸
+                        </div>
+
+                        <div>
+                            <h3>Gallery</h3>
+                            <p>
+                                Explore youth activities.
+                            </p>
+                        </div>
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- Dashboard Cards -->
+            <section class="dashboard-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            YOUR SPACE
+                        </span>
+
+                        <h2>
+                            Your dashboard
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-grid">
+
+
+                    <!-- Lesson Progress -->
+                    <article class="dashboard-card">
+
+                        <div class="dashboard-card-header">
+
+                            <div>
+                                <span class="card-label">
+                                    LESSON PROGRESS
+                                </span>
+
+                                <h3>
+                                    Keep learning
+                                </h3>
+                            </div>
+
+                            <span class="dashboard-card-icon">
+                                📚
+                            </span>
+
+                        </div>
+
+                        <div class="progress-wrapper">
+
+                            <div class="progress-track">
+
+                                <div
+                                    class="progress-fill"
+                                    id="lessonProgress"
+                                    style="width: 0%"
+                                ></div>
+
+                            </div>
+
+                            <span id="lessonProgressText">
+                                0% complete
+                            </span>
+
+                        </div>
+
+                        <a
+                            href="pages/lessons.html"
+                            class="text-link"
+                        >
+                            Continue learning →
+                        </a>
+
+                    </article>
+
+
+                    <!-- Quiz -->
+                    <article class="dashboard-card">
+
+                        <div class="dashboard-card-header">
+
+                            <div>
+                                <span class="card-label">
+                                    QUIZ
+                                </span>
+
+                                <h3>
+                                    Challenge yourself
+                                </h3>
+                            </div>
+
+                            <span class="dashboard-card-icon">
+                                🏆
+                            </span>
+
+                        </div>
+
+                        <p class="dashboard-message">
+                            Your available quizzes will appear here.
+                        </p>
+
+                        <a
+                            href="pages/quiz.html"
+                            class="text-link"
+                        >
+                            View quizzes →
+                        </a>
+
+                    </article>
+
+
+                    <!-- Birthday -->
+                    <article class="dashboard-card">
+
+                        <div class="dashboard-card-header">
+
+                            <div>
+                                <span class="card-label">
+                                    BIRTHDAY
+                                </span>
+
+                                <h3 id="birthdayTitle">
+                                    Your birthday
+                                </h3>
+                            </div>
+
+                            <span class="dashboard-card-icon">
+                                🎂
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="dashboard-message"
+                            id="birthdayMessage"
+                        >
+                            Add your birthday to your profile.
+                        </p>
+
+                        <a
+                            href="pages/profile.html"
+                            class="text-link"
+                        >
+                            Manage profile →
+                        </a>
+
+                    </article>
+
+
+                    <!-- Notifications -->
+                    <article class="dashboard-card">
+
+                        <div class="dashboard-card-header">
+
+                            <div>
+                                <span class="card-label">
+                                    NOTIFICATIONS
+                                </span>
+
+                                <h3>
+                                    Stay updated
+                                </h3>
+                            </div>
+
+                            <span class="dashboard-card-icon">
+                                🔔
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="dashboard-message"
+                            id="notificationMessage"
+                        >
+                            You have no new notifications.
+                        </p>
+
+                        <a
+                            href="pages/notifications.html"
+                            class="text-link"
+                        >
+                            View notifications →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- Footer -->
+            <footer class="app-footer">
+
+                <p>
+                    AFC Isiu Youth Portal
+                </p>
+
+                <span>
+                    Built for faith, growth &amp; community.
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================
+         MOBILE BOTTOM NAVIGATION
+    ========================================== -->
+
+    <nav class="bottom-nav">
+
+        <a
+            href="index.html"
+            class="bottom-nav-item active"
+        >
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+
+        <a
+            href="pages/lessons.html"
+            class="bottom-nav-item"
+        >
+            <span>📖</span>
+            <small>Lessons</small>
+        </a>
+
+
+        <a
+            href="pages/quiz.html"
+            class="bottom-nav-main"
+            aria-label="Quizzes"
+        >
+            <span>+</span>
+        </a>
+
+
+        <a
+            href="pages/gallery.html"
+            class="bottom-nav-item"
+        >
+            <span>▦</span>
+            <small>Gallery</small>
+        </a>
+
+
+        <a
+            href="pages/profile.html"
+            class="bottom-nav-item"
+        >
+            <span>◯</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================== -->
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
