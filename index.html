@@ -17,7 +17,7 @@
 
     <meta
         name="description"
-        content="AFC Isiu Youth Portal"
+        content="AFC Isiu Youth Portal — Learn, connect, grow and stay informed."
     >
 
     <title>AFC Isiu Youth Portal</title>
@@ -28,10 +28,13 @@
     >
 
     <!-- =====================================================
-         FONTS
+         GOOGLE FONTS
     ====================================================== -->
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
     <link
         rel="preconnect"
@@ -40,13 +43,13 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,400;10..48,500;10..48,600;10..48,700&family=DM+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
 
     <!-- =====================================================
-         STYLES
+         PORTAL CSS
     ====================================================== -->
 
     <link
@@ -69,1375 +72,22 @@
         href="css/components.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="css/home.css"
+    >
+
 
     <!-- =====================================================
-         LUCIDE
+         ICONS
     ====================================================== -->
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
-
-    <!-- =====================================================
-         INDEX PAGE REFINEMENTS
-    ====================================================== -->
-
-    <style>
-
-        /* ==================================================
-           INDEX PAGE
-        ================================================== */
-
-        :root {
-
-            --portal-purple: #4a0754;
-            --portal-purple-dark: #35033d;
-            --portal-purple-soft: #f5eff7;
-
-            --portal-orange: #ea580c;
-            --portal-blue: #0891b2;
-            --portal-green: #0ea472;
-
-            --portal-bg: #f8f7fa;
-            --portal-card: #ffffff;
-
-            --portal-border: #ece8ef;
-
-            --portal-text: #211b25;
-            --portal-muted: #746d78;
-
-            --portal-radius: 18px;
-
-        }
-
-
-        body {
-
-            font-family:
-                "DM Sans",
-                sans-serif;
-
-        }
-
-
-        h1,
-        h2,
-        h3,
-        h4,
-        strong {
-
-            font-family:
-                "Bricolage Grotesque",
-                sans-serif;
-
-        }
-
-
-        /* ==================================================
-           TOP HEADER
-        ================================================== */
-
-        .top-header {
-
-            min-height: 76px;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 16px;
-
-            padding:
-                14px 24px;
-
-            background:
-                rgba(255,255,255,.96);
-
-            border-bottom:
-                1px solid var(--portal-border);
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 100;
-
-            backdrop-filter:
-                blur(14px);
-
-        }
-
-
-        .mobile-menu-button {
-
-            flex-shrink: 0;
-
-        }
-
-
-        /* ==================================================
-           MOBILE / PORTAL LOGO
-        ================================================== */
-
-        .portal-header-brand {
-
-            display: none;
-
-            align-items: center;
-
-            gap: 10px;
-
-            min-width: 0;
-
-        }
-
-
-        .portal-logo {
-
-            width: 42px;
-
-            height: 42px;
-
-            flex-shrink: 0;
-
-            border-radius: 13px;
-
-            display: grid;
-
-            place-items: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--portal-purple),
-                    #6d1580
-                );
-
-            color: #ffffff;
-
-            box-shadow:
-                0 7px 18px rgba(74,7,84,.20);
-
-        }
-
-
-        .portal-logo svg {
-
-            width: 21px;
-
-            height: 21px;
-
-            stroke-width: 2.3;
-
-        }
-
-
-        .portal-brand-text {
-
-            display: flex;
-
-            flex-direction: column;
-
-            line-height: 1.05;
-
-            min-width: 0;
-
-        }
-
-
-        .portal-brand-text strong {
-
-            font-size: .95rem;
-
-            color:
-                var(--portal-text);
-
-        }
-
-
-        .portal-brand-text span {
-
-            font-size: .68rem;
-
-            color:
-                var(--portal-muted);
-
-        }
-
-
-        /* ==================================================
-           HEADER TITLE
-        ================================================== */
-
-        .header-title {
-
-            flex: 1;
-
-            min-width: 0;
-
-        }
-
-
-        .header-eyebrow {
-
-            display: block;
-
-            font-size: .68rem;
-
-            font-weight: 600;
-
-            color:
-                var(--portal-purple);
-
-            letter-spacing: .04em;
-
-            text-transform: uppercase;
-
-            margin-bottom: 2px;
-
-        }
-
-
-        .header-title h1 {
-
-            margin: 0;
-
-            font-size: 1.35rem;
-
-            line-height: 1.15;
-
-            color:
-                var(--portal-text);
-
-        }
-
-
-        /* ==================================================
-           HEADER ACTIONS
-        ================================================== */
-
-        .header-actions {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            flex-shrink: 0;
-
-        }
-
-
-        .header-auth-actions {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-        }
-
-
-        .header-auth-button {
-
-            min-height: 40px;
-
-            padding:
-                0 15px;
-
-            border-radius: 11px;
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 7px;
-
-            font-family:
-                "DM Sans",
-                sans-serif;
-
-            font-size: .78rem;
-
-            font-weight: 700;
-
-            text-decoration: none;
-
-            white-space: nowrap;
-
-            transition:
-                .2s ease;
-
-        }
-
-
-        .header-login {
-
-            color:
-                var(--portal-purple);
-
-            background:
-                var(--portal-purple-soft);
-
-            border:
-                1px solid #eadced;
-
-        }
-
-
-        .header-login:hover {
-
-            background:
-                #eee2f0;
-
-        }
-
-
-        .header-register {
-
-            color: #ffffff;
-
-            background:
-                var(--portal-purple);
-
-            border:
-                1px solid var(--portal-purple);
-
-            box-shadow:
-                0 6px 14px rgba(74,7,84,.17);
-
-        }
-
-
-        .header-register:hover {
-
-            background:
-                var(--portal-purple-dark);
-
-            transform:
-                translateY(-1px);
-
-        }
-
-
-        .header-logout {
-
-            color:
-                #b42318;
-
-            background:
-                #fff5f4;
-
-            border:
-                1px solid #f5d7d4;
-
-        }
-
-
-        .header-logout:hover {
-
-            background:
-                #fee9e7;
-
-        }
-
-
-        .header-icon-button {
-
-            width: 40px;
-
-            height: 40px;
-
-            display: grid;
-
-            place-items: center;
-
-            border-radius: 11px;
-
-            color:
-                var(--portal-text);
-
-            background:
-                #f6f4f7;
-
-            position: relative;
-
-        }
-
-
-        .header-avatar {
-
-            width: 40px;
-
-            height: 40px;
-
-            border-radius: 50%;
-
-            display: grid;
-
-            place-items: center;
-
-            background:
-                var(--portal-purple);
-
-            color: #ffffff;
-
-            text-decoration: none;
-
-            font-size: .78rem;
-
-            font-weight: 700;
-
-        }
-
-
-        /* ==================================================
-           WELCOME
-        ================================================== */
-
-        .welcome-section {
-
-            position: relative;
-
-            overflow: hidden;
-
-            border-radius:
-                22px;
-
-            padding:
-                27px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #4a0754 0%,
-                    #62106d 65%,
-                    #7a1d82 100%
-                );
-
-            color: #ffffff;
-
-            box-shadow:
-                0 12px 30px rgba(74,7,84,.14);
-
-        }
-
-
-        .welcome-section::after {
-
-            content: "";
-
-            position: absolute;
-
-            width: 190px;
-
-            height: 190px;
-
-            border-radius: 50%;
-
-            right: -75px;
-
-            top: -90px;
-
-            background:
-                rgba(255,255,255,.08);
-
-        }
-
-
-        .welcome-copy {
-
-            position: relative;
-
-            z-index: 2;
-
-        }
-
-
-        .welcome-copy .section-label {
-
-            color:
-                rgba(255,255,255,.70);
-
-        }
-
-
-        .welcome-copy h2 {
-
-            margin:
-                5px 0 7px;
-
-            font-size:
-                clamp(
-                    1.55rem,
-                    4vw,
-                    2.15rem
-                );
-
-            line-height: 1.1;
-
-        }
-
-
-        .welcome-copy p {
-
-            margin: 0;
-
-            color:
-                rgba(255,255,255,.80);
-
-            font-size: .86rem;
-
-            max-width: 570px;
-
-        }
-
-
-        .welcome-icon {
-
-            position: absolute;
-
-            right: 28px;
-
-            bottom: 23px;
-
-            width: 52px;
-
-            height: 52px;
-
-            display: grid;
-
-            place-items: center;
-
-            border-radius: 16px;
-
-            background:
-                rgba(255,255,255,.10);
-
-            color:
-                rgba(255,255,255,.85);
-
-        }
-
-
-        /* ==================================================
-           QUICK ACCESS
-        ================================================== */
-
-        .quick-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 13px;
-
-        }
-
-
-        .quick-card {
-
-            min-width: 0;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 13px;
-
-            padding: 16px;
-
-            background:
-                var(--portal-card);
-
-            border:
-                1px solid var(--portal-border);
-
-            border-radius:
-                var(--portal-radius);
-
-            text-decoration: none;
-
-            color:
-                var(--portal-text);
-
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease,
-                border-color .2s ease;
-
-        }
-
-
-        .quick-card:hover {
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 9px 22px rgba(36,20,43,.07);
-
-            border-color:
-                #dfd5e2;
-
-        }
-
-
-        .quick-card-icon {
-
-            width: 43px;
-
-            height: 43px;
-
-            flex-shrink: 0;
-
-            border-radius: 12px;
-
-            display: grid;
-
-            place-items: center;
-
-        }
-
-
-        .quick-card-icon.purple {
-
-            color:
-                var(--portal-purple);
-
-            background:
-                #f4eaf6;
-
-        }
-
-
-        .quick-card-icon.orange {
-
-            color:
-                var(--portal-orange);
-
-            background:
-                #fff0e8;
-
-        }
-
-
-        .quick-card-icon.blue {
-
-            color:
-                var(--portal-blue);
-
-            background:
-                #e8f8fb;
-
-        }
-
-
-        .quick-card-icon.green {
-
-            color:
-                var(--portal-green);
-
-            background:
-                #e8f7f1;
-
-        }
-
-
-        .quick-card-content {
-
-            min-width: 0;
-
-            flex: 1;
-
-        }
-
-
-        .quick-card-content strong {
-
-            display: block;
-
-            font-size: .88rem;
-
-            margin-bottom: 3px;
-
-        }
-
-
-        .quick-card-content span {
-
-            display: block;
-
-            color:
-                var(--portal-muted);
-
-            font-size: .72rem;
-
-            line-height: 1.35;
-
-        }
-
-
-        .quick-card-arrow {
-
-            flex-shrink: 0;
-
-            color:
-                #aaa2ad;
-
-        }
-
-
-        /* ==================================================
-           DASHBOARD CARDS
-        ================================================== */
-
-        .dashboard-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 16px;
-
-        }
-
-
-        .dashboard-card {
-
-            min-width: 0;
-
-            background:
-                var(--portal-card);
-
-            border:
-                1px solid var(--portal-border);
-
-            border-radius:
-                var(--portal-radius);
-
-            overflow: hidden;
-
-            box-shadow:
-                0 5px 16px rgba(36,20,43,.025);
-
-        }
-
-
-        .dashboard-card-header {
-
-            padding:
-                17px 18px;
-
-            border-bottom:
-                1px solid var(--portal-border);
-
-        }
-
-
-        .dashboard-card-title {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 11px;
-
-        }
-
-
-        .small-icon {
-
-            width: 39px;
-
-            height: 39px;
-
-            border-radius: 11px;
-
-            display: grid;
-
-            place-items: center;
-
-        }
-
-
-        .small-icon.purple {
-
-            color:
-                var(--portal-purple);
-
-            background:
-                #f4eaf6;
-
-        }
-
-
-        .small-icon.orange {
-
-            color:
-                var(--portal-orange);
-
-            background:
-                #fff0e8;
-
-        }
-
-
-        .dashboard-card-title .card-label {
-
-            display: block;
-
-            font-size: .64rem;
-
-            color:
-                var(--portal-muted);
-
-            text-transform: uppercase;
-
-            letter-spacing: .04em;
-
-            margin-bottom: 2px;
-
-        }
-
-
-        .dashboard-card-title h3 {
-
-            margin: 0;
-
-            font-size: .98rem;
-
-        }
-
-
-        .dashboard-card-body {
-
-            min-height: 135px;
-
-            padding: 18px;
-
-        }
-
-
-        .text-link {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding:
-                13px 18px;
-
-            border-top:
-                1px solid var(--portal-border);
-
-            color:
-                var(--portal-purple);
-
-            font-size: .76rem;
-
-            font-weight: 700;
-
-            text-decoration: none;
-
-        }
-
-
-        /* ==================================================
-           MOBILE BOTTOM NAV
-        ================================================== */
-
-        .bottom-navigation {
-
-            padding-bottom:
-                env(safe-area-inset-bottom);
-
-        }
-
-
-        /* ==================================================
-           MOBILE
-        ================================================== */
-
-        @media (max-width: 760px) {
-
-            .top-header {
-
-                min-height: 67px;
-
-                padding:
-                    10px 14px;
-
-                gap: 9px;
-
-            }
-
-
-            .portal-header-brand {
-
-                display: flex;
-
-            }
-
-
-            .header-title {
-
-                display: none;
-
-            }
-
-
-            .header-actions {
-
-                margin-left: auto;
-
-            }
-
-
-            .header-icon-button {
-
-                width: 37px;
-
-                height: 37px;
-
-            }
-
-
-            .header-avatar {
-
-                width: 37px;
-
-                height: 37px;
-
-            }
-
-
-            .header-auth-actions {
-
-                gap: 5px;
-
-            }
-
-
-            .header-auth-button {
-
-                min-height: 36px;
-
-                padding:
-                    0 10px;
-
-                font-size: .70rem;
-
-                border-radius: 9px;
-
-            }
-
-
-            .header-auth-button svg {
-
-                width: 14px;
-
-                height: 14px;
-
-            }
-
-
-            .page-content {
-
-                padding:
-                    16px 13px 95px;
-
-            }
-
-
-            .welcome-section {
-
-                padding:
-                    22px 19px;
-
-                border-radius:
-                    18px;
-
-            }
-
-
-            .welcome-copy h2 {
-
-                font-size:
-                    1.55rem;
-
-            }
-
-
-            .welcome-copy p {
-
-                font-size:
-                    .78rem;
-
-                padding-right:
-                    30px;
-
-            }
-
-
-            .welcome-icon {
-
-                right: 17px;
-
-                bottom: 17px;
-
-                width: 40px;
-
-                height: 40px;
-
-                border-radius: 12px;
-
-            }
-
-
-            .quick-grid {
-
-                grid-template-columns:
-                    1fr;
-
-                gap: 9px;
-
-            }
-
-
-            .quick-card {
-
-                padding:
-                    13px;
-
-                border-radius:
-                    15px;
-
-            }
-
-
-            .quick-card-icon {
-
-                width: 40px;
-
-                height: 40px;
-
-            }
-
-
-            .quick-card-content strong {
-
-                font-size:
-                    .82rem;
-
-            }
-
-
-            .quick-card-content span {
-
-                font-size:
-                    .69rem;
-
-            }
-
-
-            .dashboard-grid {
-
-                grid-template-columns:
-                    1fr;
-
-                gap: 12px;
-
-            }
-
-
-            .dashboard-card-body {
-
-                min-height:
-                    115px;
-
-            }
-
-
-            .section-heading {
-
-                gap: 8px;
-
-            }
-
-
-            .section-heading h2 {
-
-                font-size:
-                    1rem;
-
-            }
-
-        }
-
-
-        /* ==================================================
-           VERY SMALL PHONES
-        ================================================== */
-
-        @media (max-width: 430px) {
-
-            .portal-logo {
-
-                width: 37px;
-
-                height: 37px;
-
-                border-radius: 11px;
-
-            }
-
-
-            .portal-logo svg {
-
-                width: 18px;
-
-                height: 18px;
-
-            }
-
-
-            .portal-brand-text strong {
-
-                font-size:
-                    .82rem;
-
-            }
-
-
-            .portal-brand-text span {
-
-                font-size:
-                    .61rem;
-
-            }
-
-
-            .header-auth-button {
-
-                padding:
-                    0 8px;
-
-            }
-
-
-            .header-auth-button span {
-
-                display: none;
-
-            }
-
-
-            .header-auth-button svg {
-
-                display: block;
-
-            }
-
-
-            .header-icon-button {
-
-                display: none;
-
-            }
-
-        }
-
-
-        /* ==================================================
-           LOGGED-IN STATE
-        ================================================== */
-
-        body.authenticated .guest-only {
-
-            display: none !important;
-
-        }
-
-
-        body.guest .member-only {
-
-            display: none !important;
-
-        }
-
-
-        .member-only,
-        .guest-only {
-
-            transition:
-                opacity .2s ease;
-
-        }
-
-
-        /* ==================================================
-           MOBILE GUEST BUTTONS
-        ================================================== */
-
-        .guest-welcome-actions {
-
-            display: flex;
-
-            gap: 9px;
-
-            margin-top: 17px;
-
-            position: relative;
-
-            z-index: 3;
-
-        }
-
-
-        .welcome-action {
-
-            min-height: 39px;
-
-            padding:
-                0 14px;
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            border-radius: 10px;
-
-            font-size: .72rem;
-
-            font-weight: 700;
-
-            text-decoration: none;
-
-        }
-
-
-        .welcome-action.primary {
-
-            background: #ffffff;
-
-            color:
-                var(--portal-purple);
-
-        }
-
-
-        .welcome-action.secondary {
-
-            color: #ffffff;
-
-            background:
-                rgba(255,255,255,.12);
-
-            border:
-                1px solid rgba(255,255,255,.25);
-
-        }
-
-
-        /* ==================================================
-           AUTHENTICATED MEMBER STATUS
-        ================================================== */
-
-        .member-status {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, minmax(0,1fr));
-
-            gap: 10px;
-
-        }
-
-
-        .status-card {
-
-            padding:
-                15px;
-
-            background:
-                #ffffff;
-
-            border:
-                1px solid var(--portal-border);
-
-            border-radius:
-                15px;
-
-            min-width: 0;
-
-        }
-
-
-        .status-card-label {
-
-            font-size: .62rem;
-
-            color:
-                var(--portal-muted);
-
-            text-transform: uppercase;
-
-            letter-spacing: .04em;
-
-        }
-
-
-        .status-card-value {
-
-            display: block;
-
-            margin-top: 5px;
-
-            font-family:
-                "Bricolage Grotesque",
-                sans-serif;
-
-            font-size: .92rem;
-
-            font-weight: 700;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            .member-status {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-        }
-
-    </style>
-
 </head>
 
 
-<body class="guest">
+<body>
 
 <div class="app-shell">
 
@@ -1451,10 +101,14 @@
         id="sidebar"
     >
 
+        <!-- BRAND -->
+
         <div class="sidebar-brand">
 
             <div class="brand-mark">
+
                 <span data-lucide="church"></span>
+
             </div>
 
             <div class="brand-text">
@@ -1472,14 +126,24 @@
         </div>
 
 
-        <nav class="sidebar-navigation">
+        <!-- NAVIGATION -->
+
+        <nav
+            class="sidebar-navigation"
+            aria-label="Main navigation"
+        >
 
             <a
                 href="index.html"
                 class="nav-item active"
             >
+
                 <span data-lucide="house"></span>
-                <span>Home</span>
+
+                <span>
+                    Home
+                </span>
+
             </a>
 
 
@@ -1487,8 +151,13 @@
                 href="pages/lessons.html"
                 class="nav-item"
             >
+
                 <span data-lucide="book-open"></span>
-                <span>Lessons</span>
+
+                <span>
+                    Lessons
+                </span>
+
             </a>
 
 
@@ -1496,8 +165,13 @@
                 href="pages/quiz.html"
                 class="nav-item"
             >
+
                 <span data-lucide="clipboard-check"></span>
-                <span>Quiz</span>
+
+                <span>
+                    Quiz
+                </span>
+
             </a>
 
 
@@ -1505,8 +179,13 @@
                 href="pages/gallery.html"
                 class="nav-item"
             >
+
                 <span data-lucide="images"></span>
-                <span>Gallery</span>
+
+                <span>
+                    Gallery
+                </span>
+
             </a>
 
 
@@ -1514,8 +193,13 @@
                 href="pages/profile.html"
                 class="nav-item member-only"
             >
+
                 <span data-lucide="user-round"></span>
-                <span>Profile</span>
+
+                <span>
+                    Profile
+                </span>
+
             </a>
 
 
@@ -1543,37 +227,45 @@
         </nav>
 
 
+        <!-- SIDEBAR ACCOUNT AREA -->
+
         <div class="sidebar-footer">
 
             <!-- GUEST -->
 
-            <div class="guest-only">
+            <div
+                class="sidebar-guest"
+                id="sidebarGuest"
+            >
 
-                <a
-                    href="login.html"
-                    class="header-auth-button header-login"
-                    style="width:100%; margin-bottom:8px;"
-                >
-                    <span data-lucide="log-in"></span>
-                    <span>Login</span>
-                </a>
+                <div class="sidebar-guest-icon">
 
+                    <span data-lucide="user-round"></span>
 
-                <a
-                    href="login.html#register"
-                    class="header-auth-button header-register"
-                    style="width:100%;"
-                >
-                    <span data-lucide="user-plus"></span>
-                    <span>Create Account</span>
-                </a>
+                </div>
+
+                <div class="sidebar-guest-copy">
+
+                    <strong>
+                        Welcome
+                    </strong>
+
+                    <small>
+                        Sign in to access your account
+                    </small>
+
+                </div>
 
             </div>
 
 
             <!-- MEMBER -->
 
-            <div class="member-only">
+            <div
+                class="sidebar-member"
+                id="sidebarMember"
+                hidden
+            >
 
                 <a
                     href="pages/profile.html"
@@ -1585,16 +277,14 @@
                         <span
                             id="sidebarAvatar"
                         >
-                            <span data-lucide="user-round"></span>
+                            A
                         </span>
 
                     </div>
 
                     <div>
 
-                        <strong
-                            id="sidebarUserName"
-                        >
+                        <strong id="sidebarUserName">
                             Member
                         </strong>
 
@@ -1606,11 +296,27 @@
 
                 </a>
 
+
+                <button
+                    type="button"
+                    class="sidebar-logout"
+                    id="sidebarLogoutButton"
+                >
+
+                    <span data-lucide="log-out"></span>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </button>
+
             </div>
 
         </div>
 
     </aside>
+
 
 
     <!-- =====================================================
@@ -1621,50 +327,56 @@
 
 
         <!-- =================================================
-             HEADER
+             TOP HEADER
         ================================================== -->
 
         <header class="top-header">
 
 
+            <!-- MOBILE MENU -->
+
             <button
                 type="button"
                 class="icon-button mobile-menu-button"
                 id="mobileMenuButton"
-                aria-label="Open menu"
+                aria-label="Open navigation menu"
             >
+
                 <span data-lucide="menu"></span>
+
             </button>
 
 
             <!-- MOBILE BRAND -->
 
-            <div class="portal-header-brand">
+            <a
+                href="index.html"
+                class="mobile-brand"
+                aria-label="AFC Isiu Youth Portal Home"
+            >
 
-                <div class="portal-logo">
+                <span class="mobile-brand-icon">
 
-                    <span
-                        data-lucide="church"
-                    ></span>
+                    <span data-lucide="church"></span>
 
-                </div>
+                </span>
 
-                <div class="portal-brand-text">
+                <span class="mobile-brand-text">
 
                     <strong>
                         AFC Isiu
                     </strong>
 
-                    <span>
+                    <small>
                         Youth Portal
-                    </span>
+                    </small>
 
-                </div>
+                </span>
 
-            </div>
+            </a>
 
 
-            <!-- DESKTOP TITLE -->
+            <!-- PAGE TITLE -->
 
             <div class="header-title">
 
@@ -1686,11 +398,14 @@
 
                 <!-- GUEST ACTIONS -->
 
-                <div class="header-auth-actions guest-only">
+                <div
+                    class="header-auth-actions"
+                    id="guestHeaderActions"
+                >
 
                     <a
                         href="login.html"
-                        class="header-auth-button header-login"
+                        class="header-login-button"
                     >
 
                         <span data-lucide="log-in"></span>
@@ -1704,10 +419,8 @@
 
                     <a
                         href="login.html#register"
-                        class="header-auth-button header-register"
+                        class="header-register-button"
                     >
-
-                        <span data-lucide="user-plus"></span>
 
                         <span>
                             Create Account
@@ -1721,7 +434,9 @@
                 <!-- MEMBER ACTIONS -->
 
                 <div
-                    class="header-auth-actions member-only"
+                    class="member-header-actions"
+                    id="memberHeaderActions"
+                    hidden
                 >
 
                     <a
@@ -1744,30 +459,14 @@
                     <a
                         href="pages/profile.html"
                         class="header-avatar"
-                        id="headerAvatar"
-                        aria-label="Profile"
+                        aria-label="My profile"
                     >
 
-                        <span
-                            data-lucide="user-round"
-                        ></span>
-
-                    </a>
-
-
-                    <button
-                        type="button"
-                        class="header-auth-button header-logout"
-                        id="headerLogoutButton"
-                    >
-
-                        <span data-lucide="log-out"></span>
-
-                        <span>
-                            Logout
+                        <span id="headerAvatarLetter">
+                            A
                         </span>
 
-                    </button>
+                    </a>
 
                 </div>
 
@@ -1776,188 +475,171 @@
         </header>
 
 
+
         <!-- =================================================
              PAGE CONTENT
         ================================================== -->
 
-        <section class="page-content">
+        <section class="page-content home-page">
 
 
             <!-- =================================================
-                 WELCOME
-            ================================================== -->
-
-            <section class="welcome-section">
-
-
-                <div class="welcome-copy">
-
-                    <span class="section-label">
-                        <span
-                            class="guest-only"
-                        >
-                            Welcome to the portal
-                        </span>
-
-                        <span
-                            class="member-only"
-                        >
-                            Welcome back
-                        </span>
-                    </span>
-
-
-                    <h2>
-
-                        Hello,
-
-                        <span
-                            id="welcomeUserName"
-                        >
-                            Friend
-                        </span>
-
-                    </h2>
-
-
-                    <p class="guest-only">
-
-                        Explore lessons, quizzes, photos and
-                        everything happening with AFC Isiu Youth.
-
-                    </p>
-
-
-                    <p class="member-only">
-
-                        Keep growing, learning and staying connected.
-
-                    </p>
-
-
-                    <!-- GUEST CTA -->
-
-                    <div
-                        class="guest-welcome-actions guest-only"
-                    >
-
-                        <a
-                            href="login.html"
-                            class="welcome-action primary"
-                        >
-
-                            <span data-lucide="log-in"></span>
-
-                            Login
-
-                        </a>
-
-
-                        <a
-                            href="login.html#register"
-                            class="welcome-action secondary"
-                        >
-
-                            <span data-lucide="user-plus"></span>
-
-                            Create Account
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <div class="welcome-icon">
-
-                    <span
-                        data-lucide="sparkles"
-                    ></span>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 MEMBER STATUS
+                 HERO / WELCOME
             ================================================== -->
 
             <section
-                class="section-block member-only"
+                class="home-hero"
+                id="homeHero"
             >
 
-                <div class="section-heading">
+                <div class="home-hero-content">
 
-                    <div>
+
+                    <!-- GUEST -->
+
+                    <div
+                        id="guestHero"
+                        class="hero-state"
+                    >
 
                         <span class="section-label">
-                            Your portal
+                            Welcome to AFC Isiu Youth
                         </span>
 
                         <h2>
-                            Member overview
+                            Learn.
+                            <span>
+                                Grow.
+                            </span>
+                            Connect.
                         </h2>
 
+                        <p>
+                            Your digital space for Bible lessons,
+                            quizzes, youth activities, memories
+                            and staying connected with the church.
+                        </p>
+
+
+                        <div class="hero-actions">
+
+                            <a
+                                href="login.html#register"
+                                class="primary-action-button"
+                            >
+
+                                <span data-lucide="user-plus"></span>
+
+                                <span>
+                                    Create Account
+                                </span>
+
+                                <span data-lucide="arrow-right"></span>
+
+                            </a>
+
+
+                            <a
+                                href="login.html"
+                                class="secondary-action-button"
+                            >
+
+                                <span data-lucide="log-in"></span>
+
+                                <span>
+                                    Login
+                                </span>
+
+                            </a>
+
+                        </div>
+
                     </div>
+
+
+                    <!-- MEMBER -->
+
+                    <div
+                        id="memberHero"
+                        class="hero-state"
+                        hidden
+                    >
+
+                        <span class="section-label">
+                            Welcome back
+                        </span>
+
+                        <h2>
+                            Hello,
+                            <span id="welcomeUserName">
+                                Friend
+                            </span>
+                        </h2>
+
+                        <p>
+                            Keep growing, learning and staying
+                            connected with your youth family.
+                        </p>
+
+
+                        <div class="member-hero-actions">
+
+                            <a
+                                href="pages/lessons.html"
+                                class="primary-action-button"
+                            >
+
+                                <span data-lucide="book-open"></span>
+
+                                <span>
+                                    Continue Learning
+                                </span>
+
+                                <span data-lucide="arrow-right"></span>
+
+                            </a>
+
+
+                            <button
+                                type="button"
+                                class="secondary-action-button"
+                                id="heroLogoutButton"
+                            >
+
+                                <span data-lucide="log-out"></span>
+
+                                <span>
+                                    Logout
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
 
                 </div>
 
 
-                <div class="member-status">
+                <!-- HERO ICON -->
 
+                <div class="home-hero-visual">
 
-                    <div class="status-card">
+                    <div class="hero-icon-orbit">
 
-                        <span class="status-card-label">
-                            Account
-                        </span>
+                        <div class="hero-icon">
 
-                        <span
-                            class="status-card-value"
-                            id="memberAccountStatus"
-                        >
-                            Active
-                        </span>
+                            <span data-lucide="church"></span>
 
-                    </div>
-
-
-                    <div class="status-card">
-
-                        <span class="status-card-label">
-                            Weekly Quiz
-                        </span>
-
-                        <span
-                            class="status-card-value"
-                            id="memberQuizStatus"
-                        >
-                            Checking...
-                        </span>
-
-                    </div>
-
-
-                    <div class="status-card">
-
-                        <span class="status-card-label">
-                            Notifications
-                        </span>
-
-                        <span
-                            class="status-card-value"
-                            id="memberNotificationStatus"
-                        >
-                            Checking...
-                        </span>
+                        </div>
 
                     </div>
 
                 </div>
 
             </section>
+
 
 
             <!-- =================================================
@@ -1965,7 +647,6 @@
             ================================================== -->
 
             <section class="section-block">
-
 
                 <div class="section-heading">
 
@@ -1994,14 +675,11 @@
                         class="quick-card"
                     >
 
-                        <div
-                            class="quick-card-icon purple"
-                        >
-                            <span
-                                data-lucide="book-open"
-                            ></span>
-                        </div>
+                        <div class="quick-card-icon purple">
 
+                            <span data-lucide="book-open"></span>
+
+                        </div>
 
                         <div class="quick-card-content">
 
@@ -2010,11 +688,10 @@
                             </strong>
 
                             <span>
-                                Read this week's lesson
+                                Read and study this week's lesson
                             </span>
 
                         </div>
-
 
                         <span
                             class="quick-card-arrow"
@@ -2022,6 +699,7 @@
                         ></span>
 
                     </a>
+
 
 
                     <!-- QUIZ -->
@@ -2031,19 +709,16 @@
                         class="quick-card"
                     >
 
-                        <div
-                            class="quick-card-icon orange"
-                        >
-                            <span
-                                data-lucide="clipboard-check"
-                            ></span>
-                        </div>
+                        <div class="quick-card-icon orange">
 
+                            <span data-lucide="clipboard-check"></span>
+
+                        </div>
 
                         <div class="quick-card-content">
 
                             <strong>
-                                Take a Quiz
+                                Weekly Quiz
                             </strong>
 
                             <span>
@@ -2052,13 +727,13 @@
 
                         </div>
 
-
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
                         ></span>
 
                     </a>
+
 
 
                     <!-- GALLERY -->
@@ -2068,14 +743,11 @@
                         class="quick-card"
                     >
 
-                        <div
-                            class="quick-card-icon blue"
-                        >
-                            <span
-                                data-lucide="images"
-                            ></span>
-                        </div>
+                        <div class="quick-card-icon blue">
 
+                            <span data-lucide="images"></span>
+
+                        </div>
 
                         <div class="quick-card-content">
 
@@ -2084,11 +756,10 @@
                             </strong>
 
                             <span>
-                                Photos and memories
+                                Photos and memories from our programs
                             </span>
 
                         </div>
-
 
                         <span
                             class="quick-card-arrow"
@@ -2096,6 +767,7 @@
                         ></span>
 
                     </a>
+
 
 
                     <!-- PROFILE -->
@@ -2105,14 +777,11 @@
                         class="quick-card member-only"
                     >
 
-                        <div
-                            class="quick-card-icon green"
-                        >
-                            <span
-                                data-lucide="user-round"
-                            ></span>
-                        </div>
+                        <div class="quick-card-icon green">
 
+                            <span data-lucide="user-round"></span>
+
+                        </div>
 
                         <div class="quick-card-content">
 
@@ -2121,11 +790,10 @@
                             </strong>
 
                             <span>
-                                Manage your account
+                                Manage your account and information
                             </span>
 
                         </div>
-
 
                         <span
                             class="quick-card-arrow"
@@ -2134,243 +802,249 @@
 
                     </a>
 
-
                 </div>
 
             </section>
 
 
+
             <!-- =================================================
-                 DASHBOARD DATA
+                 MEMBER DASHBOARD CONTENT
             ================================================== -->
 
-            <section class="dashboard-grid">
+            <div
+                id="memberDashboardContent"
+                hidden
+            >
 
 
-                <!-- CURRENT LESSON -->
+                <!-- =============================================
+                     MEMBER OVERVIEW
+                ============================================== -->
 
-                <article class="dashboard-card">
-
-                    <div class="dashboard-card-header">
-
-                        <div class="dashboard-card-title">
-
-                            <div
-                                class="small-icon purple"
-                            >
-                                <span
-                                    data-lucide="book-open"
-                                ></span>
-                            </div>
+                <section class="dashboard-grid">
 
 
-                            <div>
+                    <!-- CURRENT LESSON -->
 
-                                <span class="card-label">
-                                    This Week
-                                </span>
+                    <article class="dashboard-card">
 
-                                <h3>
-                                    Weekly Lesson
-                                </h3>
+                        <div class="dashboard-card-header">
+
+                            <div class="dashboard-card-title">
+
+                                <div class="small-icon purple">
+
+                                    <span data-lucide="book-open"></span>
+
+                                </div>
+
+                                <div>
+
+                                    <span class="card-label">
+                                        This Week
+                                    </span>
+
+                                    <h3>
+                                        Weekly Lesson
+                                    </h3>
+
+                                </div>
 
                             </div>
 
                         </div>
 
+
+                        <div
+                            class="dashboard-card-body"
+                            id="currentLesson"
+                        >
+
+                            <div class="empty-state">
+
+                                <div class="empty-state-icon">
+
+                                    <span data-lucide="book-open"></span>
+
+                                </div>
+
+                                <p>
+                                    Your current lesson will appear here.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="pages/lessons.html"
+                            class="text-link"
+                        >
+
+                            <span>
+                                View lessons
+                            </span>
+
+                            <span data-lucide="arrow-right"></span>
+
+                        </a>
+
+                    </article>
+
+
+
+                    <!-- QUIZ -->
+
+                    <article class="dashboard-card">
+
+                        <div class="dashboard-card-header">
+
+                            <div class="dashboard-card-title">
+
+                                <div class="small-icon orange">
+
+                                    <span data-lucide="trophy"></span>
+
+                                </div>
+
+                                <div>
+
+                                    <span class="card-label">
+                                        Challenge
+                                    </span>
+
+                                    <h3>
+                                        Weekly Quiz
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="dashboard-card-body"
+                            id="quizSummary"
+                        >
+
+                            <div class="empty-state">
+
+                                <div class="empty-state-icon">
+
+                                    <span data-lucide="clipboard-check"></span>
+
+                                </div>
+
+                                <p>
+                                    Your quiz information will appear here.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="pages/quiz.html"
+                            class="text-link"
+                        >
+
+                            <span>
+                                Go to quiz
+                            </span>
+
+                            <span data-lucide="arrow-right"></span>
+
+                        </a>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     NOTIFICATIONS
+                ============================================== -->
+
+                <section class="section-block">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-label">
+                                Updates
+                            </span>
+
+                            <h2>
+                                Recent notifications
+                            </h2>
+
+                        </div>
+
+
+                        <a
+                            href="pages/notifications.html"
+                            class="section-link"
+                        >
+                            View all
+                        </a>
+
                     </div>
 
 
                     <div
-                        class="dashboard-card-body"
-                        id="currentLesson"
+                        class="notification-preview"
+                        id="notificationPreview"
                     >
 
                         <div class="empty-state">
 
                             <div class="empty-state-icon">
 
-                                <span
-                                    data-lucide="book-open"
-                                ></span>
+                                <span data-lucide="bell"></span>
 
                             </div>
 
                             <p>
-                                Your current lesson will appear here.
+                                No new notifications.
                             </p>
 
                         </div>
 
                     </div>
 
-
-                    <a
-                        href="pages/lessons.html"
-                        class="text-link"
-                    >
-
-                        View lessons
-
-                        <span
-                            data-lucide="arrow-right"
-                        ></span>
-
-                    </a>
-
-                </article>
+                </section>
 
 
-                <!-- QUIZ -->
+            </div>
 
-                <article class="dashboard-card">
-
-                    <div class="dashboard-card-header">
-
-                        <div class="dashboard-card-title">
-
-                            <div
-                                class="small-icon orange"
-                            >
-                                <span
-                                    data-lucide="trophy"
-                                ></span>
-                            </div>
-
-
-                            <div>
-
-                                <span class="card-label">
-                                    Challenge
-                                </span>
-
-                                <h3>
-                                    Weekly Quiz
-                                </h3>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        class="dashboard-card-body"
-                        id="quizSummary"
-                    >
-
-                        <div class="empty-state">
-
-                            <div class="empty-state-icon">
-
-                                <span
-                                    data-lucide="clipboard-check"
-                                ></span>
-
-                            </div>
-
-                            <p>
-                                Your quiz information will appear here.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <a
-                        href="pages/quiz.html"
-                        class="text-link"
-                    >
-
-                        Go to quiz
-
-                        <span
-                            data-lucide="arrow-right"
-                        ></span>
-
-                    </a>
-
-                </article>
-
-
-            </section>
-
-
-            <!-- =================================================
-                 NOTIFICATIONS
-            ================================================== -->
-
-            <section class="section-block member-only">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <span class="section-label">
-                            Updates
-                        </span>
-
-                        <h2>
-                            Recent notifications
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="pages/notifications.html"
-                        class="section-link"
-                    >
-                        View all
-                    </a>
-
-                </div>
-
-
-                <div
-                    class="notification-preview"
-                    id="notificationPreview"
-                >
-
-                    <div class="empty-state">
-
-                        <div class="empty-state-icon">
-
-                            <span
-                                data-lucide="bell"
-                            ></span>
-
-                        </div>
-
-                        <p>
-                            No new notifications.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
 
 
             <!-- =================================================
                  GUEST INFORMATION
             ================================================== -->
 
-            <section class="section-block guest-only">
+            <section
+                class="guest-information"
+                id="guestInformation"
+            >
 
                 <div class="section-heading">
 
                     <div>
 
                         <span class="section-label">
-                            AFC Isiu Youth
+                            What you can do
                         </span>
 
                         <h2>
-                            Stay connected
+                            Everything in one place
                         </h2>
 
                     </div>
@@ -2378,27 +1052,64 @@
                 </div>
 
 
-                <div class="dashboard-card">
+                <div class="feature-grid">
 
-                    <div
-                        class="dashboard-card-body"
-                        style="min-height:auto;"
-                    >
 
-                        <p
-                            style="
-                                margin:0;
-                                color:var(--portal-muted);
-                                font-size:.82rem;
-                                line-height:1.65;
-                            "
-                        >
+                    <div class="feature-card">
 
-                            Create your account to access your
-                            personalized profile, participate in
-                            quizzes, receive important notifications
-                            and keep track of your activities.
+                        <div class="feature-icon purple">
 
+                            <span data-lucide="book-open"></span>
+
+                        </div>
+
+                        <h3>
+                            Learn
+                        </h3>
+
+                        <p>
+                            Access weekly lessons and grow in your
+                            understanding of God's Word.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon orange">
+
+                            <span data-lucide="trophy"></span>
+
+                        </div>
+
+                        <h3>
+                            Challenge Yourself
+                        </h3>
+
+                        <p>
+                            Take weekly quizzes and track your
+                            learning progress.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon blue">
+
+                            <span data-lucide="images"></span>
+
+                        </div>
+
+                        <h3>
+                            Stay Connected
+                        </h3>
+
+                        <p>
+                            Relive programs, activities and special
+                            moments through our gallery.
                         </p>
 
                     </div>
@@ -2413,6 +1124,7 @@
     </main>
 
 </div>
+
 
 
 <!-- =========================================================
@@ -2500,7 +1212,7 @@
 
     <a
         href="pages/profile.html"
-        class="bottom-nav-item"
+        class="bottom-nav-item member-only"
     >
 
         <span
@@ -2517,6 +1229,7 @@
 </nav>
 
 
+
 <!-- =========================================================
      MOBILE OVERLAY
 ========================================================== -->
@@ -2527,8 +1240,9 @@
 ></div>
 
 
+
 <!-- =========================================================
-     SCRIPTS
+     APPLICATION SCRIPTS
 ========================================================== -->
 
 <script src="js/config.js"></script>
@@ -2541,214 +1255,16 @@
 
 <script src="js/app.js"></script>
 
+<script src="js/home.js"></script>
+
 
 <script>
-
-"use strict";
-
-
-/* ============================================================
-   INDEX AUTHENTICATED / GUEST STATE
-============================================================ */
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        const authenticated =
-            window.AUTH &&
-            typeof AUTH.isAuthenticated === "function"
-                ? AUTH.isAuthenticated()
-                : false;
-
-
-        document.body.classList.toggle(
-            "authenticated",
-            authenticated
-        );
-
-
-        document.body.classList.toggle(
-            "guest",
-            !authenticated
-        );
-
-
-        if (authenticated) {
-
-            const user =
-                AUTH.getUser();
-
-
-            if (user) {
-
-                const firstName =
-                    String(
-                        user.first_name || "Member"
-                    ).trim();
-
-
-                const displayName =
-                    AUTH.getDisplayName
-                        ? AUTH.getDisplayName()
-                        : firstName;
-
-
-                const welcome =
-                    document.getElementById(
-                        "welcomeUserName"
-                    );
-
-
-                if (welcome) {
-
-                    welcome.textContent =
-                        firstName;
-
-                }
-
-
-                const sidebarName =
-                    document.getElementById(
-                        "sidebarUserName"
-                    );
-
-
-                if (sidebarName) {
-
-                    sidebarName.textContent =
-                        displayName;
-
-                }
-
-
-                const headerAvatar =
-                    document.getElementById(
-                        "headerAvatar"
-                    );
-
-
-                if (headerAvatar) {
-
-                    headerAvatar.innerHTML =
-                        firstName
-                            .charAt(0)
-                            .toUpperCase();
-
-                }
-
-
-                const sidebarAvatar =
-                    document.getElementById(
-                        "sidebarAvatar"
-                    );
-
-
-                if (sidebarAvatar) {
-
-                    sidebarAvatar.innerHTML =
-                        firstName
-                            .charAt(0)
-                            .toUpperCase();
-
-                }
-
-            }
-
-
-            /* ----------------------------------------------
-               QUIZ STATUS
-            ---------------------------------------------- */
-
-            if (
-                window.API &&
-                typeof API.get === "function"
-            ) {
-
-                loadMemberDashboardData();
-
-            }
-
-        }
-
-
-        /* ----------------------------------------------
-           LOGOUT
-        ---------------------------------------------- */
-
-        const logoutButton =
-            document.getElementById(
-                "headerLogoutButton"
-            );
-
-
-        if (logoutButton) {
-
-            logoutButton.addEventListener(
-                "click",
-                async function () {
-
-                    logoutButton.disabled =
-                        true;
-
-
-                    logoutButton
-                        .querySelector("span:last-child")
-                        ?.replaceChildren(
-                            document.createTextNode(
-                                "Logging out..."
-                            )
-                        );
-
-
-                    try {
-
-                        if (
-                            window.AUTH &&
-                            typeof AUTH.logout ===
-                                "function"
-                        ) {
-
-                            await AUTH.logout();
-
-                        }
-
-                    } catch (error) {
-
-                        console.error(
-                            "Logout error:",
-                            error
-                        );
-
-                        if (
-                            window.AUTH &&
-                            typeof AUTH.clear ===
-                                "function"
-                        ) {
-
-                            AUTH.clear();
-
-                        }
-
-                    }
-
-
-                    window.location.href =
-                        "index.html";
-
-                }
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           LUCIDE
-        ---------------------------------------------- */
-
-        if (
-            window.lucide
-        ) {
+        if (window.lucide) {
 
             lucide.createIcons();
 
@@ -2757,174 +1273,10 @@ document.addEventListener(
     }
 );
 
-
-/* ============================================================
-   MEMBER DATA
-============================================================ */
-
-async function loadMemberDashboardData() {
-
-    try {
-
-        const token =
-            AUTH.getToken();
-
-
-        const userId =
-            AUTH.getUserId();
-
-
-        const quizResult =
-            await API.get(
-                "getquizstatus",
-                {
-                    token:
-                        token,
-
-                    user_id:
-                        userId
-                }
-            );
-
-
-        const quizData =
-            quizResult?.data ||
-            quizResult ||
-            {};
-
-
-        const quizStatus =
-            document.getElementById(
-                "memberQuizStatus"
-            );
-
-
-        if (quizStatus) {
-
-            const status =
-                String(
-                    quizData.status ||
-                    quizData.quiz_status ||
-                    ""
-                ).toLowerCase();
-
-
-            if (
-                status === "open" ||
-                status === "available" ||
-                status === "published"
-            ) {
-
-                quizStatus.textContent =
-                    "Available";
-
-            } else if (
-                status === "completed" ||
-                status === "submitted"
-            ) {
-
-                quizStatus.textContent =
-                    "Completed";
-
-            } else {
-
-                quizStatus.textContent =
-                    "No active quiz";
-
-            }
-
-        }
-
-
-        const notificationResult =
-            await API.get(
-                "getnotifications",
-                {
-                    token:
-                        token,
-
-                    user_id:
-                        userId
-                }
-            );
-
-
-        const unreadCount =
-            Number(
-                notificationResult?.unreadCount ||
-                notificationResult?.data?.unreadCount ||
-                0
-            );
-
-
-        const notificationStatus =
-            document.getElementById(
-                "memberNotificationStatus"
-            );
-
-
-        if (notificationStatus) {
-
-            notificationStatus.textContent =
-                unreadCount > 0
-                    ? `${unreadCount} unread`
-                    : "All caught up";
-
-        }
-
-
-        const badge =
-            document.getElementById(
-                "desktopNotificationBadge"
-            );
-
-
-        const dot =
-            document.getElementById(
-                "headerNotificationDot"
-            );
-
-
-        if (unreadCount > 0) {
-
-            if (badge) {
-
-                badge.hidden =
-                    false;
-
-                badge.textContent =
-                    unreadCount > 99
-                        ? "99+"
-                        : String(
-                            unreadCount
-                        );
-
-            }
-
-
-            if (dot) {
-
-                dot.hidden =
-                    false;
-
-            }
-
-        }
-
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to load member dashboard data:",
-            error
-        );
-
-    }
-
-}
-
 </script>
 
 
 </body>
+
 </html>
+
