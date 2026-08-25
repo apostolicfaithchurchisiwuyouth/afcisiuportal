@@ -1,105 +1,55 @@
 :root {
 
-    /* ==============================
-       BRAND
-    ============================== */
-
     --brand: #4a0754;
-    --brand-dark: #2d0334;
+    --brand-dark: #35033d;
     --brand-light: #f5eafa;
-    --brand-soft: #faf5fc;
 
+    --accent: #ea580c;
+    --accent-light: #fff1e8;
 
-    /* ==============================
-       TEXT
-    ============================== */
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
 
-    --text: #170d1a;
-    --text-soft: #5f5363;
-    --text-muted: #8b8190;
+    --green: #0a9f6e;
+    --green-light: #ecfdf5;
 
+    --yellow: #d97706;
+    --yellow-light: #fffbeb;
 
-    /* ==============================
-       BACKGROUND
-    ============================== */
+    --red: #dc2626;
+    --red-light: #fef2f2;
 
-    --background: #f8f7f9;
+    --ink: #17121a;
+    --ink-soft: #5d5661;
+    --ink-muted: #8c8590;
+
+    --background: #f8f7fa;
     --surface: #ffffff;
-    --surface-soft: #fbfafc;
 
-
-    /* ==============================
-       BORDERS
-    ============================== */
-
-    --border: #e9e3eb;
-    --border-light: #f0ebf2;
-
-
-    /* ==============================
-       STATUS
-    ============================== */
-
-    --success: #16845b;
-    --success-light: #e8f7f0;
-
-    --warning: #b7791f;
-    --warning-light: #fff7e6;
-
-    --danger: #c0392b;
-    --danger-light: #fcebea;
-
-
-    /* ==============================
-       SHADOWS
-    ============================== */
+    --border: #ebe7ed;
+    --border-dark: #ddd6e0;
 
     --shadow-sm:
-        0 2px 8px rgba(35, 10, 40, 0.05);
+        0 2px 8px rgba(42, 20, 48, 0.05);
 
-    --shadow:
-        0 8px 30px rgba(35, 10, 40, 0.07);
+    --shadow-md:
+        0 8px 24px rgba(42, 20, 48, 0.08);
 
     --shadow-lg:
-        0 18px 50px rgba(35, 10, 40, 0.10);
-
-
-    /* ==============================
-       RADIUS
-    ============================== */
+        0 18px 45px rgba(42, 20, 48, 0.12);
 
     --radius-sm: 10px;
-    --radius: 16px;
+    --radius-md: 16px;
     --radius-lg: 22px;
     --radius-xl: 28px;
 
+    --sidebar-width: 250px;
 
-    /* ==============================
-       LAYOUT
-    ============================== */
-
-    --sidebar-width: 270px;
     --header-height: 72px;
 
-
-    /* ==============================
-       TYPOGRAPHY
-    ============================== */
-
-    --font-heading:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    --font-body:
-        "DM Sans",
-        sans-serif;
-
-
-    /* ==============================
-       TRANSITIONS
-    ============================== */
+    --bottom-nav-height: 72px;
 
     --transition:
-        0.2s ease;
+        180ms ease;
 
 }
