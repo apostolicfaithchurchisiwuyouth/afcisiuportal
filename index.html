@@ -1,54 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport"  content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-    <meta name="theme-color" content="#4a0754">
+    <meta
+        name="theme-color"
+        content="#4a0754"
+    >
 
-    <meta name="description" content="AFC Isiu Youth Portal">
+    <meta
+        name="description"
+        content="AFC Isiu Youth Portal"
+    >
 
     <title>AFC Isiu Youth Portal</title>
 
-    <link rel="manifest" href="manifest.json">
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
 
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link
+        rel="stylesheet"
+        href="css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/base.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/layout.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/components.css"
+    >
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
 </head>
+
 
 <body>
 
 <div class="app-shell">
 
+
     <!-- =====================================================
          DESKTOP SIDEBAR
     ====================================================== -->
 
-    <aside class="sidebar" id="sidebar">
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <!-- BRAND -->
 
         <div class="sidebar-brand">
 
             <div class="brand-mark">
+
                 <span data-lucide="church"></span>
+
             </div>
 
             <div class="brand-text">
+
                 <strong>AFC Isiu</strong>
+
                 <span>Youth Portal</span>
+
             </div>
 
         </div>
 
 
+        <!-- NAVIGATION -->
+
         <nav class="sidebar-navigation">
 
-            <a href="index.html" class="nav-item active">
+
+            <a
+                href="index.html"
+                class="nav-item active"
+            >
 
                 <span data-lucide="house"></span>
 
@@ -57,7 +105,10 @@
             </a>
 
 
-            <a href="pages/lessons.html" class="nav-item">
+            <a
+                href="pages/lessons.html"
+                class="nav-item"
+            >
 
                 <span data-lucide="book-open"></span>
 
@@ -66,7 +117,10 @@
             </a>
 
 
-            <a href="pages/quiz.html" class="nav-item">
+            <a
+                href="pages/quiz.html"
+                class="nav-item"
+            >
 
                 <span data-lucide="clipboard-check"></span>
 
@@ -75,7 +129,10 @@
             </a>
 
 
-            <a href="pages/gallery.html" class="nav-item">
+            <a
+                href="pages/gallery.html"
+                class="nav-item"
+            >
 
                 <span data-lucide="images"></span>
 
@@ -84,7 +141,13 @@
             </a>
 
 
-            <a href="pages/profile.html" class="nav-item">
+            <!-- PROFILE -->
+
+            <a
+                href="pages/profile.html"
+                class="nav-item"
+                id="sidebarProfileLink"
+            >
 
                 <span data-lucide="user-round"></span>
 
@@ -93,7 +156,12 @@
             </a>
 
 
-            <a href="pages/notifications.html" class="nav-item">
+            <!-- NOTIFICATIONS -->
+
+            <a
+                href="pages/notifications.html"
+                class="nav-item"
+            >
 
                 <span data-lucide="bell"></span>
 
@@ -112,22 +180,71 @@
         </nav>
 
 
+        <!-- =================================================
+             SIDEBAR PROFILE
+        ================================================== -->
+
         <div class="sidebar-footer">
 
-            <a href="pages/profile.html" class="sidebar-profile">
+
+            <!-- GUEST -->
+
+            <a
+                href="login.html"
+                class="sidebar-profile"
+                id="sidebarGuestProfile"
+            >
 
                 <div class="avatar">
-                    <span data-lucide="user-round"></span>
+
+                    <span data-lucide="log-in"></span>
+
                 </div>
 
                 <div>
-                    <strong id="sidebarUserName">
+
+                    <strong>
                         Welcome
+                    </strong>
+
+                    <small>
+                        Sign in
+                    </small>
+
+                </div>
+
+            </a>
+
+
+            <!-- MEMBER -->
+
+            <a
+                href="pages/profile.html"
+                class="sidebar-profile"
+                id="sidebarMemberProfile"
+                hidden
+            >
+
+                <div class="avatar">
+
+                    <span
+                        id="sidebarAvatar"
+                    >
+                        M
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <strong id="sidebarUserName">
+                        Member
                     </strong>
 
                     <small>
                         My Profile
                     </small>
+
                 </div>
 
             </a>
@@ -143,9 +260,13 @@
 
     <main class="main-area">
 
-        <!-- HEADER -->
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
         <header class="top-header">
+
 
             <button
                 type="button"
@@ -153,7 +274,9 @@
                 id="mobileMenuButton"
                 aria-label="Open menu"
             >
+
                 <span data-lucide="menu"></span>
+
             </button>
 
 
@@ -172,6 +295,7 @@
 
             <div class="header-actions">
 
+
                 <a
                     href="pages/notifications.html"
                     class="header-icon-button"
@@ -189,12 +313,34 @@
                 </a>
 
 
+                <!-- GUEST PROFILE -->
+
+                <a
+                    href="login.html"
+                    class="header-avatar"
+                    id="guestHeaderAvatar"
+                    aria-label="Login"
+                >
+
+                    <span data-lucide="log-in"></span>
+
+                </a>
+
+
+                <!-- MEMBER PROFILE -->
+
                 <a
                     href="pages/profile.html"
                     class="header-avatar"
+                    id="memberHeaderAvatar"
                     aria-label="Profile"
+                    hidden
                 >
-                    <span data-lucide="user-round"></span>
+
+                    <span id="headerAvatarLetter">
+                        M
+                    </span>
+
                 </a>
 
             </div>
@@ -208,9 +354,88 @@
 
         <section class="page-content">
 
-            <!-- Welcome -->
 
-            <section class="welcome-section">
+            <!-- =================================================
+                 GUEST WELCOME
+            ================================================== -->
+
+            <section
+                class="welcome-section"
+                id="guestWelcome"
+            >
+
+                <div class="welcome-copy">
+
+                    <span class="section-label">
+                        Welcome
+                    </span>
+
+                    <h2>
+                        Welcome to
+                        <span>AFC Isiu Youth</span>
+                    </h2>
+
+                    <p>
+                        Learn, grow, connect and stay engaged
+                        with the youth community.
+                    </p>
+
+
+                    <div
+                        class="guest-actions"
+                        id="guestActions"
+                    >
+
+                        <a
+                            href="login.html"
+                            class="primary-button"
+                        >
+
+                            <span data-lucide="log-in"></span>
+
+                            <span>
+                                Login
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="login.html"
+                            class="secondary-button"
+                        >
+
+                            <span data-lucide="user-plus"></span>
+
+                            <span>
+                                Create Account
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="welcome-icon">
+
+                    <span data-lucide="sparkles"></span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MEMBER WELCOME
+            ================================================== -->
+
+            <section
+                class="welcome-section"
+                id="memberWelcome"
+                hidden
+            >
 
                 <div class="welcome-copy">
 
@@ -221,12 +446,13 @@
                     <h2>
                         Hello,
                         <span id="welcomeUserName">
-                            Friend
+                            Member
                         </span>
                     </h2>
 
                     <p>
-                        Keep growing, learning and staying connected.
+                        Keep growing, learning and staying
+                        connected with your youth community.
                     </p>
 
                 </div>
@@ -241,13 +467,16 @@
             </section>
 
 
-            <!-- Quick Access -->
+            <!-- =================================================
+                 PUBLIC EXPLORE
+            ================================================== -->
 
             <section class="section-block">
 
                 <div class="section-heading">
 
                     <div>
+
                         <span class="section-label">
                             Explore
                         </span>
@@ -255,6 +484,7 @@
                         <h2>
                             Quick access
                         </h2>
+
                     </div>
 
                 </div>
@@ -262,13 +492,18 @@
 
                 <div class="quick-grid">
 
+
+                    <!-- LESSONS -->
+
                     <a
                         href="pages/lessons.html"
                         class="quick-card"
                     >
 
                         <div class="quick-card-icon purple">
+
                             <span data-lucide="book-open"></span>
+
                         </div>
 
                         <div class="quick-card-content">
@@ -291,13 +526,17 @@
                     </a>
 
 
+                    <!-- QUIZ -->
+
                     <a
                         href="pages/quiz.html"
                         class="quick-card"
                     >
 
                         <div class="quick-card-icon orange">
+
                             <span data-lucide="clipboard-check"></span>
+
                         </div>
 
                         <div class="quick-card-content">
@@ -320,13 +559,17 @@
                     </a>
 
 
+                    <!-- GALLERY -->
+
                     <a
                         href="pages/gallery.html"
                         class="quick-card"
                     >
 
                         <div class="quick-card-icon blue">
+
                             <span data-lucide="images"></span>
+
                         </div>
 
                         <div class="quick-card-content">
@@ -349,13 +592,53 @@
                     </a>
 
 
+                    <!-- PROFILE / LOGIN -->
+
                     <a
-                        href="pages/profile.html"
+                        href="login.html"
                         class="quick-card"
+                        id="guestProfileCard"
                     >
 
                         <div class="quick-card-icon green">
+
                             <span data-lucide="user-round"></span>
+
+                        </div>
+
+                        <div class="quick-card-content">
+
+                            <strong>
+                                Join the Portal
+                            </strong>
+
+                            <span>
+                                Create your personal account
+                            </span>
+
+                        </div>
+
+                        <span
+                            class="quick-card-arrow"
+                            data-lucide="chevron-right"
+                        ></span>
+
+                    </a>
+
+
+                    <!-- MEMBER PROFILE -->
+
+                    <a
+                        href="pages/profile.html"
+                        class="quick-card"
+                        id="memberProfileCard"
+                        hidden
+                    >
+
+                        <div class="quick-card-icon green">
+
+                            <span data-lucide="user-round"></span>
+
                         </div>
 
                         <div class="quick-card-content">
@@ -382,12 +665,145 @@
             </section>
 
 
-            <!-- Dashboard Grid -->
+            <!-- =================================================
+                 MEMBER QUICK ACTIONS
+            ================================================== -->
 
-            <section class="dashboard-grid">
+            <section
+                class="section-block"
+                id="memberQuickActions"
+                hidden
+            >
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            Your Portal
+                        </span>
+
+                        <h2>
+                            What would you like to do?
+                        </h2>
+
+                    </div>
+
+                </div>
 
 
-                <!-- Current Lesson -->
+                <div class="quick-grid">
+
+
+                    <a
+                        href="pages/notifications.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-card-icon purple">
+
+                            <span data-lucide="bell"></span>
+
+                        </div>
+
+                        <div class="quick-card-content">
+
+                            <strong>
+                                Notifications
+                            </strong>
+
+                            <span>
+                                See your latest updates
+                            </span>
+
+                        </div>
+
+                        <span
+                            class="quick-card-arrow"
+                            data-lucide="chevron-right"
+                        ></span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/quiz.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-card-icon orange">
+
+                            <span data-lucide="trophy"></span>
+
+                        </div>
+
+                        <div class="quick-card-content">
+
+                            <strong>
+                                Weekly Challenge
+                            </strong>
+
+                            <span>
+                                Check your current quiz
+                            </span>
+
+                        </div>
+
+                        <span
+                            class="quick-card-arrow"
+                            data-lucide="chevron-right"
+                        ></span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/profile.html"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-card-icon green">
+
+                            <span data-lucide="settings"></span>
+
+                        </div>
+
+                        <div class="quick-card-content">
+
+                            <strong>
+                                Account
+                            </strong>
+
+                            <span>
+                                Update your profile and settings
+                            </span>
+
+                        </div>
+
+                        <span
+                            class="quick-card-arrow"
+                            data-lucide="chevron-right"
+                        ></span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DASHBOARD GRID
+            ================================================== -->
+
+            <section
+                class="dashboard-grid"
+                id="memberDashboardGrid"
+                hidden
+            >
+
+
+                <!-- CURRENT LESSON -->
 
                 <article class="dashboard-card">
 
@@ -396,10 +812,13 @@
                         <div class="dashboard-card-title">
 
                             <div class="small-icon purple">
+
                                 <span data-lucide="book-open"></span>
+
                             </div>
 
                             <div>
+
                                 <span class="card-label">
                                     This Week
                                 </span>
@@ -407,6 +826,7 @@
                                 <h3>
                                     Weekly Lesson
                                 </h3>
+
                             </div>
 
                         </div>
@@ -422,7 +842,9 @@
                         <div class="empty-state">
 
                             <div class="empty-state-icon">
+
                                 <span data-lucide="book-open"></span>
+
                             </div>
 
                             <p>
@@ -448,7 +870,7 @@
                 </article>
 
 
-                <!-- Quiz -->
+                <!-- QUIZ -->
 
                 <article class="dashboard-card">
 
@@ -457,10 +879,13 @@
                         <div class="dashboard-card-title">
 
                             <div class="small-icon orange">
+
                                 <span data-lucide="trophy"></span>
+
                             </div>
 
                             <div>
+
                                 <span class="card-label">
                                     Challenge
                                 </span>
@@ -468,6 +893,7 @@
                                 <h3>
                                     Weekly Quiz
                                 </h3>
+
                             </div>
 
                         </div>
@@ -483,7 +909,9 @@
                         <div class="empty-state">
 
                             <div class="empty-state-icon">
+
                                 <span data-lucide="clipboard-check"></span>
+
                             </div>
 
                             <p>
@@ -511,9 +939,14 @@
             </section>
 
 
-            <!-- Notifications -->
+            <!-- =================================================
+                 NOTIFICATIONS
+            ================================================== -->
 
-            <section class="section-block">
+            <section
+                class="section-block"
+                id="notificationsSection"
+            >
 
                 <div class="section-heading">
 
@@ -548,7 +981,9 @@
                     <div class="empty-state">
 
                         <div class="empty-state-icon">
+
                             <span data-lucide="bell"></span>
+
                         </div>
 
                         <p>
@@ -558,6 +993,80 @@
                     </div>
 
                 </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 GUEST CALL TO ACTION
+            ================================================== -->
+
+            <section
+                class="welcome-section"
+                id="guestBottomCTA"
+            >
+
+                <div class="welcome-copy">
+
+                    <span class="section-label">
+                        Get more from the portal
+                    </span>
+
+                    <h2>
+                        Create your account
+                    </h2>
+
+                    <p>
+                        Save your profile, receive personal
+                        updates and take part in youth activities.
+                    </p>
+
+
+                    <div class="guest-actions">
+
+                        <a
+                            href="login.html"
+                            class="primary-button"
+                        >
+
+                            <span data-lucide="user-plus"></span>
+
+                            <span>
+                                Create Account
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MEMBER LOGOUT
+            ================================================== -->
+
+            <section
+                class="section-block"
+                id="memberAccountSection"
+                hidden
+            >
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="logoutButton"
+                >
+
+                    <span data-lucide="log-out"></span>
+
+                    <span>
+                        Log Out
+                    </span>
+
+                </button>
 
             </section>
 
@@ -572,7 +1081,10 @@
      MOBILE BOTTOM NAVIGATION
 ========================================================== -->
 
-<nav class="bottom-navigation" aria-label="Main navigation">
+<nav
+    class="bottom-navigation"
+    aria-label="Main navigation"
+>
 
 
     <!-- HOME -->
@@ -613,7 +1125,7 @@
     </a>
 
 
-    <!-- CENTER QUIZ BUTTON -->
+    <!-- CENTER QUIZ -->
 
     <a
         href="pages/quiz.html"
@@ -661,6 +1173,7 @@
     <a
         href="pages/profile.html"
         class="bottom-nav-item"
+        id="bottomProfileLink"
     >
 
         <span
@@ -677,7 +1190,7 @@
 </nav>
 
 
-<!-- Mobile overlay -->
+<!-- MOBILE OVERLAY -->
 
 <div
     class="mobile-overlay"
@@ -685,21 +1198,40 @@
 ></div>
 
 
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
 <script src="js/config.js"></script>
+
 <script src="js/api.js"></script>
+
 <script src="js/auth.js"></script>
+
 <script src="js/auth-state.js"></script>
+
 <script src="js/app.js"></script>
 
+<script src="js/index-dashboard.js"></script>
+
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
 
-        if (window.lucide) {
-            lucide.createIcons();
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            if (window.lucide) {
+
+                lucide.createIcons();
+
+            }
+
         }
+    );
 
-    });
 </script>
 
 </body>
+
 </html>
