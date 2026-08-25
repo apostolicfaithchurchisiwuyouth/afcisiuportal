@@ -1,285 +1,288 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   HOME PAGE CONTROLLER
+   HOME PAGE JAVASCRIPT
    ============================================================ */
 
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
 
-    /* ============================================================
-       1. ELEMENT REFERENCES
-    ============================================================ */
-
-    const sidebar = document.getElementById("sidebar");
-    const mobileMenuButton = document.getElementById("mobileMenuButton");
-    const mobileOverlay = document.getElementById("mobileOverlay");
-
-    const sidebarGuest = document.getElementById("sidebarGuest");
-    const sidebarMember = document.getElementById("sidebarMember");
-
-    const sidebarAvatar = document.getElementById("sidebarAvatar");
-    const sidebarUserName = document.getElementById("sidebarUserName");
-
-    const sidebarLogoutButton =
-        document.getElementById("sidebarLogoutButton");
-
-    const heroLogoutButton =
-        document.getElementById("heroLogoutButton");
-
-    const guestHeaderActions =
-        document.getElementById("guestHeaderActions");
-
-    const memberHeaderActions =
-        document.getElementById("memberHeaderActions");
-
-    const guestHero =
-        document.getElementById("guestHero");
-
-    const memberHero =
-        document.getElementById("memberHero");
-
-    const welcomeUserName =
-        document.getElementById("welcomeUserName");
-
-    const memberDashboardContent =
-        document.getElementById("memberDashboardContent");
-
-    const guestInformation =
-        document.getElementById("guestInformation");
-
-    const headerAvatarLetter =
-        document.getElementById("headerAvatarLetter");
-
-    const desktopNotificationBadge =
-        document.getElementById("desktopNotificationBadge");
-
-    const headerNotificationDot =
-        document.getElementById("headerNotificationDot");
+    "use strict";
 
 
-    /* ============================================================
-       2. MOBILE SIDEBAR
-    ============================================================ */
+    /* ========================================================
+       DOM HELPERS
+       ======================================================== */
+
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+
+    function show(element) {
+        if (!element) return;
+
+        element.hidden = false;
+    }
+
+
+    function hide(element) {
+        if (!element) return;
+
+        element.hidden = true;
+    }
+
+
+    /* ========================================================
+       MOBILE MENU
+       ======================================================== */
 
     function openMobileMenu() {
 
-        if (!sidebar) return;
+        const sidebar = $("sidebar");
+        const overlay = $("mobileOverlay");
+
+        if (!sidebar) {
+            console.warn(
+                "AFC Portal: sidebar element not found."
+            );
+
+            return;
+        }
 
         sidebar.classList.add("open");
 
-        if (mobileOverlay) {
-            mobileOverlay.classList.add("active");
+        if (overlay) {
+            overlay.classList.add("active");
         }
 
-        document.body.classList.add("mobile-menu-open");
+        document.body.classList.add(
+            "mobile-menu-open"
+        );
 
-        if (mobileMenuButton) {
-            mobileMenuButton.setAttribute(
+        const button = $("mobileMenuButton");
+
+        if (button) {
+
+            button.setAttribute(
                 "aria-expanded",
                 "true"
             );
+
+            button.setAttribute(
+                "aria-label",
+                "Close navigation menu"
+            );
+
+            const icon = button.querySelector(
+                "[data-lucide]"
+            );
+
+            if (icon) {
+                icon.setAttribute(
+                    "data-lucide",
+                    "x"
+                );
+            }
         }
+
+        refreshIcons();
     }
 
 
     function closeMobileMenu() {
 
-        if (!sidebar) return;
+        const sidebar = $("sidebar");
+        const overlay = $("mobileOverlay");
 
-        sidebar.classList.remove("open");
-
-        if (mobileOverlay) {
-            mobileOverlay.classList.remove("active");
+        if (sidebar) {
+            sidebar.classList.remove("open");
         }
 
-        document.body.classList.remove("mobile-menu-open");
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
 
-        if (mobileMenuButton) {
-            mobileMenuButton.setAttribute(
+        document.body.classList.remove(
+            "mobile-menu-open"
+        );
+
+        const button = $("mobileMenuButton");
+
+        if (button) {
+
+            button.setAttribute(
                 "aria-expanded",
                 "false"
             );
+
+            button.setAttribute(
+                "aria-label",
+                "Open navigation menu"
+            );
+
+            const icon = button.querySelector(
+                "[data-lucide]"
+            );
+
+            if (icon) {
+                icon.setAttribute(
+                    "data-lucide",
+                    "menu"
+                );
+            }
         }
+
+        refreshIcons();
     }
 
 
     function toggleMobileMenu() {
 
+        const sidebar = $("sidebar");
+
         if (!sidebar) return;
 
-        if (sidebar.classList.contains("open")) {
+        if (
+            sidebar.classList.contains("open")
+        ) {
+
             closeMobileMenu();
+
         } else {
+
             openMobileMenu();
+
+        }
+    }
+
+
+    /* ========================================================
+       LUCIDE
+       ======================================================== */
+
+    function refreshIcons() {
+
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons ===
+                "function"
+        ) {
+
+            window.lucide.createIcons();
+
         }
     }
 
 
-    /* ============================================================
-       3. HAMBURGER BUTTON
-    ============================================================ */
+    /* ========================================================
+       USER DATA
+       ======================================================== */
 
-    if (mobileMenuButton) {
-
-        mobileMenuButton.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        mobileMenuButton.setAttribute(
-            "aria-controls",
-            "sidebar"
-        );
-
-        mobileMenuButton.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                toggleMobileMenu();
-
-            }
-        );
-
-    }
-
-
-    /* ============================================================
-       4. OVERLAY CLOSE
-    ============================================================ */
-
-    if (mobileOverlay) {
-
-        mobileOverlay.addEventListener(
-            "click",
-            function () {
-
-                closeMobileMenu();
-
-            }
-        );
-
-    }
-
-
-    /* ============================================================
-       5. CLOSE MENU WITH ESCAPE
-    ============================================================ */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Escape") {
-
-                closeMobileMenu();
-
-            }
-
-        }
-    );
-
-
-    /* ============================================================
-       6. CLOSE MENU AFTER CLICKING A SIDEBAR LINK
-    ============================================================ */
-
-    if (sidebar) {
-
-        const sidebarLinks =
-            sidebar.querySelectorAll("a");
-
-        sidebarLinks.forEach((link) => {
-
-            link.addEventListener(
-                "click",
-                function () {
-
-                    closeMobileMenu();
-
-                }
-            );
-
-        });
-
-    }
-
-
-    /* ============================================================
-       7. AUTH STATE HELPERS
-    ============================================================ */
-
-    function getCurrentUser() {
+    function getStoredUser() {
 
         /*
-         * The portal may expose the authenticated user through
-         * different objects depending on the current auth build.
-         *
-         * We check the common locations without breaking if one
-         * does not exist.
+         * Primary storage used by the portal.
          */
 
-        try {
+        const possibleKeys = [
+            "afc_isiu_auth_user",
+            "afc_isiu_user",
+            "auth_user",
+            "currentUser"
+        ];
 
-            if (
-                window.AuthState &&
-                typeof window.AuthState.getUser === "function"
-            ) {
 
-                return window.AuthState.getUser();
+        for (
+            let i = 0;
+            i < possibleKeys.length;
+            i++
+        ) {
+
+            const key = possibleKeys[i];
+
+            try {
+
+                const raw =
+                    localStorage.getItem(key);
+
+                if (!raw) continue;
+
+                const parsed =
+                    JSON.parse(raw);
+
+                if (
+                    parsed &&
+                    typeof parsed === "object"
+                ) {
+
+                    return (
+                        parsed.user ||
+                        parsed.data ||
+                        parsed
+                    );
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: unable to read stored user:",
+                    error
+                );
 
             }
-
-        } catch (error) {
-
-            console.warn(
-                "AuthState.getUser() could not be read:",
-                error
-            );
-
         }
 
 
-        try {
+        /*
+         * If auth-state.js exposes a current user,
+         * use it.
+         */
 
-            if (
-                window.authState &&
-                typeof window.authState.getUser === "function"
-            ) {
+        if (window.AUTH) {
 
-                return window.authState.getUser();
+            try {
 
-            }
+                if (
+                    typeof window.AUTH.getUser ===
+                    "function"
+                ) {
 
-        } catch (error) {
+                    const user =
+                        window.AUTH.getUser();
 
-            console.warn(
-                "authState.getUser() could not be read:",
-                error
-            );
+                    if (user) return user;
+                }
 
-        }
+            } catch (error) {
 
-
-        try {
-
-            if (
-                window.AUTH_STATE &&
-                window.AUTH_STATE.user
-            ) {
-
-                return window.AUTH_STATE.user;
+                console.warn(
+                    "AFC Portal: AUTH.getUser() failed.",
+                    error
+                );
 
             }
 
-        } catch (error) {
 
-            console.warn(
-                "AUTH_STATE could not be read:",
-                error
-            );
+            try {
 
+                if (
+                    typeof window.AUTH.getCurrentUser ===
+                    "function"
+                ) {
+
+                    const user =
+                        window.AUTH.getCurrentUser();
+
+                    if (user) return user;
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: AUTH.getCurrentUser() failed.",
+                    error
+                );
+
+            }
         }
 
 
@@ -287,72 +290,136 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* ========================================================
+       SESSION CHECK
+       ======================================================== */
+
     function isLoggedIn() {
 
-        const user = getCurrentUser();
+        /*
+         * If the existing AUTH object already knows
+         * the session, respect it.
+         */
 
-        if (!user) {
-            return false;
+        if (window.AUTH) {
+
+            try {
+
+                if (
+                    typeof window.AUTH.isLoggedIn ===
+                    "function"
+                ) {
+
+                    return !!window.AUTH.isLoggedIn();
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: AUTH.isLoggedIn() failed.",
+                    error
+                );
+
+            }
+
+
+            try {
+
+                if (
+                    typeof window.AUTH.isAuthenticated ===
+                    "function"
+                ) {
+
+                    return !!window.AUTH.isAuthenticated();
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: AUTH.isAuthenticated() failed.",
+                    error
+                );
+
+            }
         }
 
-        if (
-            user.isAuthenticated === false ||
-            user.authenticated === false
-        ) {
-            return false;
-        }
 
-        return true;
+        /*
+         * Fallback:
+         * If the user object exists, treat the person
+         * as logged in.
+         */
+
+        return !!getStoredUser();
     }
 
 
-    /* ============================================================
-       8. USER NAME HELPERS
-    ============================================================ */
+    /* ========================================================
+       NAME HELPERS
+       ======================================================== */
 
-    function getUserFirstName(user) {
+    function getFirstName(user) {
 
         if (!user) {
             return "Friend";
         }
 
 
-        if (user.firstName) {
-            return String(user.firstName).trim();
+        /*
+         * Try the common first-name fields first.
+         */
+
+        const possibleNames = [
+            user.firstName,
+            user.firstname,
+            user.first_name,
+            user.givenName,
+            user.given_name
+        ];
+
+
+        for (
+            let i = 0;
+            i < possibleNames.length;
+            i++
+        ) {
+
+            const value =
+                possibleNames[i];
+
+            if (
+                typeof value === "string" &&
+                value.trim()
+            ) {
+
+                return value
+                    .trim()
+                    .split(/\s+/)[0];
+
+            }
         }
 
 
-        if (user.firstname) {
-            return String(user.firstname).trim();
-        }
+        /*
+         * Fall back to full name.
+         */
+
+        const fullName =
+            user.name ||
+            user.fullName ||
+            user.full_name ||
+            user.displayName ||
+            user.display_name;
 
 
-        if (user.first_name) {
-            return String(user.first_name).trim();
-        }
+        if (
+            typeof fullName === "string" &&
+            fullName.trim()
+        ) {
 
-
-        if (user.name) {
-
-            return String(user.name)
-                .trim()
-                .split(/\s+/)[0];
-
-        }
-
-
-        if (user.fullName) {
-
-            return String(user.fullName)
-                .trim()
-                .split(/\s+/)[0];
-
-        }
-
-
-        if (user.full_name) {
-
-            return String(user.full_name)
+            return fullName
                 .trim()
                 .split(/\s+/)[0];
 
@@ -363,928 +430,847 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function getUserInitial(user) {
+    /* ========================================================
+       AVATAR
+       ======================================================== */
 
-        const firstName =
-            getUserFirstName(user);
-
-        if (
-            firstName &&
-            firstName !== "Friend"
-        ) {
-
-            return firstName
-                .charAt(0)
-                .toUpperCase();
-
-        }
-
-
-        if (user && user.name) {
-
-            return String(user.name)
-                .trim()
-                .charAt(0)
-                .toUpperCase();
-
-        }
-
-
-        return "A";
-    }
-
-
-    function getUserAvatar(user) {
+    function getAvatarUrl(user) {
 
         if (!user) {
-            return "";
+            return null;
         }
 
 
-        return (
-            user.avatar ||
-            user.avatarUrl ||
-            user.avatarURL ||
-            user.profileImage ||
-            user.profileImageUrl ||
-            user.photoURL ||
-            user.photoUrl ||
-            user.image ||
-            ""
-        );
+        /*
+         * Existing AUTH avatar method.
+         */
 
+        if (
+            window.AUTH &&
+            typeof window.AUTH.getAvatar ===
+                "function"
+        ) {
+
+            try {
+
+                const avatar =
+                    window.AUTH.getAvatar();
+
+                if (
+                    typeof avatar === "string" &&
+                    avatar.trim()
+                ) {
+
+                    return avatar.trim();
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: AUTH.getAvatar() failed.",
+                    error
+                );
+
+            }
+        }
+
+
+        const possibleAvatars = [
+            user.avatar,
+            user.avatarUrl,
+            user.avatarURL,
+            user.avatar_url,
+            user.photo,
+            user.photoUrl,
+            user.photoURL,
+            user.photo_url,
+            user.profileImage,
+            user.profileImageUrl,
+            user.image,
+            user.imageUrl
+        ];
+
+
+        for (
+            let i = 0;
+            i < possibleAvatars.length;
+            i++
+        ) {
+
+            const value =
+                possibleAvatars[i];
+
+            if (
+                typeof value === "string" &&
+                value.trim()
+            ) {
+
+                return value.trim();
+
+            }
+        }
+
+
+        return null;
     }
 
 
-    /* ============================================================
-       9. CREATE / UPDATE HEADER AVATAR
-    ============================================================ */
+    /* ========================================================
+       CREATE AVATAR CONTENT
+       ======================================================== */
 
-    function updateHeaderAvatar(user) {
+    function renderHeaderAvatar(user) {
 
-        if (!headerAvatarLetter) {
+        const avatar =
+            $("headerAvatarLetter");
+
+        if (!avatar) {
             return;
         }
 
 
-        const avatar =
-            getUserAvatar(user);
+        const firstName =
+            getFirstName(user);
+
+        const letter =
+            firstName.charAt(0)
+                .toUpperCase() || "A";
+
+        const avatarUrl =
+            getAvatarUrl(user);
 
 
-        if (avatar) {
+        /*
+         * Clear old avatar.
+         */
 
-            /*
-             * Keep the existing circular header-avatar element.
-             * Only replace its contents.
-             */
+        avatar.innerHTML = "";
 
-            headerAvatarLetter.innerHTML = "";
+
+        /*
+         * If the user has an uploaded avatar,
+         * display it inside the SAME CIRCLE.
+         */
+
+        if (avatarUrl) {
 
             const image =
                 document.createElement("img");
-
-            image.src = avatar;
-
-            image.alt =
-                `${getUserFirstName(user)} profile picture`;
 
             image.className =
                 "header-avatar-image";
 
-            image.onerror = function () {
-
-                this.remove();
-
-                headerAvatarLetter.textContent =
-                    getUserInitial(user);
-
-            };
-
-
-            headerAvatarLetter.appendChild(image);
-
-        } else {
-
-            headerAvatarLetter.innerHTML = "";
-
-            headerAvatarLetter.textContent =
-                getUserInitial(user);
-
-        }
-
-    }
-
-
-    /* ============================================================
-       10. SIDEBAR PROFILE
-    ============================================================ */
-
-    function updateSidebarProfile(user) {
-
-        if (sidebarUserName) {
-
-            sidebarUserName.textContent =
-                getUserFirstName(user);
-
-        }
-
-
-        if (!sidebarAvatar) {
-            return;
-        }
-
-
-        const avatar =
-            getUserAvatar(user);
-
-
-        if (avatar) {
-
-            sidebarAvatar.innerHTML = "";
-
-            const image =
-                document.createElement("img");
-
-            image.src = avatar;
-
             image.alt =
-                `${getUserFirstName(user)} profile picture`;
+                firstName + "'s profile picture";
 
-            image.style.width = "100%";
-            image.style.height = "100%";
-            image.style.objectFit = "cover";
-            image.style.borderRadius = "50%";
+            image.src = avatarUrl;
 
-            image.onerror = function () {
-
-                this.remove();
-
-                sidebarAvatar.textContent =
-                    getUserInitial(user);
-
-            };
-
-
-            sidebarAvatar.appendChild(image);
-
-        } else {
-
-            sidebarAvatar.innerHTML = "";
-
-            sidebarAvatar.textContent =
-                getUserInitial(user);
-
-        }
-
-    }
-
-
-    /* ============================================================
-       11. BOTTOM NAVIGATION
-    ============================================================ */
-
-    function updateBottomNavigation(user) {
-
-        const bottomNav =
-            document.querySelector(
-                ".bottom-navigation"
-            );
-
-        if (!bottomNav) {
-            return;
-        }
-
-
-        /*
-         * The fifth position is always present.
-         *
-         * Guest:
-         *     Guest icon
-         *
-         * Member:
-         *     Circular avatar / initial
-         */
-
-        const profileItem =
-            bottomNav.querySelector(
-                ".bottom-nav-profile"
-            ) ||
-            bottomNav.querySelector(
-                'a[href*="profile.html"]'
-            );
-
-
-        if (!profileItem) {
-            return;
-        }
-
-
-        let avatar =
-            profileItem.querySelector(
-                ".bottom-nav-avatar"
-            );
-
-
-        let icon =
-            profileItem.querySelector(
-                ".bottom-nav-icon"
-            );
-
-
-        let label =
-            profileItem.querySelector(
-                ".bottom-nav-label"
-            );
-
-
-        /* --------------------------------------------------------
-           MEMBER
-        -------------------------------------------------------- */
-
-        if (user) {
-
-            if (!avatar) {
-
-                avatar =
-                    document.createElement("span");
-
-                avatar.className =
-                    "bottom-nav-avatar";
-
-                profileItem.insertBefore(
-                    avatar,
-                    label || null
-                );
-
-            }
-
-
-            if (icon) {
-
-                icon.style.display = "none";
-
-            }
-
-
-            const imageUrl =
-                getUserAvatar(user);
-
-
-            avatar.innerHTML = "";
-
-
-            if (imageUrl) {
-
-                const image =
-                    document.createElement("img");
-
-                image.src = imageUrl;
-
-                image.alt =
-                    `${getUserFirstName(user)} profile picture`;
-
-                image.className =
-                    "bottom-avatar-image";
-
-                image.onerror = function () {
+            image.onerror =
+                function () {
 
                     this.remove();
 
                     avatar.textContent =
-                        getUserInitial(user);
+                        letter;
 
                 };
 
-
-                avatar.appendChild(image);
-
-            } else {
-
-                avatar.textContent =
-                    getUserInitial(user);
-
-            }
-
-
-            if (label) {
-
-                label.textContent =
-                    "Profile";
-
-            }
+            avatar.appendChild(image);
 
             return;
         }
 
 
-        /* --------------------------------------------------------
-           GUEST
-        -------------------------------------------------------- */
+        /*
+         * Otherwise show first letter.
+         */
 
-        if (avatar) {
+        avatar.textContent = letter;
+    }
 
-            avatar.remove();
 
+    /* ========================================================
+       SIDEBAR AVATAR
+       ======================================================== */
+
+    function renderSidebarAvatar(user) {
+
+        const avatar =
+            $("sidebarAvatar");
+
+        if (!avatar) {
+            return;
         }
 
 
-        if (icon) {
+        const firstName =
+            getFirstName(user);
 
-            icon.style.display = "flex";
+        const letter =
+            firstName.charAt(0)
+                .toUpperCase() || "A";
 
-            icon.setAttribute(
-                "data-lucide",
-                "user-round"
-            );
+        const avatarUrl =
+            getAvatarUrl(user);
 
-        } else {
 
-            icon =
-                document.createElement("span");
+        avatar.innerHTML = "";
 
-            icon.className =
-                "bottom-nav-icon";
 
-            icon.setAttribute(
-                "data-lucide",
-                "user-round"
-            );
+        if (avatarUrl) {
 
-            profileItem.insertBefore(
-                icon,
-                label || null
-            );
+            const image =
+                document.createElement("img");
 
+            image.className =
+                "bottom-avatar-image";
+
+            image.alt =
+                firstName + "'s profile picture";
+
+            image.src = avatarUrl;
+
+            image.onerror =
+                function () {
+
+                    this.remove();
+
+                    avatar.textContent =
+                        letter;
+
+                };
+
+            avatar.appendChild(image);
+
+            return;
         }
 
 
-        if (label) {
+        avatar.textContent = letter;
+    }
 
-            label.textContent =
-                "Guest";
 
-        }
+    /* ========================================================
+       PERSONALIZED HOME
+       ======================================================== */
+
+    function updatePersonalizedHome() {
+
+        const loggedIn =
+            isLoggedIn();
+
+        const user =
+            getStoredUser();
+
+
+        const guestHero =
+            $("guestHero");
+
+        const memberHero =
+            $("memberHero");
+
+        const guestInformation =
+            $("guestInformation");
+
+        const memberDashboard =
+            $("memberDashboardContent");
+
+        const sidebarGuest =
+            $("sidebarGuest");
+
+        const sidebarMember =
+            $("sidebarMember");
+
+        const guestHeaderActions =
+            $("guestHeaderActions");
+
+        const memberHeaderActions =
+            $("memberHeaderActions");
+
+        const welcomeUserName =
+            $("welcomeUserName");
+
+        const sidebarUserName =
+            $("sidebarUserName");
 
 
         /*
-         * Rebuild Lucide icons after dynamically adding
-         * the guest icon.
+         * IMPORTANT:
+         *
+         * Lessons remain publicly accessible.
+         *
+         * We are NOT hiding the Lessons link for guests.
+         *
+         * Authentication only changes the personalized
+         * dashboard/member experience.
          */
 
-        if (
-            window.lucide &&
-            typeof window.lucide.createIcons === "function"
-        ) {
 
-            window.lucide.createIcons();
+        if (loggedIn && user) {
 
-        }
-
-    }
+            const firstName =
+                getFirstName(user);
 
 
-    /* ============================================================
-       12. UPDATE HEADER
-    ============================================================ */
+            /* ------------------------------
+               HERO
+            ------------------------------ */
 
-    function updateHeader(user) {
+            hide(guestHero);
 
-        if (user) {
+            show(memberHero);
 
-            if (guestHeaderActions) {
-                guestHeaderActions.hidden = true;
-            }
-
-            if (memberHeaderActions) {
-                memberHeaderActions.hidden = false;
-            }
-
-            updateHeaderAvatar(user);
-
-        } else {
-
-            if (guestHeaderActions) {
-                guestHeaderActions.hidden = false;
-            }
-
-            if (memberHeaderActions) {
-                memberHeaderActions.hidden = true;
-            }
-
-        }
-
-    }
-
-
-    /* ============================================================
-       13. UPDATE HERO
-    ============================================================ */
-
-    function updateHero(user) {
-
-        if (user) {
-
-            if (guestHero) {
-                guestHero.hidden = true;
-            }
-
-            if (memberHero) {
-                memberHero.hidden = false;
-            }
 
             if (welcomeUserName) {
 
                 welcomeUserName.textContent =
-                    getUserFirstName(user);
+                    firstName;
 
             }
+
+
+            /* ------------------------------
+               GUEST INFORMATION
+            ------------------------------ */
+
+            hide(guestInformation);
+
+
+            /* ------------------------------
+               MEMBER DASHBOARD
+            ------------------------------ */
+
+            show(memberDashboard);
+
+
+            /* ------------------------------
+               SIDEBAR
+            ------------------------------ */
+
+            hide(sidebarGuest);
+
+            show(sidebarMember);
+
+
+            if (sidebarUserName) {
+
+                sidebarUserName.textContent =
+                    firstName;
+
+            }
+
+
+            renderSidebarAvatar(user);
+
+
+            /* ------------------------------
+               HEADER
+            ------------------------------ */
+
+            hide(guestHeaderActions);
+
+            show(memberHeaderActions);
+
+            renderHeaderAvatar(user);
+
+
+            /*
+             * Make sure the profile avatar remains
+             * perfectly circular.
+             */
+
+            const headerAvatar =
+                document.querySelector(
+                    ".header-avatar"
+                );
+
+            if (headerAvatar) {
+
+                headerAvatar.style.width =
+                    "42px";
+
+                headerAvatar.style.height =
+                    "42px";
+
+                headerAvatar.style.minWidth =
+                    "42px";
+
+                headerAvatar.style.maxWidth =
+                    "42px";
+
+                headerAvatar.style.borderRadius =
+                    "50%";
+
+            }
+
 
         } else {
 
-            if (guestHero) {
-                guestHero.hidden = false;
-            }
+            /* ------------------------------
+               GUEST HERO
+            ------------------------------ */
 
-            if (memberHero) {
-                memberHero.hidden = true;
-            }
+            show(guestHero);
+
+            hide(memberHero);
+
+
+            /* ------------------------------
+               GUEST INFORMATION
+            ------------------------------ */
+
+            show(guestInformation);
+
+
+            /* ------------------------------
+               MEMBER DASHBOARD
+            ------------------------------ */
+
+            hide(memberDashboard);
+
+
+            /* ------------------------------
+               SIDEBAR
+            ------------------------------ */
+
+            show(sidebarGuest);
+
+            hide(sidebarMember);
+
+
+            /* ------------------------------
+               HEADER
+            ------------------------------ */
+
+            show(guestHeaderActions);
+
+            hide(memberHeaderActions);
 
         }
 
+
+        refreshIcons();
     }
 
 
-    /* ============================================================
-       14. UPDATE DASHBOARD
-    ============================================================ */
+    /* ========================================================
+       LOGOUT
+       ======================================================== */
 
-    function updateDashboard(user) {
-
-        if (memberDashboardContent) {
-
-            memberDashboardContent.hidden =
-                !user;
-
-        }
-
-
-        if (guestInformation) {
-
-            guestInformation.hidden =
-                !!user;
-
-        }
-
-    }
-
-
-    /* ============================================================
-       15. MEMBER-ONLY ELEMENTS
-    ============================================================ */
-
-    function updateMemberOnlyElements(user) {
-
-        const memberOnlyElements =
-            document.querySelectorAll(
-                ".member-only"
-            );
-
-
-        memberOnlyElements.forEach(
-            (element) => {
-
-                /*
-                 * Keep lessons, gallery and quiz accessible
-                 * to guests.
-                 *
-                 * Only elements explicitly marked
-                 * .member-only require authentication.
-                 */
-
-                element.hidden =
-                    !user;
-
-            }
-        );
-
-    }
-
-
-    /* ============================================================
-       16. NOTIFICATION STATE
-    ============================================================ */
-
-    function updateNotificationState() {
+    function performLogout() {
 
         /*
-         * Notification data can be added later.
-         *
-         * For now we simply preserve the existing hidden state
-         * instead of displaying a false notification count.
-         */
-
-        if (desktopNotificationBadge) {
-
-            desktopNotificationBadge.hidden = true;
-
-        }
-
-        if (headerNotificationDot) {
-
-            headerNotificationDot.hidden = true;
-
-        }
-
-    }
-
-
-    /* ============================================================
-       17. APPLY COMPLETE HOME STATE
-    ============================================================ */
-
-    function applyHomeState() {
-
-        const user =
-            isLoggedIn()
-                ? getCurrentUser()
-                : null;
-
-
-        updateHeader(user);
-
-        updateHero(user);
-
-        updateDashboard(user);
-
-        updateMemberOnlyElements(user);
-
-        updateSidebarProfile(user);
-
-        updateBottomNavigation(user);
-
-        updateNotificationState();
-
-
-        if (user) {
-
-            if (sidebarGuest) {
-                sidebarGuest.hidden = true;
-            }
-
-            if (sidebarMember) {
-                sidebarMember.hidden = false;
-            }
-
-        } else {
-
-            if (sidebarGuest) {
-                sidebarGuest.hidden = false;
-            }
-
-            if (sidebarMember) {
-                sidebarMember.hidden = true;
-            }
-
-        }
-
-
-        /*
-         * Recreate all Lucide icons after any dynamic changes.
+         * Prefer the existing AUTH logout method.
          */
 
         if (
-            window.lucide &&
-            typeof window.lucide.createIcons === "function"
+            window.AUTH &&
+            typeof window.AUTH.logout ===
+                "function"
         ) {
 
-            window.lucide.createIcons();
+            try {
 
-        }
-
-    }
-
-
-    /* ============================================================
-       18. LOGOUT
-    ============================================================ */
-
-    async function handleLogout(button) {
-
-        if (!button) {
-            return;
-        }
+                const result =
+                    window.AUTH.logout();
 
 
-        const originalHTML =
-            button.innerHTML;
+                /*
+                 * Support both synchronous and
+                 * Promise-based logout functions.
+                 */
 
+                if (
+                    result &&
+                    typeof result.then ===
+                        "function"
+                ) {
 
-        button.disabled = true;
+                    result
+                        .then(function () {
 
+                            updatePersonalizedHome();
 
-        try {
+                            window.location.href =
+                                "index.html";
 
-            button.innerHTML = `
-                <span data-lucide="loader-circle"></span>
-                <span>Logging out...</span>
-            `;
+                        })
+                        .catch(function (error) {
 
+                            console.error(
+                                "AFC Portal logout failed:",
+                                error
+                            );
 
-            if (
-                window.lucide &&
-                typeof window.lucide.createIcons === "function"
-            ) {
+                        });
 
-                window.lucide.createIcons();
+                } else {
 
-            }
+                    updatePersonalizedHome();
 
+                    window.location.href =
+                        "index.html";
 
-            let logoutResult = null;
-
-
-            /*
-             * Try the known authentication functions.
-             */
-
-            if (
-                window.Auth &&
-                typeof window.Auth.logout === "function"
-            ) {
-
-                logoutResult =
-                    await window.Auth.logout();
-
-            }
-
-            else if (
-                window.auth &&
-                typeof window.auth.logout === "function"
-            ) {
-
-                logoutResult =
-                    await window.auth.logout();
-
-            }
-
-            else if (
-                window.AuthState &&
-                typeof window.AuthState.logout === "function"
-            ) {
-
-                logoutResult =
-                    await window.AuthState.logout();
-
-            }
-
-            else if (
-                window.logoutUser &&
-                typeof window.logoutUser === "function"
-            ) {
-
-                logoutResult =
-                    await window.logoutUser();
-
-            }
-
-
-            /*
-             * Give the authentication system a moment to
-             * update its state.
-             */
-
-            await new Promise(
-                (resolve) =>
-                    setTimeout(resolve, 250)
-            );
-
-
-            applyHomeState();
-
-            closeMobileMenu();
-
-
-            /*
-             * If the authentication system returned a redirect,
-             * respect it.
-             */
-
-            if (
-                logoutResult &&
-                typeof logoutResult === "object" &&
-                logoutResult.redirect
-            ) {
-
-                window.location.href =
-                    logoutResult.redirect;
+                }
 
                 return;
 
-            }
+            } catch (error) {
 
-        } catch (error) {
-
-            console.error(
-                "Logout failed:",
-                error
-            );
-
-            /*
-             * Restore button instead of leaving it
-             * permanently disabled.
-             */
-
-            button.innerHTML =
-                originalHTML;
-
-            button.disabled = false;
-
-
-            if (
-                window.lucide &&
-                typeof window.lucide.createIcons === "function"
-            ) {
-
-                window.lucide.createIcons();
-
-            }
-
-            return;
-
-        }
-
-
-        button.innerHTML =
-            originalHTML;
-
-        button.disabled = false;
-
-
-        if (
-            window.lucide &&
-            typeof window.lucide.createIcons === "function"
-        ) {
-
-            window.lucide.createIcons();
-
-        }
-
-    }
-
-
-    /* ============================================================
-       19. LOGOUT BUTTONS
-    ============================================================ */
-
-    if (sidebarLogoutButton) {
-
-        sidebarLogoutButton.addEventListener(
-            "click",
-            function () {
-
-                handleLogout(
-                    sidebarLogoutButton
+                console.error(
+                    "AFC Portal logout failed:",
+                    error
                 );
 
             }
-        );
+        }
 
-    }
-
-
-    if (heroLogoutButton) {
-
-        heroLogoutButton.addEventListener(
-            "click",
-            function () {
-
-                handleLogout(
-                    heroLogoutButton
-                );
-
-            }
-        );
-
-    }
-
-
-    /* ============================================================
-       20. AUTH STATE LISTENER
-    ============================================================ */
-
-    function listenForAuthChanges() {
 
         /*
-         * Support several possible event names used by the
-         * authentication system.
+         * Fallback if AUTH.logout() is not available.
          */
 
-        const events = [
-            "authStateChanged",
-            "auth-state-changed",
-            "authchange",
-            "userLoggedIn",
-            "userLoggedOut"
+        const keys = [
+            "afc_isiu_auth_user",
+            "afc_isiu_auth_session",
+            "afc_isiu_user",
+            "auth_user",
+            "currentUser"
         ];
 
 
-        events.forEach((eventName) => {
+        keys.forEach(function (key) {
+
+            try {
+                localStorage.removeItem(key);
+            } catch (error) {
+                console.warn(
+                    "Unable to remove storage:",
+                    key
+                );
+            }
+
+        });
+
+
+        updatePersonalizedHome();
+
+        window.location.href =
+            "index.html";
+    }
+
+
+    /* ========================================================
+       NAVIGATION CLOSE
+       ======================================================== */
+
+    function setupNavigation() {
+
+        const menuButton =
+            $("mobileMenuButton");
+
+        const overlay =
+            $("mobileOverlay");
+
+        const sidebar =
+            $("sidebar");
+
+
+        /*
+         * Hamburger button
+         */
+
+        if (menuButton) {
+
+            /*
+             * Prevent duplicate listeners.
+             */
+
+            menuButton.onclick =
+                function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+                    toggleMobileMenu();
+
+                };
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+
+
+        /*
+         * Overlay closes the menu.
+         */
+
+        if (overlay) {
+
+            overlay.onclick =
+                function () {
+
+                    closeMobileMenu();
+
+                };
+        }
+
+
+        /*
+         * Clicking a sidebar navigation link
+         * closes the menu on mobile.
+         */
+
+        if (sidebar) {
+
+            sidebar.addEventListener(
+                "click",
+                function (event) {
+
+                    const link =
+                        event.target.closest(
+                            "a"
+                        );
+
+                    if (!link) return;
+
+                    if (
+                        window.innerWidth <= 900
+                    ) {
+
+                        closeMobileMenu();
+
+                    }
+
+                }
+            );
+        }
+
+
+        /*
+         * Escape closes the menu.
+         */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeMobileMenu();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Resize protection.
+         */
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                if (
+                    window.innerWidth > 900
+                ) {
+
+                    closeMobileMenu();
+
+                }
+
+            }
+        );
+    }
+
+
+    /* ========================================================
+       LOGOUT BUTTONS
+       ======================================================== */
+
+    function setupLogoutButtons() {
+
+        const sidebarLogout =
+            $("sidebarLogoutButton");
+
+        const heroLogout =
+            $("heroLogoutButton");
+
+
+        if (sidebarLogout) {
+
+            sidebarLogout.onclick =
+                function () {
+
+                    performLogout();
+
+                };
+        }
+
+
+        if (heroLogout) {
+
+            heroLogout.onclick =
+                function () {
+
+                    performLogout();
+
+                };
+        }
+    }
+
+
+    /* ========================================================
+       AUTH CHANGE LISTENER
+       ======================================================== */
+
+    function setupAuthListeners() {
+
+        /*
+         * If auth-state.js dispatches one of these,
+         * the homepage immediately updates.
+         */
+
+        const events = [
+            "authchange",
+            "auth-state-changed",
+            "authStateChanged",
+            "login",
+            "logout",
+            "user-login",
+            "user-logout"
+        ];
+
+
+        events.forEach(function (eventName) {
 
             window.addEventListener(
                 eventName,
                 function () {
 
-                    applyHomeState();
+                    /*
+                     * Give localStorage/auth-state
+                     * a moment to finish updating.
+                     */
+
+                    setTimeout(
+                        updatePersonalizedHome,
+                        50
+                    );
 
                 }
             );
 
         });
 
-    }
 
+        /*
+         * Also listen for storage changes.
+         *
+         * This is useful if authentication updates
+         * localStorage from another page.
+         */
 
-    listenForAuthChanges();
+        window.addEventListener(
+            "storage",
+            function (event) {
 
+                if (
+                    event.key ===
+                        "afc_isiu_auth_user" ||
+                    event.key ===
+                        "afc_isiu_auth_session"
+                ) {
 
-    /* ============================================================
-       21. STORAGE AUTH CHANGE
-    ============================================================ */
+                    updatePersonalizedHome();
 
-    window.addEventListener(
-        "storage",
-        function (event) {
-
-            /*
-             * If another tab changes authentication,
-             * refresh the home state.
-             */
-
-            if (
-                event.key &&
-                (
-                    event.key.toLowerCase().includes("auth") ||
-                    event.key.toLowerCase().includes("user") ||
-                    event.key.toLowerCase().includes("token")
-                )
-            ) {
-
-                applyHomeState();
+                }
 
             }
-
-        }
-    );
-
-
-    /* ============================================================
-       22. INITIAL STATE
-    ============================================================ */
-
-    applyHomeState();
+        );
+    }
 
 
-    /* ============================================================
-       23. SECOND AUTH CHECK
-    ============================================================ */
+    /* ========================================================
+       INITIALIZE HOME
+       ======================================================== */
 
-    /*
-     * auth-state.js may finish restoring the session slightly
-     * after DOMContentLoaded. A second check prevents the home
-     * page from temporarily showing the guest state.
-     */
+    function initializeHome() {
 
-    setTimeout(
-        function () {
+        setupNavigation();
 
-            applyHomeState();
+        setupLogoutButtons();
 
-        },
-        150
-    );
+        setupAuthListeners();
+
+        updatePersonalizedHome();
+
+        refreshIcons();
 
 
-    setTimeout(
-        function () {
+        /*
+         * Run one more time shortly after startup.
+         *
+         * This helps when auth-state.js finishes
+         * restoring a session just after DOMContentLoaded.
+         */
 
-            applyHomeState();
+        setTimeout(
+            updatePersonalizedHome,
+            150
+        );
 
-        },
-        600
-    );
+        setTimeout(
+            updatePersonalizedHome,
+            500
+        );
+    }
 
 
-    /* ============================================================
-       24. FINAL LUCIDE INITIALIZATION
-    ============================================================ */
+    /* ========================================================
+       DOM READY
+       ======================================================== */
 
     if (
-        window.lucide &&
-        typeof window.lucide.createIcons === "function"
+        document.readyState ===
+        "loading"
     ) {
 
-        window.lucide.createIcons();
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeHome
+        );
+
+    } else {
+
+        initializeHome();
 
     }
 
-});
+
+    /* ========================================================
+       PUBLIC METHODS
+       ======================================================== */
+
+    window.openMobileMenu =
+        openMobileMenu;
+
+    window.closeMobileMenu =
+        closeMobileMenu;
+
+    window.toggleMobileMenu =
+        toggleMobileMenu;
+
+    window.updatePersonalizedHome =
+        updatePersonalizedHome;
+
+
+})();
