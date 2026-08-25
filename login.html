@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#4a0754"
+    >
+
+    <meta
+        name="description"
+        content="AFC Isiu Youth Portal"
+    >
+
+    <title>
+        AFC Isiu Youth Portal — Account
+    </title>
+
+
+    <!-- ======================================================
+         AUTHENTICATION STYLES
+         ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/auth.css"
+    >
+
+
+</head>
+
+
+<body>
+
+
+    <!-- ======================================================
+         AUTH PAGE
+         ====================================================== -->
+
+    <main class="auth-page">
+
+
+        <!-- ==================================================
+             LEFT / BRAND AREA
+             ================================================== -->
+
+        <section class="auth-brand">
+
+            <div class="brand-content">
+
+                <div class="brand-icon">
+                    <span class="brand-icon-inner">
+                        AY
+                    </span>
+                </div>
+
+
+                <p class="brand-label">
+                    AFC ISIU YOUTH
+                </p>
+
+
+                <h1>
+                    Grow.
+                    <br>
+                    Learn.
+                    <br>
+                    Connect.
+                </h1>
+
+
+                <p class="brand-description">
+                    Your digital space for Bible study,
+                    lessons, quizzes, reflections and
+                    youth fellowship.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             AUTH FORM AREA
+             ================================================== -->
+
+        <section class="auth-panel">
+
+
+            <div class="auth-container">
+
+
+                <!-- ==========================================
+                     HEADER
+                     ========================================== -->
+
+                <div class="auth-header">
+
+                    <div class="mobile-brand">
+                        AFC ISIU YOUTH
+                    </div>
+
+
+                    <h2 id="authTitle">
+                        Welcome back
+                    </h2>
+
+
+                    <p id="authSubtitle">
+                        Sign in to continue to your portal.
+                    </p>
+
+                </div>
+
+
+
+                <!-- ==========================================
+                     GLOBAL MESSAGE
+                     ========================================== -->
+
+                <div
+                    id="authMessage"
+                    class="auth-message"
+                    role="alert"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+
+
+                <!-- ==========================================
+                     LOGIN FORM
+                     ========================================== -->
+
+                <form
+                    id="loginForm"
+                    class="auth-form"
+                    novalidate
+                >
+
+
+                    <div class="form-group">
+
+                        <label for="loginEmail">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="loginPassword">
+                            Password
+                        </label>
+
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="loginPassword"
+                                aria-label="Show password"
+                            >
+                                <span
+                                    class="password-icon"
+                                >
+                                    ◉
+                                </span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <button
+                        type="submit"
+                        class="auth-submit"
+                        id="loginSubmit"
+                    >
+
+                        <span class="button-text">
+                            Sign In
+                        </span>
+
+                        <span
+                            class="button-loader"
+                            hidden
+                        >
+                            Signing in...
+                        </span>
+
+                    </button>
+
+
+                </form>
+
+
+
+                <!-- ==========================================
+                     REGISTRATION FORM
+                     ========================================== -->
+
+                <form
+                    id="registerForm"
+                    class="auth-form"
+                    novalidate
+                    hidden
+                >
+
+
+                    <div class="form-group">
+
+                        <label for="registerName">
+                            Full name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="registerName"
+                            name="name"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="registerEmail">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="registerEmail"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="registerPassword">
+                            Password
+                        </label>
+
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="registerPassword"
+                                name="password"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="registerPassword"
+                                aria-label="Show password"
+                            >
+
+                                <span
+                                    class="password-icon"
+                                >
+                                    ◉
+                                </span>
+
+                            </button>
+
+                        </div>
+
+
+                        <small class="field-hint">
+                            Your password must meet the portal's
+                            security requirements.
+                        </small>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label for="registerPasswordConfirm">
+                            Confirm password
+                        </label>
+
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="registerPasswordConfirm"
+                                name="password_confirm"
+                                placeholder="Confirm your password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="registerPasswordConfirm"
+                                aria-label="Show password"
+                            >
+
+                                <span
+                                    class="password-icon"
+                                >
+                                    ◉
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <label class="terms-row">
+
+                        <input
+                            type="checkbox"
+                            id="registerTerms"
+                            required
+                        >
+
+                        <span>
+                            I agree to use this portal
+                            responsibly and provide
+                            accurate information.
+                        </span>
+
+                    </label>
+
+
+
+                    <button
+                        type="submit"
+                        class="auth-submit"
+                        id="registerSubmit"
+                    >
+
+                        <span class="button-text">
+                            Create Account
+                        </span>
+
+                        <span
+                            class="button-loader"
+                            hidden
+                        >
+                            Creating account...
+                        </span>
+
+                    </button>
+
+
+                </form>
+
+
+
+                <!-- ==========================================
+                     FORM SWITCH
+                     ========================================== -->
+
+                <div class="auth-switch">
+
+                    <span id="switchText">
+                        Don't have an account?
+                    </span>
+
+
+                    <button
+                        type="button"
+                        id="switchAuth"
+                    >
+                        Create an account
+                    </button>
+
+                </div>
+
+
+
+                <!-- ==========================================
+                     FOOTER
+                     ========================================== -->
+
+                <p class="auth-footer">
+
+                    AFC Isiu Youth Portal
+
+                    <span>
+                        •
+                    </span>
+
+                    Version 2.0
+
+                </p>
+
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ======================================================
+         JAVASCRIPT
+         ====================================================== -->
+
+    <!-- Step 10B -->
+    <script src="js/api.js"></script>
+
+    <!-- Step 10C -->
+    <script src="js/auth.js"></script>
+
+
+    <!-- Step 10D -->
+    <script>
+
+        "use strict";
+
+
+        /* ==================================================
+           ELEMENTS
+           ================================================== */
+
+        const loginForm =
+            document.getElementById(
+                "loginForm"
+            );
+
+
+        const registerForm =
+            document.getElementById(
+                "registerForm"
+            );
+
+
+        const switchAuth =
+            document.getElementById(
+                "switchAuth"
+            );
+
+
+        const switchText =
+            document.getElementById(
+                "switchText"
+            );
+
+
+        const authTitle =
+            document.getElementById(
+                "authTitle"
+            );
+
+
+        const authSubtitle =
+            document.getElementById(
+                "authSubtitle"
+            );
+
+
+        const authMessage =
+            document.getElementById(
+                "authMessage"
+            );
+
+
+        let currentMode =
+            "login";
+
+
+
+        /* ==================================================
+           MESSAGE
+           ================================================== */
+
+        function showMessage(
+            message,
+            type = "error"
+        ) {
+
+            authMessage.textContent =
+                message;
+
+            authMessage.className =
+                "auth-message " + type;
+
+            authMessage.hidden =
+                false;
+        }
+
+
+        function hideMessage() {
+
+            authMessage.hidden =
+                true;
+
+            authMessage.textContent =
+                "";
+
+            authMessage.className =
+                "auth-message";
+        }
+
+
+
+        /* ==================================================
+           SWITCH LOGIN / REGISTER
+           ================================================== */
+
+        function setAuthMode(
+            mode
+        ) {
+
+            currentMode =
+                mode;
+
+            hideMessage();
+
+
+            if (mode === "register") {
+
+                loginForm.hidden =
+                    true;
+
+                registerForm.hidden =
+                    false;
+
+
+                authTitle.textContent =
+                    "Create your account";
+
+
+                authSubtitle.textContent =
+                    "Join the AFC Isiu Youth Portal.";
+
+
+                switchText.textContent =
+                    "Already have an account?";
+
+
+                switchAuth.textContent =
+                    "Sign in";
+
+
+                document
+                    .getElementById(
+                        "registerName"
+                    )
+                    .focus();
+
+            } else {
+
+                registerForm.hidden =
+                    true;
+
+                loginForm.hidden =
+                    false;
+
+
+                authTitle.textContent =
+                    "Welcome back";
+
+
+                authSubtitle.textContent =
+                    "Sign in to continue to your portal.";
+
+
+                switchText.textContent =
+                    "Don't have an account?";
+
+
+                switchAuth.textContent =
+                    "Create an account";
+
+
+                document
+                    .getElementById(
+                        "loginEmail"
+                    )
+                    .focus();
+            }
+        }
+
+
+
+        switchAuth.addEventListener(
+            "click",
+            function() {
+
+                setAuthMode(
+                    currentMode === "login"
+                        ? "register"
+                        : "login"
+                );
+
+            }
+        );
+
+
+
+        /* ==================================================
+           PASSWORD VISIBILITY
+           ================================================== */
+
+        document
+            .querySelectorAll(
+                ".password-toggle"
+            )
+            .forEach(
+                function(button) {
+
+                    button.addEventListener(
+                        "click",
+                        function() {
+
+                            const targetId =
+                                button.dataset.target;
+
+
+                            const input =
+                                document.getElementById(
+                                    targetId
+                                );
+
+
+                            if (
+                                input.type ===
+                                "password"
+                            ) {
+
+                                input.type =
+                                    "text";
+
+                                button.setAttribute(
+                                    "aria-label",
+                                    "Hide password"
+                                );
+
+                            } else {
+
+                                input.type =
+                                    "password";
+
+                                button.setAttribute(
+                                    "aria-label",
+                                    "Show password"
+                                );
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+
+        /* ==================================================
+           BUTTON LOADING
+           ================================================== */
+
+        function setButtonLoading(
+            button,
+            loading,
+            loadingText
+        ) {
+
+            if (!button) {
+                return;
+            }
+
+
+            const text =
+                button.querySelector(
+                    ".button-text"
+                );
+
+
+            const loader =
+                button.querySelector(
+                    ".button-loader"
+                );
+
+
+            button.disabled =
+                loading;
+
+
+            if (text) {
+
+                text.hidden =
+                    loading;
+            }
+
+
+            if (loader) {
+
+                loader.hidden =
+                    !loading;
+
+                if (loadingText) {
+
+                    loader.textContent =
+                        loadingText;
+                }
+            }
+        }
+
+
+
+        /* ==================================================
+           EMAIL VALIDATION
+           ================================================== */
+
+        function isValidEmail(
+            email
+        ) {
+
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                .test(email);
+        }
+
+
+
+        /* ==================================================
+           LOGIN
+           ================================================== */
+
+        loginForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                hideMessage();
+
+
+                const email =
+                    document
+                        .getElementById(
+                            "loginEmail"
+                        )
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById(
+                            "loginPassword"
+                        )
+                        .value;
+
+
+                if (!email) {
+
+                    showMessage(
+                        "Please enter your email address."
+                    );
+
+                    return;
+                }
+
+
+                if (!isValidEmail(email)) {
+
+                    showMessage(
+                        "Please enter a valid email address."
+                    );
+
+                    return;
+                }
+
+
+                if (!password) {
+
+                    showMessage(
+                        "Please enter your password."
+                    );
+
+                    return;
+                }
+
+
+                const submitButton =
+                    document.getElementById(
+                        "loginSubmit"
+                    );
+
+
+                setButtonLoading(
+                    submitButton,
+                    true,
+                    "Signing in..."
+                );
+
+
+                try {
+
+                    const result =
+                        await AUTH.login({
+                            email:
+                                email,
+
+                            password:
+                                password
+                        });
+
+
+                    if (!result.success) {
+
+                        showMessage(
+                            result.message ||
+                            "Unable to sign in."
+                        );
+
+                        return;
+                    }
+
+
+                    showMessage(
+                        "Login successful. Welcome back!",
+                        "success"
+                    );
+
+
+                    /*
+                     * Give the success message a moment
+                     * before redirecting.
+                     */
+
+                    setTimeout(
+                        function() {
+
+                            const redirect =
+                                AUTH.getLoginRedirect();
+
+
+                            window.location.href =
+                                redirect ||
+                                "index.html";
+
+                        },
+                        700
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Login interface error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        "Something went wrong while signing in."
+                    );
+
+                } finally {
+
+                    setButtonLoading(
+                        submitButton,
+                        false
+                    );
+                }
+
+            }
+        );
+
+
+
+        /* ==================================================
+           REGISTRATION
+           ================================================== */
+
+        registerForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                hideMessage();
+
+
+                const name =
+                    document
+                        .getElementById(
+                            "registerName"
+                        )
+                        .value
+                        .trim();
+
+
+                const email =
+                    document
+                        .getElementById(
+                            "registerEmail"
+                        )
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById(
+                            "registerPassword"
+                        )
+                        .value;
+
+
+                const passwordConfirm =
+                    document
+                        .getElementById(
+                            "registerPasswordConfirm"
+                        )
+                        .value;
+
+
+                const terms =
+                    document
+                        .getElementById(
+                            "registerTerms"
+                        )
+                        .checked;
+
+
+                if (!name) {
+
+                    showMessage(
+                        "Please enter your full name."
+                    );
+
+                    return;
+                }
+
+
+                if (!email) {
+
+                    showMessage(
+                        "Please enter your email address."
+                    );
+
+                    return;
+                }
+
+
+                if (!isValidEmail(email)) {
+
+                    showMessage(
+                        "Please enter a valid email address."
+                    );
+
+                    return;
+                }
+
+
+                if (!password) {
+
+                    showMessage(
+                        "Please create a password."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    password !==
+                    passwordConfirm
+                ) {
+
+                    showMessage(
+                        "The passwords do not match."
+                    );
+
+                    return;
+                }
+
+
+                if (!terms) {
+
+                    showMessage(
+                        "Please accept the agreement before creating your account."
+                    );
+
+                    return;
+                }
+
+
+                const submitButton =
+                    document.getElementById(
+                        "registerSubmit"
+                    );
+
+
+                setButtonLoading(
+                    submitButton,
+                    true,
+                    "Creating account..."
+                );
+
+
+                try {
+
+                    /*
+                     * Send the registration information
+                     * directly to the existing backend.
+                     *
+                     * The backend remains responsible for
+                     * validation and security.
+                     */
+
+                    const result =
+                        await AUTH.register({
+
+                            name:
+                                name,
+
+                            email:
+                                email,
+
+                            password:
+                                password
+                        });
+
+
+                    if (!result.success) {
+
+                        showMessage(
+                            result.message ||
+                            "Unable to create your account."
+                        );
+
+                        return;
+                    }
+
+
+                    showMessage(
+                        "Your account has been created successfully.",
+                        "success"
+                    );
+
+
+                    /*
+                     * If registration also logged the user
+                     * in automatically, go to the dashboard.
+                     *
+                     * Otherwise return to login.
+                     */
+
+                    if (
+                        AUTH.isLoggedIn()
+                    ) {
+
+                        setTimeout(
+                            function() {
+
+                                window.location.href =
+                                    "index.html";
+
+                            },
+                            800
+                        );
+
+                    } else {
+
+                        setTimeout(
+                            function() {
+
+                                setAuthMode(
+                                    "login"
+                                );
+
+
+                                document
+                                    .getElementById(
+                                        "loginEmail"
+                                    )
+                                    .value =
+                                    email;
+
+
+                                showMessage(
+                                    "Account created. Please sign in.",
+                                    "success"
+                                );
+
+                            },
+                            900
+                        );
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Registration interface error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        error.message ||
+                        "Something went wrong while creating your account."
+                    );
+
+                } finally {
+
+                    setButtonLoading(
+                        submitButton,
+                        false
+                    );
+                }
+
+            }
+        );
+
+
+
+        /* ==================================================
+           CHECK EXISTING LOGIN
+           ================================================== */
+
+        function initializeAuthPage() {
+
+            /*
+             * If the user is already authenticated,
+             * there is normally no reason to stay on the
+             * login page.
+             */
+
+            if (
+                AUTH &&
+                AUTH.isLoggedIn()
+            ) {
+
+                console.log(
+                    "User is already authenticated."
+                );
+
+                /*
+                 * We intentionally do not immediately
+                 * redirect during development.
+                 *
+                 * This lets us inspect the page while
+                 * building the frontend.
+                 */
+            }
+
+
+            setAuthMode(
+                "login"
+            );
+        }
+
+
+        initializeAuthPage();
+
+    </script>
+
+
+</body>
+
+</html>
