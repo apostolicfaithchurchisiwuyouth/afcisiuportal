@@ -1,38 +1,59 @@
 /**
  * ============================================================
  * AFC ISIU YOUTH PORTAL
- * APPLICATION SHELL
- * STEP 10A
+ * APP FOUNDATION
  * ============================================================
  */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
 
-        initializeNavigation();
+document.addEventListener("DOMContentLoaded", function () {
 
-        initializeProfileButtons();
+    initializeMobileMenu();
 
-        initializeThemeButton();
+    initializeNavigation();
 
-        initializeServiceWorker();
+    loadUserInformation();
 
-        initializeDashboard();
+    /*
+     * Lucide icons are initialized after the page
+     * has loaded.
+     */
+    initializeIcons();
+
+});
+
+
+/**
+ * ------------------------------------------------------------
+ * INITIALIZE LUCIDE ICONS
+ * ------------------------------------------------------------
+ */
+
+function initializeIcons() {
+
+    if (
+        typeof lucide !== "undefined" &&
+        typeof lucide.createIcons === "function"
+    ) {
+
+        lucide.createIcons();
 
     }
-);
+
+}
 
 
-/* ============================================================
-   NAVIGATION
-============================================================ */
+/**
+ * ------------------------------------------------------------
+ * MOBILE MENU
+ * ------------------------------------------------------------
+ */
 
-function initializeNavigation() {
+function initializeMobileMenu() {
 
     const menuButton =
         document.getElementById(
-            "menuButton"
+            "mobileMenuButton"
         );
 
     const sidebar =
@@ -42,11 +63,15 @@ function initializeNavigation() {
 
     const overlay =
         document.getElementById(
-            "sidebarOverlay"
+            "mobileOverlay"
         );
 
 
-    if (!menuButton || !sidebar) {
+    if (
+        !menuButton ||
+        !sidebar ||
+        !overlay
+    ) {
         return;
     }
 
@@ -55,73 +80,37 @@ function initializeNavigation() {
         "click",
         function () {
 
-            sidebar.classList.toggle(
-                "open"
-            );
+            sidebar.classList.toggle("open");
 
-            if (overlay) {
-
-                overlay.classList.toggle(
-                    "active"
-                );
-
-            }
-
-            document.body.classList.toggle(
-                "no-scroll"
-            );
+            overlay.classList.toggle("active");
 
         }
     );
 
 
-    if (overlay) {
+    overlay.addEventListener(
+        "click",
+        function () {
 
-        overlay.addEventListener(
-            "click",
-            function () {
+            sidebar.classList.remove("open");
 
-                sidebar.classList.remove(
-                    "open"
-                );
+            overlay.classList.remove("active");
 
-                overlay.classList.remove(
-                    "active"
-                );
-
-                document.body.classList.remove(
-                    "no-scroll"
-                );
-
-            }
-        );
-
-    }
+        }
+    );
 
 
     document
-        .querySelectorAll(".nav-item")
+        .querySelectorAll(".sidebar .nav-item")
         .forEach(function (item) {
 
             item.addEventListener(
                 "click",
                 function () {
 
-                    sidebar.classList.remove(
-                        "open"
-                    );
+                    sidebar.classList.remove("open");
 
-                    if (overlay) {
-
-                        overlay.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-                    document.body.classList.remove(
-                        "no-scroll"
-                    );
+                    overlay.classList.remove("active");
 
                 }
             );
@@ -131,221 +120,157 @@ function initializeNavigation() {
 }
 
 
-/* ============================================================
-   PROFILE BUTTONS
-============================================================ */
+/**
+ * ------------------------------------------------------------
+ * NAVIGATION
+ * ------------------------------------------------------------
+ */
 
-function initializeProfileButtons() {
+function initializeNavigation() {
 
-    const profileButton =
-        document.getElementById(
-            "profileButton"
-        );
+    const currentPage =
+        window.location.pathname
+            .split("/")
+            .pop()
+            .toLowerCase();
 
-    if (profileButton) {
 
-        profileButton.addEventListener(
-            "click",
-            function () {
+    document
+        .querySelectorAll(
+            ".sidebar .nav-item, .bottom-nav-item"
+        )
+        .forEach(function (item) {
 
-                window.location.href =
-                    "pages/profile.html";
+            const href =
+                item.getAttribute("href");
+
+            if (!href) {
+                return;
+            }
+
+            const itemPage =
+                href
+                    .split("/")
+                    .pop()
+                    .toLowerCase();
+
+
+            if (
+                itemPage === currentPage ||
+                (
+                    currentPage === "" &&
+                    itemPage === "index.html"
+                )
+            ) {
+
+                item.classList.add("active");
+
+            } else {
+
+                item.classList.remove("active");
 
             }
-        );
 
-    }
-
-
-    const notificationButton =
-        document.getElementById(
-            "notificationButton"
-        );
-
-    if (notificationButton) {
-
-        notificationButton.addEventListener(
-            "click",
-            function () {
-
-                window.location.href =
-                    "pages/notifications.html";
-
-            }
-        );
-
-    }
+        });
 
 }
 
 
-/* ============================================================
-   THEME
-============================================================ */
+/**
+ * ------------------------------------------------------------
+ * USER INFORMATION
+ * ------------------------------------------------------------
+ */
 
-function initializeThemeButton() {
+function loadUserInformation() {
 
-    const themeButton =
-        document.getElementById(
-            "themeButton"
+    let user = null;
+
+
+    try {
+
+        const storedUser =
+            localStorage.getItem(
+                "afc_current_user"
+            );
+
+
+        if (storedUser) {
+
+            user =
+                JSON.parse(
+                    storedUser
+                );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to read stored user.",
+            error
         );
 
-    if (!themeButton) {
+    }
+
+
+    if (!user) {
         return;
     }
 
 
-    themeButton.addEventListener(
-        "click",
-        function () {
-
-            const current =
-                document.documentElement
-                    .getAttribute("data-theme");
-
-
-            if (current === "dark") {
-
-                document.documentElement
-                    .removeAttribute(
-                        "data-theme"
-                    );
-
-                localStorage.setItem(
-                    "afc_theme",
-                    "light"
-                );
-
-            } else {
-
-                document.documentElement
-                    .setAttribute(
-                        "data-theme",
-                        "dark"
-                    );
-
-                localStorage.setItem(
-                    "afc_theme",
-                    "dark"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   SERVICE WORKER
-============================================================ */
-
-function initializeServiceWorker() {
-
-    if (
-        "serviceWorker" in navigator
-    ) {
-
-        window.addEventListener(
-            "load",
-            function () {
-
-                navigator.serviceWorker
-                    .register("sw.js")
-                    .then(function (registration) {
-
-                        console.log(
-                            "Service Worker registered:",
-                            registration.scope
-                        );
-
-                    })
-                    .catch(function (error) {
-
-                        console.warn(
-                            "Service Worker registration failed:",
-                            error
-                        );
-
-                    });
-
-            }
-        );
-
-    }
-
-}
-
-
-/* ============================================================
-   DASHBOARD FOUNDATION
-============================================================ */
-
-function initializeDashboard() {
-
-    const session =
-        AUTH.getSession();
-
-
-    /*
-     * Until Step 10B/10C,
-     * we use placeholder information.
-     */
-
-    const userName =
-        session &&
-        session.user &&
-        session.user.first_name
-            ? session.user.first_name
-            : "";
+    const name =
+        user.name ||
+        user.full_name ||
+        user.first_name ||
+        "Friend";
 
 
     const welcomeName =
         document.getElementById(
-            "welcomeName"
+            "welcomeUserName"
         );
 
-    if (
-        welcomeName &&
-        userName
-    ) {
+    if (welcomeName) {
 
         welcomeName.textContent =
-            ", " + userName;
+            name;
 
     }
 
 
-    const profileInitial =
+    const sidebarName =
         document.getElementById(
-            "profileInitial"
+            "sidebarUserName"
         );
 
-    const sidebarAvatar =
-        document.getElementById(
-            "sidebarAvatar"
-        );
+    if (sidebarName) {
+
+        sidebarName.textContent =
+            name;
+
+    }
+
+}
 
 
-    if (userName) {
+/**
+ * ------------------------------------------------------------
+ * REFRESH ICONS
+ * ------------------------------------------------------------
+ *
+ * Useful later when dynamic HTML is inserted.
+ * ------------------------------------------------------------
+ */
 
-        const initial =
-            userName
-                .charAt(0)
-                .toUpperCase();
+function refreshIcons() {
 
+    if (
+        typeof lucide !== "undefined" &&
+        typeof lucide.createIcons === "function"
+    ) {
 
-        if (profileInitial) {
-            profileInitial.textContent =
-                initial;
-        }
-
-
-        if (sidebarAvatar) {
-            sidebarAvatar.textContent =
-                initial;
-        }
+        lucide.createIcons();
 
     }
 
