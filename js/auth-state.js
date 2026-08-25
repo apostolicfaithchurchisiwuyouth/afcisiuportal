@@ -8,7 +8,11 @@
  * ------------------------------------------------------------
  * Central authentication state manager for the frontend.
  *
- * RESPONSIBILITIES:
+ * 10E is the SINGLE source of truth for frontend
+ * authentication storage.
+ *
+ * Responsibilities:
+ *
  * 1. Store authenticated user
  * 2. Store authenticated session
  * 3. Retrieve authenticated user
@@ -19,16 +23,24 @@
  * 8. Logout from backend
  * 9. Clear authentication state
  *
- * IMPORTANT:
- * ------------------------------------------------------------
- * 10E is the SINGLE source of truth for frontend
- * authentication storage.
- *
- * 10D MUST use:
+ * LOGIN FLOW:
  *
  *     AUTH.save(result.data)
  *
- * after successful login.
+ * Expected authentication data:
+ *
+ * {
+ *     user: {
+ *         user_id: "...",
+ *         first_name: "...",
+ *         last_name: "..."
+ *     },
+ *
+ *     session: {
+ *         token: "...",
+ *         expires_at: "..."
+ *     }
+ * }
  *
  * ============================================================
  */
@@ -55,9 +67,7 @@ const AUTH_STORAGE_KEYS = {
    2. SAFE JSON PARSER
    ============================================================ */
 
-function parseStoredJSON_(
-    value
-) {
+function parseStoredJSON_(value) {
 
     if (!value) {
 
@@ -68,9 +78,7 @@ function parseStoredJSON_(
 
     try {
 
-        return JSON.parse(
-            value
-        );
+        return JSON.parse(value);
 
     } catch (error) {
 
@@ -100,9 +108,7 @@ function getStoredAuthUser_() {
             );
 
 
-        return parseStoredJSON_(
-            stored
-        );
+        return parseStoredJSON_(stored);
 
     } catch (error) {
 
@@ -132,9 +138,7 @@ function getStoredAuthSession_() {
             );
 
 
-        return parseStoredJSON_(
-            stored
-        );
+        return parseStoredJSON_(stored);
 
     } catch (error) {
 
@@ -154,22 +158,7 @@ function getStoredAuthSession_() {
    5. SAVE AUTHENTICATION
    ============================================================ */
 
-/**
- * Expected login response:
- *
- * {
- *     user: {...},
- *
- *     session: {
- *         token: "...",
- *         expires_at: "..."
- *     }
- * }
- */
-
-function saveAuthentication(
-    loginResult
-) {
+function saveAuthentication(loginResult) {
 
     if (
         !loginResult ||
@@ -183,13 +172,32 @@ function saveAuthentication(
     }
 
 
+    /*
+     * Support both:
+     *
+     * AUTH.save(result.data)
+     *
+     * and, defensively:
+     *
+     * AUTH.save(result)
+     *
+     */
+
+    const source =
+        loginResult.data &&
+        typeof loginResult.data === "object"
+            ? loginResult.data
+            : loginResult;
+
+
     const user =
-        loginResult.user ||
+        source.user ||
+        source.member ||
         null;
 
 
     const session =
-        loginResult.session ||
+        source.session ||
         null;
 
 
@@ -230,9 +238,7 @@ function saveAuthentication(
 
             AUTH_STORAGE_KEYS.USER,
 
-            JSON.stringify(
-                user
-            )
+            JSON.stringify(user)
 
         );
 
@@ -245,16 +251,13 @@ function saveAuthentication(
 
             AUTH_STORAGE_KEYS.SESSION,
 
-            JSON.stringify(
-                session
-            )
+            JSON.stringify(session)
 
         );
 
 
         /*
-         * Verify that the data was
-         * actually written.
+         * Verify the saved information.
          */
 
         const savedUser =
@@ -312,10 +315,6 @@ function saveAuthentication(
             error
         );
 
-
-        /*
-         * Remove partially saved data.
-         */
 
         clearAuthentication();
 
@@ -382,9 +381,7 @@ function getAuthToken() {
    9. CHECK SESSION EXPIRATION
    ============================================================ */
 
-function isSessionExpired_(
-    session
-) {
+function isSessionExpired_(session) {
 
     if (
         !session ||
@@ -392,10 +389,9 @@ function isSessionExpired_(
     ) {
 
         /*
-         * If the backend did not provide
-         * an expiration date, do not
-         * automatically expire the session
-         * on the frontend.
+         * No expiration supplied.
+         *
+         * Backend remains the final authority.
          */
 
         return false;
@@ -415,17 +411,17 @@ function isSessionExpired_(
         )
     ) {
 
-        /*
-         * Invalid date.
-         *
-         * Let the backend remain the
-         * final authority.
-         */
-
         console.warn(
             "Invalid session expiration date:",
             session.expires_at
         );
+
+
+        /*
+         * Do not destroy a potentially valid
+         * backend session because of a frontend
+         * date parsing issue.
+         */
 
         return false;
 
@@ -469,7 +465,7 @@ function isAuthenticated() {
 
 
     /*
-     * Session token is required.
+     * Session token is mandatory.
      */
 
     if (
@@ -515,9 +511,7 @@ function isAuthenticated() {
    11. GET AUTHENTICATED REQUEST DATA
    ============================================================ */
 
-function getAuthenticatedRequestData(
-    payload = {}
-) {
+function getAuthenticatedRequestData(payload = {}) {
 
     const token =
         getAuthToken();
@@ -543,6 +537,10 @@ function clearAuthentication() {
 
     try {
 
+        /*
+         * Current authentication keys.
+         */
+
         localStorage.removeItem(
             AUTH_STORAGE_KEYS.USER
         );
@@ -554,11 +552,10 @@ function clearAuthentication() {
 
 
         /*
-         * Remove the OLD authentication
-         * keys used by the previous 10D.
+         * Previous authentication keys.
          *
-         * This prevents old authentication
-         * data from causing confusion.
+         * Keep these removals for migration
+         * compatibility.
          */
 
         localStorage.removeItem(
@@ -590,6 +587,7 @@ function clearAuthentication() {
             error
         );
 
+
         return false;
 
     }
@@ -608,10 +606,15 @@ async function logoutUserFrontend() {
 
 
     /*
-     * Notify backend when possible.
+     * Try to notify backend.
      */
 
-    if (token) {
+    if (
+        token &&
+        typeof API !== "undefined" &&
+        API &&
+        typeof API.post === "function"
+    ) {
 
         try {
 
@@ -631,12 +634,11 @@ async function logoutUserFrontend() {
         } catch (error) {
 
             /*
-             * Local logout must still happen
-             * even if the backend request fails.
+             * Local logout must still happen.
              */
 
             console.warn(
-                "Backend logout request failed:",
+                "Backend logout request failed. Continuing with local logout.",
                 error
             );
 
@@ -668,13 +670,6 @@ async function logoutUserFrontend() {
 /* ============================================================
    14. REQUIRE LOGIN
    ============================================================ */
-
-/**
- * Use this on protected pages:
- *
- * AUTH.requireLogin();
- *
- */
 
 function requireLogin(
     redirectPage = "login.html"
@@ -709,15 +704,8 @@ function requireLogin(
    15. REDIRECT IF ALREADY AUTHENTICATED
    ============================================================ */
 
-/**
- * Use this on login.html.
- *
- * If a valid session already exists,
- * send the user to dashboard.html.
- */
-
 function redirectIfAuthenticated(
-    redirectPage = "dashboard.html"
+    redirectPage = "index.html"
 ) {
 
     if (
@@ -1101,6 +1089,7 @@ window.logoutUserFrontend =
 console.log(
     "AFC Isiu Youth Portal — 10E Authentication State loaded."
 );
+
 
 console.log(
     "Current authentication state:",
