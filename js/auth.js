@@ -785,7 +785,7 @@ if (
             function() {
 
                 window.location.href =
-                    "imdex.html";
+                    "index.html";
 
             },
             700
