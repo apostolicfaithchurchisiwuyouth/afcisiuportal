@@ -1,26 +1,24 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   INDEX / HOME PAGE STYLES
+   HOME / INDEX PAGE
+   ============================================================ */
+
+
+/* ============================================================
+   1. HOME VARIABLES
    ============================================================ */
 
 :root {
+
     --home-max-width: 1280px;
 
     --home-radius-sm: 12px;
     --home-radius-md: 18px;
     --home-radius-lg: 24px;
 
-    --home-shadow:
-        0 10px 35px rgba(74, 7, 84, 0.07);
-
-    --home-shadow-hover:
-        0 18px 45px rgba(74, 7, 84, 0.13);
-
-    --home-border:
-        1px solid rgba(74, 7, 84, 0.08);
-
     --home-purple: #4a0754;
     --home-purple-dark: #35033d;
+    --home-purple-light: #711080;
     --home-purple-soft: #f6eff8;
 
     --home-orange: #ea580c;
@@ -32,15 +30,28 @@
     --home-green: #0ea472;
     --home-green-soft: #edf9f4;
 
+    --home-red: #dc2626;
+    --home-red-soft: #fef2f2;
+
     --home-text: #17131a;
     --home-muted: #6f6872;
+
     --home-background: #f8f7f9;
     --home-surface: #ffffff;
+
+    --home-border:
+        1px solid rgba(74, 7, 84, 0.08);
+
+    --home-shadow:
+        0 10px 35px rgba(74, 7, 84, 0.07);
+
+    --home-shadow-hover:
+        0 18px 45px rgba(74, 7, 84, 0.13);
 }
 
 
 /* ============================================================
-   1. GLOBAL HOME AREA
+   2. PAGE
    ============================================================ */
 
 body {
@@ -53,12 +64,14 @@ body {
 
 
 /* ============================================================
-   2. SIDEBAR
+   3. SIDEBAR
    ============================================================ */
 
 .sidebar {
     background: var(--home-surface);
-    border-right: 1px solid rgba(74, 7, 84, 0.07);
+
+    border-right:
+        1px solid rgba(74, 7, 84, 0.07);
 }
 
 .sidebar-brand {
@@ -66,20 +79,11 @@ body {
 }
 
 .brand-mark {
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-
     background:
         linear-gradient(
             135deg,
             var(--home-purple),
-            #711080
+            var(--home-purple-light)
         );
 
     color: #fff;
@@ -91,6 +95,7 @@ body {
 .brand-mark svg {
     width: 21px;
     height: 21px;
+
     stroke-width: 2.1;
 }
 
@@ -104,7 +109,7 @@ body {
 
 
 /* ============================================================
-   3. SIDEBAR NAVIGATION
+   4. SIDEBAR NAVIGATION
    ============================================================ */
 
 .sidebar-navigation {
@@ -112,12 +117,6 @@ body {
 }
 
 .nav-item {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    gap: 13px;
-
     min-height: 46px;
 
     padding: 0 14px;
@@ -128,15 +127,8 @@ body {
 
     color: #68616b;
 
-    text-decoration: none;
-
     font-size: 0.9rem;
     font-weight: 600;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
 }
 
 .nav-item svg {
@@ -150,6 +142,8 @@ body {
 }
 
 .nav-item.active {
+    position: relative;
+
     background: var(--home-purple-soft);
     color: var(--home-purple);
 }
@@ -172,7 +166,54 @@ body {
 
 
 /* ============================================================
-   4. MAIN AREA
+   5. SIDEBAR PROFILE
+   ============================================================ */
+
+.sidebar-footer {
+    padding: 14px;
+}
+
+.sidebar-profile {
+    padding: 11px;
+
+    border-radius: 14px;
+}
+
+.sidebar-profile:hover {
+    background: var(--home-purple-soft);
+}
+
+.sidebar-profile .avatar {
+    width: 38px;
+    height: 38px;
+
+    background: var(--home-purple-soft);
+    color: var(--home-purple);
+
+    border-radius: 12px;
+}
+
+.sidebar-profile .avatar svg {
+    width: 18px;
+    height: 18px;
+}
+
+.sidebar-profile strong {
+    max-width: 150px;
+
+    color: var(--home-text);
+
+    font-size: 0.78rem;
+}
+
+.sidebar-profile small {
+    color: var(--home-muted);
+    font-size: 0.67rem;
+}
+
+
+/* ============================================================
+   6. MAIN AREA
    ============================================================ */
 
 .main-area {
@@ -190,34 +231,39 @@ body {
     padding:
         30px
         34px
-        80px;
+        90px;
 }
 
 
 /* ============================================================
-   5. TOP HEADER
+   7. TOP HEADER
    ============================================================ */
 
 .top-header {
+
     min-height: 76px;
 
     display: flex;
     align-items: center;
 
-    padding: 0 34px;
+    padding:
+        0
+        34px;
 
-    background: rgba(255, 255, 255, 0.92);
+    background:
+        rgba(255, 255, 255, 0.94);
 
     border-bottom:
         1px solid rgba(74, 7, 84, 0.06);
 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
     position: sticky;
+
     top: 0;
 
     z-index: 50;
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .header-title {
@@ -228,6 +274,7 @@ body {
 }
 
 .header-eyebrow {
+
     font-size: 0.7rem;
 
     font-weight: 700;
@@ -240,16 +287,61 @@ body {
 }
 
 .header-title h1 {
+
     margin: 0;
+
+    color: var(--home-text);
 
     font-size: 1.15rem;
 
     line-height: 1.2;
 
     font-weight: 750;
-
-    color: var(--home-text);
 }
+
+
+/* ============================================================
+   8. HEADER BRAND ICON
+   ============================================================ */
+
+.header-brand-icon {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--home-purple),
+            var(--home-purple-light)
+        );
+
+    color: #fff;
+
+    box-shadow:
+        0 7px 18px rgba(74, 7, 84, 0.18);
+}
+
+.header-brand-icon svg {
+    width: 19px;
+    height: 19px;
+
+    stroke-width: 2.2;
+}
+
+
+/* ============================================================
+   9. HEADER ACTIONS
+   ============================================================ */
 
 .header-actions {
     margin-left: auto;
@@ -257,11 +349,12 @@ body {
     display: flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 9px;
 }
 
 .header-icon-button,
 .header-avatar {
+
     position: relative;
 
     width: 42px;
@@ -288,7 +381,9 @@ body {
 
 .header-icon-button:hover,
 .header-avatar:hover {
+
     background: var(--home-purple-soft);
+
     color: var(--home-purple);
 
     transform: translateY(-1px);
@@ -296,11 +391,13 @@ body {
 
 .header-icon-button svg,
 .header-avatar svg {
+
     width: 18px;
     height: 18px;
 }
 
 .header-notification-dot {
+
     position: absolute;
 
     top: 8px;
@@ -318,7 +415,7 @@ body {
 
 
 /* ============================================================
-   6. MOBILE MENU
+   10. MOBILE MENU
    ============================================================ */
 
 .mobile-menu-button {
@@ -327,10 +424,112 @@ body {
 
 
 /* ============================================================
-   7. WELCOME SECTION
+   11. HOME AUTH ACTIONS
+   ============================================================ */
+
+.home-auth-actions {
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.home-auth-button {
+
+    min-height: 44px;
+
+    padding:
+        0
+        17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 12px;
+
+    font-size: 0.78rem;
+    font-weight: 750;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    border:
+        1px solid transparent;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.home-auth-button svg {
+
+    width: 17px;
+    height: 17px;
+}
+
+.home-auth-button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 9px 22px rgba(0, 0, 0, 0.08);
+}
+
+.home-auth-login {
+
+    background: var(--home-purple);
+
+    color: #fff;
+}
+
+.home-auth-login:hover {
+
+    background:
+        var(--home-purple-dark);
+}
+
+.home-auth-register {
+
+    background: var(--home-orange);
+
+    color: #fff;
+}
+
+.home-auth-register:hover {
+
+    background: #c2410c;
+}
+
+.home-auth-logout {
+
+    background: #fff;
+
+    color: var(--home-red);
+
+    border-color:
+        rgba(220, 38, 38, 0.16);
+}
+
+.home-auth-logout:hover {
+
+    background: var(--home-red-soft);
+}
+
+
+/* ============================================================
+   12. WELCOME
    ============================================================ */
 
 .welcome-section {
+
     position: relative;
 
     display: flex;
@@ -341,11 +540,14 @@ body {
 
     min-height: 190px;
 
-    padding: 34px 38px;
+    padding:
+        34px
+        38px;
 
     overflow: hidden;
 
-    border-radius: var(--home-radius-lg);
+    border-radius:
+        var(--home-radius-lg);
 
     background:
         linear-gradient(
@@ -362,6 +564,7 @@ body {
 }
 
 .welcome-section::before {
+
     content: "";
 
     position: absolute;
@@ -374,10 +577,12 @@ body {
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.07);
+    background:
+        rgba(255, 255, 255, 0.07);
 }
 
 .welcome-section::after {
+
     content: "";
 
     position: absolute;
@@ -390,26 +595,36 @@ body {
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.05);
+    background:
+        rgba(255, 255, 255, 0.05);
 }
 
 .welcome-copy {
+
     position: relative;
+
     z-index: 2;
 }
 
 .welcome-copy .section-label {
-    color: rgba(255, 255, 255, 0.72);
+
+    color:
+        rgba(255, 255, 255, 0.72);
 }
 
 .welcome-copy h2 {
-    margin: 8px 0 8px;
 
-    font-size: clamp(
-        1.55rem,
-        3vw,
-        2.15rem
-    );
+    margin:
+        8px
+        0
+        8px;
+
+    font-size:
+        clamp(
+            1.55rem,
+            3vw,
+            2.15rem
+        );
 
     line-height: 1.15;
 
@@ -419,11 +634,13 @@ body {
 }
 
 .welcome-copy p {
+
     margin: 0;
 
     max-width: 560px;
 
-    color: rgba(255, 255, 255, 0.78);
+    color:
+        rgba(255, 255, 255, 0.78);
 
     font-size: 0.9rem;
 
@@ -431,7 +648,9 @@ body {
 }
 
 .welcome-icon {
+
     position: relative;
+
     z-index: 2;
 
     width: 72px;
@@ -445,7 +664,8 @@ body {
 
     border-radius: 22px;
 
-    background: rgba(255, 255, 255, 0.12);
+    background:
+        rgba(255, 255, 255, 0.12);
 
     border:
         1px solid rgba(255, 255, 255, 0.14);
@@ -454,20 +674,23 @@ body {
 }
 
 .welcome-icon svg {
+
     width: 31px;
     height: 31px;
 }
 
 
 /* ============================================================
-   8. SECTION BLOCKS
+   13. SECTIONS
    ============================================================ */
 
 .section-block {
+
     margin-top: 38px;
 }
 
 .section-heading {
+
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -478,6 +701,7 @@ body {
 }
 
 .section-label {
+
     display: block;
 
     margin-bottom: 5px;
@@ -494,6 +718,7 @@ body {
 }
 
 .section-heading h2 {
+
     margin: 0;
 
     font-size: 1.25rem;
@@ -506,6 +731,7 @@ body {
 }
 
 .section-link {
+
     display: inline-flex;
     align-items: center;
 
@@ -519,24 +745,30 @@ body {
 }
 
 .section-link:hover {
+
     text-decoration: underline;
 }
 
 
 /* ============================================================
-   9. QUICK ACCESS GRID
+   14. QUICK ACCESS
    ============================================================ */
 
 .quick-grid {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
     gap: 15px;
 }
 
 .quick-card {
+
     position: relative;
 
     display: flex;
@@ -546,15 +778,21 @@ body {
 
     min-height: 88px;
 
-    padding: 16px 17px;
+    padding:
+        16px
+        17px;
 
-    border-radius: var(--home-radius-md);
+    border-radius:
+        var(--home-radius-md);
 
-    background: var(--home-surface);
+    background:
+        var(--home-surface);
 
-    border: var(--home-border);
+    border:
+        var(--home-border);
 
-    box-shadow: var(--home-shadow);
+    box-shadow:
+        var(--home-shadow);
 
     color: inherit;
 
@@ -567,15 +805,19 @@ body {
 }
 
 .quick-card:hover {
-    transform: translateY(-3px);
 
-    box-shadow: var(--home-shadow-hover);
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        var(--home-shadow-hover);
 
     border-color:
         rgba(74, 7, 84, 0.14);
 }
 
 .quick-card-icon {
+
     width: 48px;
     height: 48px;
 
@@ -589,31 +831,45 @@ body {
 }
 
 .quick-card-icon svg {
+
     width: 21px;
     height: 21px;
 }
 
 .quick-card-icon.purple {
+
     color: var(--home-purple);
-    background: var(--home-purple-soft);
+
+    background:
+        var(--home-purple-soft);
 }
 
 .quick-card-icon.orange {
+
     color: var(--home-orange);
-    background: var(--home-orange-soft);
+
+    background:
+        var(--home-orange-soft);
 }
 
 .quick-card-icon.blue {
+
     color: var(--home-blue);
-    background: var(--home-blue-soft);
+
+    background:
+        var(--home-blue-soft);
 }
 
 .quick-card-icon.green {
+
     color: var(--home-green);
-    background: var(--home-green-soft);
+
+    background:
+        var(--home-green-soft);
 }
 
 .quick-card-content {
+
     min-width: 0;
 
     display: flex;
@@ -623,17 +879,21 @@ body {
 }
 
 .quick-card-content strong {
+
     font-size: 0.9rem;
 
-    color: var(--home-text);
+    color:
+        var(--home-text);
 
     font-weight: 750;
 }
 
 .quick-card-content span {
+
     overflow: hidden;
 
-    color: var(--home-muted);
+    color:
+        var(--home-muted);
 
     font-size: 0.75rem;
 
@@ -643,6 +903,7 @@ body {
 }
 
 .quick-card-arrow {
+
     width: 18px;
     height: 18px;
 
@@ -658,21 +919,28 @@ body {
 }
 
 .quick-card:hover .quick-card-arrow {
-    color: var(--home-purple);
 
-    transform: translateX(3px);
+    color:
+        var(--home-purple);
+
+    transform:
+        translateX(3px);
 }
 
 
 /* ============================================================
-   10. DASHBOARD CARDS
+   15. DASHBOARD CARDS
    ============================================================ */
 
 .dashboard-grid {
+
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
     gap: 18px;
 
@@ -680,6 +948,7 @@ body {
 }
 
 .dashboard-card {
+
     min-width: 0;
 
     display: flex;
@@ -689,23 +958,31 @@ body {
 
     overflow: hidden;
 
-    border-radius: var(--home-radius-lg);
+    border-radius:
+        var(--home-radius-lg);
 
     background: #fff;
 
-    border: var(--home-border);
+    border:
+        var(--home-border);
 
-    box-shadow: var(--home-shadow);
+    box-shadow:
+        var(--home-shadow);
 }
 
 .dashboard-card-header {
-    padding: 20px 21px 16px;
+
+    padding:
+        20px
+        21px
+        16px;
 
     border-bottom:
         1px solid rgba(74, 7, 84, 0.06);
 }
 
 .dashboard-card-title {
+
     display: flex;
     align-items: center;
 
@@ -713,39 +990,51 @@ body {
 }
 
 .small-icon {
+
     width: 40px;
     height: 40px;
+
+    flex: 0 0 40px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    flex: 0 0 40px;
-
     border-radius: 12px;
 }
 
 .small-icon svg {
+
     width: 18px;
     height: 18px;
 }
 
 .small-icon.purple {
-    background: var(--home-purple-soft);
-    color: var(--home-purple);
+
+    background:
+        var(--home-purple-soft);
+
+    color:
+        var(--home-purple);
 }
 
 .small-icon.orange {
-    background: var(--home-orange-soft);
-    color: var(--home-orange);
+
+    background:
+        var(--home-orange-soft);
+
+    color:
+        var(--home-orange);
 }
 
 .card-label {
+
     display: block;
 
     margin-bottom: 2px;
 
-    color: var(--home-muted);
+    color:
+        var(--home-muted);
 
     font-size: 0.66rem;
 
@@ -757,22 +1046,28 @@ body {
 }
 
 .dashboard-card-title h3 {
+
     margin: 0;
 
     font-size: 1rem;
 
     font-weight: 750;
 
-    color: var(--home-text);
+    color:
+        var(--home-text);
 }
 
 .dashboard-card-body {
+
     flex: 1;
 
-    padding: 18px 21px;
+    padding:
+        18px
+        21px;
 }
 
 .dashboard-card .text-link {
+
     display: flex;
     align-items: center;
 
@@ -783,7 +1078,8 @@ body {
         21px
         18px;
 
-    color: var(--home-purple);
+    color:
+        var(--home-purple);
 
     font-size: 0.78rem;
 
@@ -796,6 +1092,7 @@ body {
 }
 
 .dashboard-card .text-link svg {
+
     width: 15px;
     height: 15px;
 
@@ -804,15 +1101,18 @@ body {
 }
 
 .dashboard-card .text-link:hover svg {
-    transform: translateX(3px);
+
+    transform:
+        translateX(3px);
 }
 
 
 /* ============================================================
-   11. EMPTY STATES
+   16. EMPTY STATES
    ============================================================ */
 
 .empty-state {
+
     min-height: 150px;
 
     display: flex;
@@ -827,10 +1127,12 @@ body {
 
     text-align: center;
 
-    color: var(--home-muted);
+    color:
+        var(--home-muted);
 }
 
 .empty-state-icon {
+
     width: 44px;
     height: 44px;
 
@@ -846,11 +1148,13 @@ body {
 }
 
 .empty-state-icon svg {
+
     width: 20px;
     height: 20px;
 }
 
 .empty-state p {
+
     margin: 0;
 
     max-width: 280px;
@@ -862,172 +1166,99 @@ body {
 
 
 /* ============================================================
-   12. NOTIFICATIONS
+   17. NOTIFICATIONS
    ============================================================ */
 
 .notification-preview {
+
     overflow: hidden;
 
     min-height: 120px;
 
-    border-radius: var(--home-radius-md);
+    border-radius:
+        var(--home-radius-md);
 
     background: #fff;
 
-    border: var(--home-border);
+    border:
+        var(--home-border);
 
-    box-shadow: var(--home-shadow);
+    box-shadow:
+        var(--home-shadow);
 }
 
 .notification-preview .empty-state {
+
     min-height: 120px;
 }
 
 
 /* ============================================================
-   13. SIDEBAR PROFILE
-   ============================================================ */
-
-.sidebar-footer {
-    padding: 14px;
-}
-
-.sidebar-profile {
-    display: flex;
-    align-items: center;
-
-    gap: 11px;
-
-    padding: 11px;
-
-    border-radius: 14px;
-
-    color: inherit;
-
-    text-decoration: none;
-
-    transition:
-        background 0.2s ease;
-}
-
-.sidebar-profile:hover {
-    background: var(--home-purple-soft);
-}
-
-.sidebar-profile .avatar {
-    width: 38px;
-    height: 38px;
-
-    flex: 0 0 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background: var(--home-purple-soft);
-
-    color: var(--home-purple);
-}
-
-.sidebar-profile .avatar svg {
-    width: 18px;
-    height: 18px;
-}
-
-.sidebar-profile strong {
-    display: block;
-
-    max-width: 150px;
-
-    overflow: hidden;
-
-    color: var(--home-text);
-
-    font-size: 0.78rem;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-}
-
-.sidebar-profile small {
-    color: var(--home-muted);
-
-    font-size: 0.67rem;
-}
-
-
-/* ============================================================
-   14. MOBILE BOTTOM NAVIGATION
+   18. MOBILE BOTTOM NAV
    ============================================================ */
 
 .bottom-navigation {
+
     display: none;
 }
 
 
 /* ============================================================
-   15. TABLET
+   19. TABLET
    ============================================================ */
 
 @media (max-width: 1050px) {
 
     .page-content {
+
         padding-left: 24px;
         padding-right: 24px;
     }
 
     .top-header {
+
         padding-left: 24px;
         padding-right: 24px;
-    }
-
-    .quick-grid {
-        gap: 12px;
     }
 
 }
 
 
 /* ============================================================
-   16. MOBILE
+   20. MOBILE
    ============================================================ */
 
 @media (max-width: 768px) {
 
     body {
+
         padding-bottom: 76px;
     }
 
 
-    /* --------------------------------------------------------
-       HEADER
-       -------------------------------------------------------- */
+    /* HEADER */
 
     .top-header {
+
         min-height: 64px;
 
         display: grid;
 
         grid-template-columns:
-            42px
-            1fr
+            40px
+            auto
+            minmax(0, 1fr)
             auto;
 
-        gap: 10px;
+        gap: 8px;
 
         padding:
             0
-            15px;
-
-        position: sticky;
-
-        top: 0;
+            14px;
     }
 
     .mobile-menu-button {
+
         width: 40px;
         height: 40px;
 
@@ -1047,11 +1278,31 @@ body {
     }
 
     .mobile-menu-button svg {
+
         width: 19px;
         height: 19px;
     }
 
+    .header-brand-icon {
+
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+
+        margin-right: 0;
+
+        border-radius: 11px;
+    }
+
+    .header-brand-icon svg {
+
+        width: 18px;
+        height: 18px;
+    }
+
     .header-title {
+
         min-width: 0;
 
         align-items: flex-start;
@@ -1060,11 +1311,13 @@ body {
     }
 
     .header-eyebrow {
-        font-size: 0.58rem;
+
+        font-size: 0.56rem;
     }
 
     .header-title h1 {
-        font-size: 0.98rem;
+
+        font-size: 0.94rem;
 
         white-space: nowrap;
 
@@ -1074,23 +1327,24 @@ body {
     }
 
     .header-actions {
-        gap: 7px;
+
+        gap: 6px;
     }
 
     .header-icon-button,
     .header-avatar {
-        width: 38px;
-        height: 38px;
+
+        width: 37px;
+        height: 37px;
 
         border-radius: 11px;
     }
 
 
-    /* --------------------------------------------------------
-       PAGE
-       -------------------------------------------------------- */
+    /* PAGE */
 
     .page-content {
+
         width: 100%;
 
         padding:
@@ -1100,11 +1354,47 @@ body {
     }
 
 
-    /* --------------------------------------------------------
-       WELCOME
-       -------------------------------------------------------- */
+    /* AUTH BUTTONS */
+
+    .home-auth-actions {
+
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 8px;
+    }
+
+    .home-auth-button {
+
+        width: 100%;
+
+        min-height: 46px;
+
+        padding:
+            0
+            12px;
+
+        font-size: 0.74rem;
+    }
+
+    .home-auth-logout {
+
+        grid-column:
+            1 / -1;
+    }
+
+
+    /* WELCOME */
 
     .welcome-section {
+
         min-height: 165px;
 
         padding:
@@ -1115,10 +1405,12 @@ body {
     }
 
     .welcome-copy h2 {
+
         font-size: 1.45rem;
     }
 
     .welcome-copy p {
+
         max-width: 260px;
 
         font-size: 0.76rem;
@@ -1127,6 +1419,7 @@ body {
     }
 
     .welcome-icon {
+
         width: 52px;
         height: 52px;
 
@@ -1136,39 +1429,41 @@ body {
     }
 
     .welcome-icon svg {
+
         width: 23px;
         height: 23px;
     }
 
 
-    /* --------------------------------------------------------
-       SECTIONS
-       -------------------------------------------------------- */
+    /* SECTIONS */
 
     .section-block {
+
         margin-top: 28px;
     }
 
     .section-heading {
+
         margin-bottom: 13px;
     }
 
     .section-heading h2 {
+
         font-size: 1.08rem;
     }
 
 
-    /* --------------------------------------------------------
-       QUICK CARDS
-       -------------------------------------------------------- */
+    /* QUICK CARDS */
 
     .quick-grid {
+
         grid-template-columns: 1fr;
 
         gap: 10px;
     }
 
     .quick-card {
+
         min-height: 76px;
 
         padding:
@@ -1179,6 +1474,7 @@ body {
     }
 
     .quick-card-icon {
+
         width: 43px;
         height: 43px;
 
@@ -1188,24 +1484,26 @@ body {
     }
 
     .quick-card-icon svg {
+
         width: 19px;
         height: 19px;
     }
 
     .quick-card-content strong {
+
         font-size: 0.82rem;
     }
 
     .quick-card-content span {
+
         font-size: 0.69rem;
     }
 
 
-    /* --------------------------------------------------------
-       DASHBOARD CARDS
-       -------------------------------------------------------- */
+    /* DASHBOARD */
 
     .dashboard-grid {
+
         grid-template-columns: 1fr;
 
         gap: 13px;
@@ -1214,12 +1512,14 @@ body {
     }
 
     .dashboard-card {
+
         min-height: 245px;
 
         border-radius: 19px;
     }
 
     .dashboard-card-header {
+
         padding:
             16px
             17px
@@ -1227,12 +1527,14 @@ body {
     }
 
     .dashboard-card-body {
+
         padding:
             12px
             17px;
     }
 
     .dashboard-card .text-link {
+
         padding:
             12px
             17px
@@ -1240,20 +1542,18 @@ body {
     }
 
 
-    /* --------------------------------------------------------
-       NOTIFICATIONS
-       -------------------------------------------------------- */
+    /* NOTIFICATIONS */
 
     .notification-preview {
+
         border-radius: 16px;
     }
 
 
-    /* --------------------------------------------------------
-       BOTTOM NAV
-       -------------------------------------------------------- */
+    /* BOTTOM NAV */
 
     .bottom-navigation {
+
         position: fixed;
 
         left: 0;
@@ -1272,7 +1572,10 @@ body {
         padding:
             5px
             8px
-            calc(5px + env(safe-area-inset-bottom));
+            calc(
+                5px +
+                env(safe-area-inset-bottom)
+            );
 
         background:
             rgba(255, 255, 255, 0.96);
@@ -1290,6 +1593,7 @@ body {
     }
 
     .bottom-nav-item {
+
         min-width: 0;
 
         height: 58px;
@@ -1299,7 +1603,6 @@ body {
         flex-direction: column;
 
         align-items: center;
-
         justify-content: center;
 
         gap: 3px;
@@ -1314,15 +1617,19 @@ body {
     }
 
     .bottom-nav-icon {
+
         width: 19px;
         height: 19px;
     }
 
     .bottom-nav-item.active {
-        color: var(--home-purple);
+
+        color:
+            var(--home-purple);
     }
 
     .bottom-nav-center {
+
         position: relative;
 
         height: 70px;
@@ -1333,6 +1640,7 @@ body {
     }
 
     .bottom-nav-main {
+
         width: 48px;
         height: 48px;
 
@@ -1349,7 +1657,7 @@ body {
             linear-gradient(
                 135deg,
                 var(--home-purple),
-                #711080
+                var(--home-purple-light)
             );
 
         color: #fff;
@@ -1362,14 +1670,17 @@ body {
     }
 
     .bottom-nav-main-icon {
+
         width: 21px;
         height: 21px;
     }
 
     .bottom-nav-center-label {
+
         margin-top: -10px;
 
-        color: var(--home-purple);
+        color:
+            var(--home-purple);
 
         font-size: 0.6rem;
 
@@ -1377,11 +1688,10 @@ body {
     }
 
 
-    /* --------------------------------------------------------
-       MOBILE OVERLAY
-       -------------------------------------------------------- */
+    /* MOBILE OVERLAY */
 
     .mobile-overlay {
+
         position: fixed;
 
         inset: 0;
@@ -1401,6 +1711,7 @@ body {
     }
 
     .mobile-overlay.active {
+
         opacity: 1;
 
         visibility: visible;
@@ -1410,32 +1721,74 @@ body {
 
 
 /* ============================================================
-   17. SMALL PHONES
+   21. SMALL PHONES
    ============================================================ */
 
 @media (max-width: 390px) {
 
     .page-content {
+
         padding-left: 11px;
         padding-right: 11px;
     }
 
     .top-header {
+
         padding-left: 11px;
         padding-right: 11px;
+
+        grid-template-columns:
+            38px
+            34px
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .mobile-menu-button {
+
+        width: 38px;
+        height: 38px;
+    }
+
+    .header-brand-icon {
+
+        width: 34px;
+        height: 34px;
+
+        flex-basis: 34px;
+    }
+
+    .header-title h1 {
+
+        font-size: 0.88rem;
+    }
+
+    .header-eyebrow {
+
+        font-size: 0.52rem;
+    }
+
+    .header-icon-button,
+    .header-avatar {
+
+        width: 35px;
+        height: 35px;
     }
 
     .welcome-section {
+
         padding:
             22px
             18px;
     }
 
     .welcome-copy h2 {
+
         font-size: 1.3rem;
     }
 
     .welcome-icon {
+
         width: 46px;
         height: 46px;
 
@@ -1443,10 +1796,17 @@ body {
     }
 
     .quick-card {
+
         min-height: 72px;
     }
 
+    .home-auth-button {
+
+        font-size: 0.7rem;
+    }
+
     .bottom-navigation {
+
         padding-left: 4px;
         padding-right: 4px;
     }
@@ -1455,44 +1815,29 @@ body {
 
 
 /* ============================================================
-   18. ACCESSIBILITY
-   ============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-
-        transition-duration:
-            0.01ms !important;
-
-        animation-duration:
-            0.01ms !important;
-
-        animation-iteration-count:
-            1 !important;
-    }
-
-}
-
-
-/* ============================================================
-   19. TOUCH DEVICES
+   22. TOUCH DEVICES
    ============================================================ */
 
 @media (hover: none) {
 
     .quick-card:hover {
+
         transform: none;
 
-        box-shadow: var(--home-shadow);
+        box-shadow:
+            var(--home-shadow);
     }
 
     .header-icon-button:hover,
     .header-avatar:hover {
+
         transform: none;
     }
 
+    .home-auth-button:hover {
+
+        transform: none;
+
+        box-shadow: none;
+    }
 }
