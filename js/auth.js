@@ -773,7 +773,7 @@ if (
            
            Successful authentication now goes to:
            
-           dashboard.html
+           index.html
            
            instead of:
            
@@ -785,7 +785,7 @@ if (
             function() {
 
                 window.location.href =
-                    "dashboard.html";
+                    "imdex.html";
 
             },
             700
