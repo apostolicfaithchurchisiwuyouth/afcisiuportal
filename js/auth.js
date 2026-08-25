@@ -1,25 +1,27 @@
 /**
  * ============================================================
  * AFC ISIU YOUTH PORTAL V2
- * STEP 10C — FRONTEND AUTHENTICATION
+ * STEP 10D — AUTHENTICATION FRONTEND
+ * FILE: js/auth.js
  * ============================================================
  *
  * Handles:
  *
- * 1. User registration
- * 2. User login
- * 3. Session storage
- * 4. Current-user retrieval
- * 5. Authentication checks
- * 6. Logout
- * 7. Authentication events
+ * 1. Login
+ * 2. Registration
+ * 3. Institution loading
+ * 4. Password visibility
+ * 5. Form validation
+ * 6. Session storage
+ * 7. Authentication view switching
  *
- * Backend:
- * Google Apps Script
+ * IMPORTANT:
  *
- * Backend authentication functions:
- * - registerUser
- * - loginUser
+ * This file uses the existing API layer:
+ *
+ * js/api.js
+ *
+ * Do not put Google Apps Script code here.
  *
  * ============================================================
  */
@@ -31,1070 +33,1174 @@
    1. AUTH CONFIGURATION
    ============================================================ */
 
-const AUTH_CONFIG = {
+const AUTH_FRONTEND_CONFIG = {
 
     /*
-     * Storage keys.
-     */
-
-    SESSION_KEY:
-        "afc_isiu_auth_session",
-
-    USER_KEY:
-        "afc_isiu_current_user",
-
-    TOKEN_KEY:
-        "afc_isiu_auth_token",
-
-    /*
-     * Session duration.
+     * Where the user goes after successful login.
      *
-     * The backend remains responsible for validating the
-     * actual session/token.
+     * We can change this later when the dashboard is ready.
      */
 
-    SESSION_DURATION:
-        7 * 24 * 60 * 60 * 1000
+    AFTER_LOGIN:
+        "index.html",
+
+    /*
+     * Where the user goes after successful registration.
+     */
+
+    AFTER_REGISTER:
+        "index.html",
+
+    /*
+     * Minimum password length.
+     *
+     * Must match 03_Auth.gs.
+     */
+
+    PASSWORD_MIN_LENGTH:
+        8
+
 };
 
 
 /* ============================================================
-   2. AUTH ERROR
+   2. DOM HELPERS
    ============================================================ */
 
-class AuthError extends Error {
+function $(selector) {
 
-    constructor(message, details = {}) {
+    return document.querySelector(
+        selector
+    );
 
-        super(message);
+}
 
-        this.name =
-            "AuthError";
 
-        this.details =
-            details;
-    }
+function $$(selector) {
+
+    return Array.from(
+        document.querySelectorAll(
+            selector
+        )
+    );
+
 }
 
 
 /* ============================================================
-   3. STORAGE HELPERS
+   3. AUTH VIEW ELEMENTS
    ============================================================ */
 
-function saveAuthStorage_(
-    session,
-    user,
-    token
-) {
+const loginView =
+    $("#loginView");
 
-    try {
+const registerView =
+    $("#registerView");
 
-        if (session !== undefined) {
+const showRegisterButton =
+    $("#showRegisterButton");
 
-            localStorage.setItem(
-                AUTH_CONFIG.SESSION_KEY,
-                JSON.stringify(session)
-            );
-        }
-
-
-        if (user !== undefined) {
-
-            localStorage.setItem(
-                AUTH_CONFIG.USER_KEY,
-                JSON.stringify(user)
-            );
-        }
-
-
-        if (token) {
-
-            localStorage.setItem(
-                AUTH_CONFIG.TOKEN_KEY,
-                token
-            );
-        }
-
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "Unable to save authentication data:",
-            error
-        );
-
-        return false;
-    }
-}
+const showLoginButton =
+    $("#showLoginButton");
 
 
 /* ============================================================
-   4. GET STORED SESSION
+   4. SWITCH TO REGISTER
    ============================================================ */
 
-function getStoredAuthSession_() {
+function showRegisterView() {
 
-    try {
-
-        const raw =
-            localStorage.getItem(
-                AUTH_CONFIG.SESSION_KEY
-            );
-
-        if (!raw) {
-            return null;
-        }
-
-        return JSON.parse(raw);
-
-    } catch (error) {
-
-        console.error(
-            "Unable to read stored session:",
-            error
-        );
-
-        return null;
-    }
-}
-
-
-/* ============================================================
-   5. GET STORED USER
-   ============================================================ */
-
-function getStoredUser_() {
-
-    try {
-
-        const raw =
-            localStorage.getItem(
-                AUTH_CONFIG.USER_KEY
-            );
-
-        if (!raw) {
-            return null;
-        }
-
-        return JSON.parse(raw);
-
-    } catch (error) {
-
-        console.error(
-            "Unable to read stored user:",
-            error
-        );
-
-        return null;
-    }
-}
-
-
-/* ============================================================
-   6. GET STORED TOKEN
-   ============================================================ */
-
-function getStoredToken_() {
-
-    try {
-
-        return localStorage.getItem(
-            AUTH_CONFIG.TOKEN_KEY
-        );
-
-    } catch (error) {
-
-        return null;
-    }
-}
-
-
-/* ============================================================
-   7. CLEAR AUTHENTICATION
-   ============================================================ */
-
-function clearAuthStorage_() {
-
-    try {
-
-        localStorage.removeItem(
-            AUTH_CONFIG.SESSION_KEY
-        );
-
-        localStorage.removeItem(
-            AUTH_CONFIG.USER_KEY
-        );
-
-        localStorage.removeItem(
-            AUTH_CONFIG.TOKEN_KEY
-        );
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "Unable to clear authentication data:",
-            error
-        );
-
-        return false;
-    }
-}
-
-
-/* ============================================================
-   8. NORMALIZE BACKEND RESPONSE
-   ============================================================ */
-
-function normalizeAuthResponse_(
-    response
-) {
-
-    if (!response) {
-
-        throw new AuthError(
-            "The authentication server returned no response."
-        );
+    if (!loginView || !registerView) {
+        return;
     }
 
 
-    if (response.success === false) {
+    loginView.classList.remove(
+        "active"
+    );
 
-        throw new AuthError(
-            response.message ||
-            "Authentication request failed.",
-            response
-        );
-    }
-
-
-    /*
-     * Try to locate the user object.
-     */
-
-    const user =
-        response.user ||
-        response.member ||
-        response.profile ||
-        null;
-
-
-    /*
-     * Try to locate the session object.
-     */
-
-    const session =
-        response.session ||
-        response.auth ||
-        null;
-
-
-    /*
-     * Try to locate the token.
-     */
-
-    const token =
-        response.token ||
-        response.auth_token ||
-        response.session_token ||
-        (
-            session &&
-            (
-                session.token ||
-                session.auth_token ||
-                session.session_token
-            )
-        ) ||
-        null;
-
-
-    return {
-
-        success:
-            response.success !== false,
-
-        user:
-            user,
-
-        session:
-            session,
-
-        token:
-            token,
-
-        raw:
-            response
-    };
-}
-
-
-/* ============================================================
-   9. SAVE SUCCESSFUL AUTHENTICATION
-   ============================================================ */
-
-function storeSuccessfulAuthentication_(
-    authResult
-) {
-
-    if (!authResult) {
-        return false;
-    }
-
-
-    saveAuthStorage_(
-        authResult.session,
-        authResult.user,
-        authResult.token
+    registerView.classList.add(
+        "active"
     );
 
 
-    /*
-     * Store a local timestamp so the frontend knows when
-     * authentication was established.
-     */
+    clearMessage(
+        $("#loginMessage")
+    );
 
-    try {
-
-        localStorage.setItem(
-            "afc_isiu_auth_timestamp",
-            String(Date.now())
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Could not store authentication timestamp."
-        );
-    }
+    clearMessage(
+        $("#registerMessage")
+    );
 
 
-    return true;
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
 
 /* ============================================================
-   10. REGISTER USER
-   ============================================================
- *
- * Usage:
- *
- * const result = await registerUser({
- *
- *     email: "example@email.com",
- *     password: "password",
- *
- *     ...other backend registration fields
- *
- * });
- *
- * ============================================================
- */
+   5. SWITCH TO LOGIN
+   ============================================================ */
 
-async function registerUser(
-    userData
+function showLoginView() {
+
+    if (!loginView || !registerView) {
+        return;
+    }
+
+
+    registerView.classList.remove(
+        "active"
+    );
+
+    loginView.classList.add(
+        "active"
+    );
+
+
+    clearMessage(
+        $("#registerMessage")
+    );
+
+    clearMessage(
+        $("#loginMessage")
+    );
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ============================================================
+   6. AUTH VIEW EVENTS
+   ============================================================ */
+
+if (showRegisterButton) {
+
+    showRegisterButton.addEventListener(
+        "click",
+        showRegisterView
+    );
+
+}
+
+
+if (showLoginButton) {
+
+    showLoginButton.addEventListener(
+        "click",
+        showLoginView
+    );
+
+}
+
+
+/* ============================================================
+   7. MESSAGE HELPERS
+   ============================================================ */
+
+function showMessage(
+    element,
+    message,
+    type
 ) {
 
-    try {
-
-        if (
-            !userData ||
-            typeof userData !== "object"
-        ) {
-
-            throw new AuthError(
-                "Registration information is required."
-            );
-        }
+    if (!element) {
+        return;
+    }
 
 
-        /*
-         * Do not allow an empty registration object.
-         */
-
-        if (
-            Object.keys(userData).length === 0
-        ) {
-
-            throw new AuthError(
-                "Registration information is required."
-            );
-        }
+    element.textContent =
+        message || "";
 
 
-        console.log(
-            "Registering user..."
+    element.className =
+        "form-message";
+
+
+    if (message) {
+
+        element.classList.add(
+            type || "error"
+        );
+
+    }
+
+}
+
+
+function clearMessage(
+    element
+) {
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent = "";
+
+    element.className =
+        "form-message";
+
+}
+
+
+/* ============================================================
+   8. BUTTON LOADING
+   ============================================================ */
+
+function setButtonLoading(
+    button,
+    loading
+) {
+
+    if (!button) {
+        return;
+    }
+
+
+    const text =
+        button.querySelector(
+            ".button-text"
+        );
+
+    const loadingElement =
+        button.querySelector(
+            ".button-loading"
         );
 
 
-        const response =
-            await API.post(
-                "registerUser",
-                userData
-            );
+    button.disabled =
+        loading;
 
 
-        const authResult =
-            normalizeAuthResponse_(
-                response
-            );
+    if (text) {
 
+        text.hidden =
+            loading;
+
+    }
+
+
+    if (loadingElement) {
+
+        loadingElement.hidden =
+            !loading;
+
+    }
+
+}
+
+
+/* ============================================================
+   9. PASSWORD TOGGLE
+   ============================================================ */
+
+function setupPasswordToggles() {
+
+    const toggles =
+        $$(".password-toggle");
+
+
+    toggles.forEach(function(toggle) {
+
+        toggle.addEventListener(
+            "click",
+            function() {
+
+                const targetId =
+                    toggle.dataset.target;
+
+
+                const input =
+                    document.getElementById(
+                        targetId
+                    );
+
+
+                if (!input) {
+                    return;
+                }
+
+
+                const isPassword =
+                    input.type === "password";
+
+
+                input.type =
+                    isPassword
+                        ? "text"
+                        : "password";
+
+
+                toggle.setAttribute(
+                    "aria-label",
+                    isPassword
+                        ? "Hide password"
+                        : "Show password"
+                );
+
+
+                const icon =
+                    toggle.querySelector(
+                        "[data-lucide]"
+                    );
+
+
+                if (icon) {
+
+                    icon.setAttribute(
+                        "data-lucide",
+                        isPassword
+                            ? "eye-off"
+                            : "eye"
+                    );
+
+                }
+
+
+                if (window.lucide) {
+
+                    lucide.createIcons();
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+/* ============================================================
+   10. LOAD INSTITUTIONS
+   ============================================================ */
+
+async function loadInstitutions() {
+
+    const select =
+        $("#institutionId");
+
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Loading institutions...
+        </option>
+
+    `;
+
+
+    try {
 
         /*
-         * Some registration systems create the account
-         * without automatically logging the user in.
+         * Existing backend route:
          *
-         * Therefore we only store authentication data if
-         * the backend actually returned it.
+         * getinstitutions
          */
-
-        if (
-            authResult.user ||
-            authResult.session ||
-            authResult.token
-        ) {
-
-            storeSuccessfulAuthentication_(
-                authResult
-            );
-        }
-
-
-        console.log(
-            "Registration successful.",
-            authResult
-        );
-
-
-        window.dispatchEvent(
-            new CustomEvent(
-                "auth:registered",
-                {
-                    detail:
-                        authResult
-                }
-            )
-        );
-
-
-        return {
-
-            success:
-                true,
-
-            user:
-                authResult.user,
-
-            session:
-                authResult.session,
-
-            token:
-                authResult.token,
-
-            data:
-                authResult.raw
-        };
-
-
-    } catch (error) {
-
-        console.error(
-            "Registration error:",
-            error
-        );
-
-
-        return {
-
-            success:
-                false,
-
-            message:
-                error.message ||
-                "Registration failed.",
-
-            error:
-                error
-        };
-    }
-}
-
-
-/* ============================================================
-   11. LOGIN USER
-   ============================================================
- *
- * Usage:
- *
- * const result = await loginUser({
- *
- *     email: "example@email.com",
- *     password: "password"
- *
- * });
- *
- * ============================================================
- */
-
-async function loginUser(
-    loginData
-) {
-
-    try {
-
-        if (
-            !loginData ||
-            typeof loginData !== "object"
-        ) {
-
-            throw new AuthError(
-                "Login information is required."
-            );
-        }
-
-
-        if (
-            Object.keys(loginData).length === 0
-        ) {
-
-            throw new AuthError(
-                "Login information is required."
-            );
-        }
-
-
-        console.log(
-            "Logging user in..."
-        );
-
 
         const response =
-            await API.post(
-                "loginUser",
-                loginData
-            );
-
-
-        const authResult =
-            normalizeAuthResponse_(
-                response
+            await API.get(
+                "getinstitutions"
             );
 
 
         /*
-         * Store successful authentication.
+         * The backend may return:
+         *
+         * response.institutions
+         *
+         * or
+         *
+         * response.data.institutions
+         *
+         * or
+         *
+         * response.data
+         *
+         * We support all three.
          */
 
-        storeSuccessfulAuthentication_(
-            authResult
-        );
+        let institutions = [];
 
 
-        console.log(
-            "Login successful.",
-            authResult
-        );
+        if (
+            response &&
+            Array.isArray(
+                response.institutions
+            )
+        ) {
+
+            institutions =
+                response.institutions;
+
+        } else if (
+            response &&
+            response.data &&
+            Array.isArray(
+                response.data.institutions
+            )
+        ) {
+
+            institutions =
+                response.data.institutions;
+
+        } else if (
+            response &&
+            Array.isArray(
+                response.data
+            )
+        ) {
+
+            institutions =
+                response.data;
+
+        }
 
 
-        /*
-         * Tell the rest of the frontend that the user
-         * has successfully logged in.
-         */
+        select.innerHTML = `
 
-        window.dispatchEvent(
-            new CustomEvent(
-                "auth:login",
-                {
-                    detail:
-                        authResult
+            <option value="">
+                Select your institution
+            </option>
+
+        `;
+
+
+        if (!institutions.length) {
+
+            select.innerHTML = `
+
+                <option value="">
+                    No institutions available
+                </option>
+
+            `;
+
+            return;
+
+        }
+
+
+        institutions.forEach(
+            function(institution) {
+
+                const institutionId =
+                    institution.institution_id ||
+                    institution.id ||
+                    "";
+
+
+                const institutionName =
+                    institution.institution_name ||
+                    institution.name ||
+                    "";
+
+
+                if (
+                    !institutionId ||
+                    !institutionName
+                ) {
+
+                    return;
+
                 }
-            )
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    institutionId;
+
+
+                option.textContent =
+                    institutionName;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
         );
-
-
-        return {
-
-            success:
-                true,
-
-            user:
-                authResult.user,
-
-            session:
-                authResult.session,
-
-            token:
-                authResult.token,
-
-            data:
-                authResult.raw
-        };
 
 
     } catch (error) {
 
         console.error(
-            "Login error:",
+            "Institution loading error:",
             error
         );
 
 
-        return {
+        select.innerHTML = `
 
-            success:
-                false,
+            <option value="">
+                Unable to load institutions
+            </option>
 
-            message:
-                error.message ||
-                "Login failed.",
+        `;
 
-            error:
-                error
-        };
     }
+
 }
 
 
 /* ============================================================
-   12. GET CURRENT USER
+   11. VALIDATE EMAIL
    ============================================================ */
 
-function getCurrentUser() {
-
-    return getStoredUser_();
-}
-
-
-/* ============================================================
-   13. GET CURRENT SESSION
-   ============================================================ */
-
-function getCurrentSession() {
-
-    return getStoredAuthSession_();
-}
-
-
-/* ============================================================
-   14. GET AUTH TOKEN
-   ============================================================ */
-
-function getAuthToken() {
-
-    return getStoredToken_();
-}
-
-
-/* ============================================================
-   15. CHECK WHETHER USER IS LOGGED IN
-   ============================================================ */
-
-function isLoggedIn() {
-
-    const user =
-        getCurrentUser();
-
-    const session =
-        getCurrentSession();
-
-    const token =
-        getAuthToken();
-
-
-    /*
-     * A user is considered locally authenticated if the
-     * frontend has at least the information returned by
-     * the backend.
-     */
-
-    return !!(
-        user ||
-        session ||
-        token
-    );
-}
-
-
-/* ============================================================
-   16. LOGOUT
-   ============================================================ */
-
-function logoutUser() {
-
-    try {
-
-        /*
-         * Remove all locally stored authentication data.
-         */
-
-        clearAuthStorage_();
-
-
-        /*
-         * Remove authentication timestamp.
-         */
-
-        localStorage.removeItem(
-            "afc_isiu_auth_timestamp"
-        );
-
-
-        /*
-         * Notify the frontend.
-         */
-
-        window.dispatchEvent(
-            new CustomEvent(
-                "auth:logout"
-            )
-        );
-
-
-        console.log(
-            "User logged out successfully."
-        );
-
-
-        return {
-
-            success:
-                true,
-
-            message:
-                "You have been logged out."
-        };
-
-
-    } catch (error) {
-
-        console.error(
-            "Logout error:",
-            error
-        );
-
-
-        return {
-
-            success:
-                false,
-
-            message:
-                error.message ||
-                "Unable to log out."
-        };
-    }
-}
-
-
-/* ============================================================
-   17. AUTHENTICATION STATE
-   ============================================================ */
-
-function getAuthState() {
-
-    const user =
-        getCurrentUser();
-
-    const session =
-        getCurrentSession();
-
-    const token =
-        getAuthToken();
-
-
-    return {
-
-        authenticated:
-            isLoggedIn(),
-
-        user:
-            user,
-
-        session:
-            session,
-
-        token:
-            token
-    };
-}
-
-
-/* ============================================================
-   18. REQUIRE LOGIN
-   ============================================================
- *
- * This will be used later on protected pages such as:
- *
- * - Profile
- * - Quiz
- * - Reflection
- * - Prayer Requests
- * - Welfare
- *
- * ============================================================
- */
-
-function requireLogin(
-    redirectTo = "login.html"
+function isValidEmail(
+    email
 ) {
 
-    if (isLoggedIn()) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        .test(
+            email
+        );
 
-        return true;
+}
+
+
+/* ============================================================
+   12. VALIDATE REGISTRATION FORM
+   ============================================================ */
+
+function validateRegistrationData(
+    data
+) {
+
+    if (!data.first_name) {
+
+        return "Please enter your first name.";
+
     }
 
 
-    /*
-     * Save the page the user was attempting to visit.
-     */
+    if (!data.last_name) {
 
-    try {
+        return "Please enter your last name.";
 
-        sessionStorage.setItem(
-            "afc_isiu_redirect_after_login",
-            window.location.href
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to store redirect location."
-        );
     }
 
-
-    /*
-     * Redirect to login page.
-     */
 
     if (
-        window.location.pathname
-        .toLowerCase()
-        .endsWith(
-            redirectTo.toLowerCase()
-        ) === false
+        !data.email ||
+        !isValidEmail(data.email)
     ) {
 
-        window.location.href =
-            redirectTo;
+        return "Please enter a valid email address.";
+
     }
 
 
-    return false;
+    if (!data.password) {
+
+        return "Please create a password.";
+
+    }
+
+
+    if (
+        data.password.length <
+        AUTH_FRONTEND_CONFIG.PASSWORD_MIN_LENGTH
+    ) {
+
+        return (
+            "Your password must contain at least " +
+            AUTH_FRONTEND_CONFIG.PASSWORD_MIN_LENGTH +
+            " characters."
+        );
+
+    }
+
+
+    if (
+        data.password !==
+        data.confirm_password
+    ) {
+
+        return "Your passwords do not match.";
+
+    }
+
+
+    if (!data.date_of_birth) {
+
+        return "Please enter your date of birth.";
+
+    }
+
+
+    if (!data.institution_id) {
+
+        return "Please select your school or institution.";
+
+    }
+
+
+    if (!data.level) {
+
+        return "Please select your level.";
+
+    }
+
+
+    return "";
+
 }
 
 
 /* ============================================================
-   19. GET POST-LOGIN REDIRECT
+   13. GET REGISTRATION DATA
    ============================================================ */
 
-function getLoginRedirect() {
+function getRegistrationData() {
+
+    /*
+     * IMPORTANT:
+     *
+     * These names intentionally match
+     * 03_Auth.gs exactly.
+     */
+
+    return {
+
+        first_name:
+            $("#firstName")?.value.trim() || "",
+
+        last_name:
+            $("#lastName")?.value.trim() || "",
+
+        email:
+            $("#registerEmail")?.value.trim().toLowerCase() || "",
+
+        phone:
+            $("#phone")?.value.trim() || "",
+
+        password:
+            $("#registerPassword")?.value || "",
+
+        confirm_password:
+            $("#confirmPassword")?.value || "",
+
+        date_of_birth:
+            $("#dateOfBirth")?.value || "",
+
+        institution_id:
+            $("#institutionId")?.value || "",
+
+        course:
+            $("#course")?.value.trim() || "",
+
+        level:
+            $("#level")?.value || "",
+
+        gender:
+            $("#gender")?.value || "",
+
+        language:
+            $("#language")?.value || "en",
+
+        theme:
+            $("#theme")?.value || "system"
+
+    };
+
+}
+
+
+/* ============================================================
+   14. REGISTER USER
+   ============================================================ */
+
+async function handleRegistration(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const form =
+        event.currentTarget;
+
+
+    const button =
+        $("#registerSubmit");
+
+
+    const message =
+        $("#registerMessage");
+
+
+    clearMessage(
+        message
+    );
+
+
+    const data =
+        getRegistrationData();
+
+
+    /*
+     * FRONTEND VALIDATION
+     */
+
+    const validationMessage =
+        validateRegistrationData(
+            data
+        );
+
+
+    if (validationMessage) {
+
+        showMessage(
+            message,
+            validationMessage,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    setButtonLoading(
+        button,
+        true
+    );
+
 
     try {
 
-        const redirect =
-            sessionStorage.getItem(
-                "afc_isiu_redirect_after_login"
+        /*
+         * IMPORTANT:
+         *
+         * This is the action that caused
+         * the previous "Unknown API action"
+         * error.
+         *
+         * 02_Router.gs now accepts:
+         *
+         * registerUser
+         *
+         * and sends it to:
+         *
+         * registerUser(request)
+         */
+
+        const result =
+            await API.post(
+                "registerUser",
+                data
             );
 
 
-        if (redirect) {
+        console.log(
+            "REGISTRATION RESULT:",
+            result
+        );
 
-            sessionStorage.removeItem(
-                "afc_isiu_redirect_after_login"
+
+        /*
+         * Save returned user information
+         * if available.
+         */
+
+        const user =
+            result?.data?.user ||
+            result?.data ||
+            result?.user ||
+            null;
+
+
+        if (user) {
+
+            localStorage.setItem(
+                "afc_user",
+                JSON.stringify(user)
             );
 
-            return redirect;
         }
+
+
+        /*
+         * Registration succeeded.
+         */
+
+        showMessage(
+            message,
+            result?.message ||
+            "Your account has been created successfully.",
+            "success"
+        );
+
+
+        /*
+         * Short delay so the user sees
+         * the success message.
+         */
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    AUTH_FRONTEND_CONFIG.AFTER_REGISTER;
+
+            },
+            900
+        );
 
 
     } catch (error) {
 
-        console.warn(
-            "Unable to read login redirect."
+        console.error(
+            "REGISTRATION ERROR:",
+            error
         );
+
+
+        showMessage(
+            message,
+            error.message ||
+            "Unable to create your account. Please try again.",
+            "error"
+        );
+
+
+        setButtonLoading(
+            button,
+            false
+        );
+
+        return;
+
     }
 
 
-    return "index.html";
 }
 
 
 /* ============================================================
-   20. COMPLETE AUTHENTICATION TEST
+   15. LOGIN
    ============================================================ */
 
-function testAuthenticationStorage() {
+async function handleLogin(
+    event
+) {
 
-    console.log(
-        "========================================"
-    );
-
-    console.log(
-        "STEP 10C — AUTHENTICATION STORAGE TEST"
-    );
-
-    console.log(
-        "========================================"
-    );
+    event.preventDefault();
 
 
-    const state =
-        getAuthState();
+    const button =
+        $("#loginSubmit");
 
 
-    console.log(
-        "AUTHENTICATION STATE:"
-    );
+    const message =
+        $("#loginMessage");
 
-    console.log(
-        state
+
+    clearMessage(
+        message
     );
 
 
-    console.log(
-        "CURRENT USER:",
-        getCurrentUser()
+    const email =
+        $("#loginEmail")?.value
+            .trim()
+            .toLowerCase() || "";
+
+
+    const password =
+        $("#loginPassword")?.value || "";
+
+
+    if (
+        !email ||
+        !isValidEmail(email)
+    ) {
+
+        showMessage(
+            message,
+            "Please enter a valid email address.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!password) {
+
+        showMessage(
+            message,
+            "Please enter your password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    setButtonLoading(
+        button,
+        true
     );
 
 
-    console.log(
-        "CURRENT SESSION:",
-        getCurrentSession()
-    );
+    try {
+
+        const result =
+            await API.post(
+                "login",
+                {
+
+                    email:
+                        email,
+
+                    password:
+                        password
+
+                }
+            );
 
 
-    console.log(
-        "AUTH TOKEN:",
-        getAuthToken()
-    );
+        console.log(
+            "LOGIN RESULT:",
+            result
+        );
 
 
-    console.log(
-        "LOGGED IN:",
-        isLoggedIn()
-    );
+        /*
+         * Extract login data.
+         */
+
+        const resultData =
+            result?.data ||
+            result;
 
 
-    console.log(
-        "========================================"
-    );
-
-    console.log(
-        "STEP 10C STORAGE TEST COMPLETE"
-    );
-
-    console.log(
-        "========================================"
-    );
+        const user =
+            resultData?.user ||
+            null;
 
 
-    return {
+        const session =
+            resultData?.session ||
+            null;
 
-        success:
-            true,
 
-        authenticated:
-            state.authenticated,
+        /*
+         * Store user.
+         */
 
-        user:
-            state.user,
+        if (user) {
 
-        session:
-            state.session,
+            localStorage.setItem(
+                "afc_user",
+                JSON.stringify(user)
+            );
 
-        timestamp:
-            new Date().toISOString()
-    };
+        }
+
+
+        /*
+         * Store authentication token.
+         */
+
+        if (
+            session &&
+            session.token
+        ) {
+
+            localStorage.setItem(
+                "afc_auth_token",
+                session.token
+            );
+
+        }
+
+
+        /*
+         * Store complete session.
+         */
+
+        if (session) {
+
+            localStorage.setItem(
+                "afc_session",
+                JSON.stringify(session)
+            );
+
+        }
+
+
+        showMessage(
+            message,
+            result?.message ||
+            "Login successful.",
+            "success"
+        );
+
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    AUTH_FRONTEND_CONFIG.AFTER_LOGIN;
+
+            },
+            700
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
+
+
+        showMessage(
+            message,
+            error.message ||
+            "Unable to log in. Please check your details.",
+            "error"
+        );
+
+
+        setButtonLoading(
+            button,
+            false
+        );
+
+    }
+
 }
 
 
 /* ============================================================
-   21. GLOBAL API
+   16. FORGOT PASSWORD
    ============================================================ */
 
-window.AUTH = {
+const forgotPasswordButton =
+    $("#forgotPasswordButton");
 
-    register:
-        registerUser,
 
-    login:
-        loginUser,
+if (forgotPasswordButton) {
 
-    logout:
-        logoutUser,
+    forgotPasswordButton.addEventListener(
+        "click",
+        function() {
 
-    currentUser:
-        getCurrentUser,
+            alert(
+                "Password recovery will be added in a later authentication phase."
+            );
 
-    currentSession:
-        getCurrentSession,
+        }
+    );
 
-    token:
-        getAuthToken,
-
-    isLoggedIn:
-        isLoggedIn,
-
-    state:
-        getAuthState,
-
-    requireLogin:
-        requireLogin,
-
-    getLoginRedirect:
-        getLoginRedirect,
-
-    testStorage:
-        testAuthenticationStorage
-};
+}
 
 
 /* ============================================================
-   22. GLOBAL FUNCTIONS
+   17. FORM EVENTS
    ============================================================ */
 
-window.registerUser =
-    registerUser;
+const loginForm =
+    $("#loginForm");
 
-window.loginUser =
-    loginUser;
 
-window.logoutUser =
-    logoutUser;
+const registerForm =
+    $("#registerForm");
 
-window.getCurrentUser =
-    getCurrentUser;
 
-window.getCurrentSession =
-    getCurrentSession;
+if (loginForm) {
 
-window.getAuthToken =
-    getAuthToken;
+    loginForm.addEventListener(
+        "submit",
+        handleLogin
+    );
 
-window.isLoggedIn =
-    isLoggedIn;
+}
 
-window.getAuthState =
-    getAuthState;
 
-window.requireLogin =
-    requireLogin;
+if (registerForm) {
+
+    registerForm.addEventListener(
+        "submit",
+        handleRegistration
+    );
+
+}
 
 
 /* ============================================================
-   23. AUTH STARTUP LOG
+   18. STARTUP
    ============================================================ */
 
-console.log(
-    "AFC Isiu Youth Portal authentication layer loaded.",
-    {
-        loggedIn:
-            isLoggedIn(),
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
 
-        user:
-            getCurrentUser()
+        /*
+         * Password eye icons.
+         */
+
+        setupPasswordToggles();
+
+
+        /*
+         * Load institutions.
+         */
+
+        await loadInstitutions();
+
+
+        /*
+         * Refresh Lucide icons after
+         * dynamically creating/changing icons.
+         */
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "STEP 10D AUTHENTICATION FRONTEND READY"
+        );
+
+        console.log(
+            "========================================"
+        );
+
     }
 );
