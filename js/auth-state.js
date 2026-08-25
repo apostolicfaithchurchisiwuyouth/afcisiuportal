@@ -6,16 +6,29 @@
  *
  * PURPOSE:
  * ------------------------------------------------------------
- * Manages the logged-in user's session on the frontend.
+ * Central authentication state manager for the frontend.
  *
  * RESPONSIBILITIES:
- * 1. Store login session
- * 2. Retrieve login session
- * 3. Check whether user is authenticated
- * 4. Get current user
- * 5. Clear session on logout
+ * 1. Store authenticated user
+ * 2. Store authenticated session
+ * 3. Retrieve authenticated user
+ * 4. Retrieve session token
+ * 5. Check session expiration
  * 6. Protect authenticated pages
- * 7. Connect logout to backend
+ * 7. Redirect authenticated users
+ * 8. Logout from backend
+ * 9. Clear authentication state
+ *
+ * IMPORTANT:
+ * ------------------------------------------------------------
+ * 10E is the SINGLE source of truth for frontend
+ * authentication storage.
+ *
+ * 10D MUST use:
+ *
+ *     AUTH.save(result.data)
+ *
+ * after successful login.
  *
  * ============================================================
  */
@@ -29,40 +42,40 @@
 
 const AUTH_STORAGE_KEYS = {
 
-    SESSION:
-        "afc_isiu_auth_session",
-
     USER:
-        "afc_isiu_auth_user"
+        "afc_isiu_auth_user",
+
+    SESSION:
+        "afc_isiu_auth_session"
 
 };
 
 
 /* ============================================================
-   2. SAFE STORAGE
+   2. SAFE JSON PARSER
    ============================================================ */
 
-function getStoredAuthSession_() {
+function parseStoredJSON_(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
 
     try {
 
-        const stored =
-            localStorage.getItem(
-                AUTH_STORAGE_KEYS.SESSION
-            );
-
-        if (!stored) {
-
-            return null;
-
-        }
-
-        return JSON.parse(stored);
+        return JSON.parse(
+            value
+        );
 
     } catch (error) {
 
-        console.error(
-            "Unable to read stored auth session:",
+        console.warn(
+            "Invalid stored authentication data.",
             error
         );
 
@@ -86,13 +99,10 @@ function getStoredAuthUser_() {
                 AUTH_STORAGE_KEYS.USER
             );
 
-        if (!stored) {
 
-            return null;
-
-        }
-
-        return JSON.parse(stored);
+        return parseStoredJSON_(
+            stored
+        );
 
     } catch (error) {
 
@@ -109,8 +119,53 @@ function getStoredAuthUser_() {
 
 
 /* ============================================================
-   4. SAVE AUTHENTICATION
+   4. GET STORED SESSION
    ============================================================ */
+
+function getStoredAuthSession_() {
+
+    try {
+
+        const stored =
+            localStorage.getItem(
+                AUTH_STORAGE_KEYS.SESSION
+            );
+
+
+        return parseStoredJSON_(
+            stored
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Unable to read stored session:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* ============================================================
+   5. SAVE AUTHENTICATION
+   ============================================================ */
+
+/**
+ * Expected login response:
+ *
+ * {
+ *     user: {...},
+ *
+ *     session: {
+ *         token: "...",
+ *         expires_at: "..."
+ *     }
+ * }
+ */
 
 function saveAuthentication(
     loginResult
@@ -118,25 +173,58 @@ function saveAuthentication(
 
     if (
         !loginResult ||
-        !loginResult.user ||
-        !loginResult.session
+        typeof loginResult !== "object"
     ) {
 
         throw new Error(
-            "Invalid login response."
+            "Invalid authentication response."
         );
 
     }
 
 
     const user =
-        loginResult.user;
+        loginResult.user ||
+        null;
+
 
     const session =
-        loginResult.session;
+        loginResult.session ||
+        null;
+
+
+    if (!user) {
+
+        throw new Error(
+            "Login response did not contain a user."
+        );
+
+    }
+
+
+    if (!session) {
+
+        throw new Error(
+            "Login response did not contain a session."
+        );
+
+    }
+
+
+    if (!session.token) {
+
+        throw new Error(
+            "Login response did not contain a session token."
+        );
+
+    }
 
 
     try {
+
+        /*
+         * Save USER.
+         */
 
         localStorage.setItem(
 
@@ -149,6 +237,10 @@ function saveAuthentication(
         );
 
 
+        /*
+         * Save SESSION.
+         */
+
         localStorage.setItem(
 
             AUTH_STORAGE_KEYS.SESSION,
@@ -160,8 +252,43 @@ function saveAuthentication(
         );
 
 
+        /*
+         * Verify that the data was
+         * actually written.
+         */
+
+        const savedUser =
+            getStoredAuthUser_();
+
+
+        const savedSession =
+            getStoredAuthSession_();
+
+
+        if (
+            !savedUser ||
+            !savedSession ||
+            !savedSession.token
+        ) {
+
+            throw new Error(
+                "Authentication data could not be verified after saving."
+            );
+
+        }
+
+
         console.log(
-            "Authentication saved successfully."
+            "Authentication saved successfully.",
+            {
+
+                user_id:
+                    savedUser.user_id || "",
+
+                expires_at:
+                    savedSession.expires_at || ""
+
+            }
         );
 
 
@@ -171,13 +298,12 @@ function saveAuthentication(
                 true,
 
             user:
-                user,
+                savedUser,
 
             session:
-                session
+                savedSession
 
         };
-
 
     } catch (error) {
 
@@ -187,15 +313,16 @@ function saveAuthentication(
         );
 
 
-        return {
+        /*
+         * Remove partially saved data.
+         */
 
-            success:
-                false,
+        clearAuthentication();
 
-            message:
-                "Unable to save your login session."
 
-        };
+        throw new Error(
+            "Unable to save your login session."
+        );
 
     }
 
@@ -203,7 +330,7 @@ function saveAuthentication(
 
 
 /* ============================================================
-   5. GET CURRENT SESSION
+   6. GET CURRENT SESSION
    ============================================================ */
 
 function getAuthSession() {
@@ -214,7 +341,7 @@ function getAuthSession() {
 
 
 /* ============================================================
-   6. GET CURRENT USER
+   7. GET CURRENT USER
    ============================================================ */
 
 function getCurrentUser() {
@@ -225,7 +352,7 @@ function getCurrentUser() {
 
 
 /* ============================================================
-   7. GET AUTH TOKEN
+   8. GET AUTH TOKEN
    ============================================================ */
 
 function getAuthToken() {
@@ -246,27 +373,94 @@ function getAuthToken() {
 
     return String(
         session.token
+    ).trim();
+
+}
+
+
+/* ============================================================
+   9. CHECK SESSION EXPIRATION
+   ============================================================ */
+
+function isSessionExpired_(
+    session
+) {
+
+    if (
+        !session ||
+        !session.expires_at
+    ) {
+
+        /*
+         * If the backend did not provide
+         * an expiration date, do not
+         * automatically expire the session
+         * on the frontend.
+         */
+
+        return false;
+
+    }
+
+
+    const expiresAt =
+        new Date(
+            session.expires_at
+        );
+
+
+    if (
+        isNaN(
+            expiresAt.getTime()
+        )
+    ) {
+
+        /*
+         * Invalid date.
+         *
+         * Let the backend remain the
+         * final authority.
+         */
+
+        console.warn(
+            "Invalid session expiration date:",
+            session.expires_at
+        );
+
+        return false;
+
+    }
+
+
+    return (
+        expiresAt.getTime() <=
+        Date.now()
     );
 
 }
 
 
 /* ============================================================
-   8. CHECK AUTHENTICATION
+   10. CHECK AUTHENTICATION
    ============================================================ */
 
 function isAuthenticated() {
-
-    const session =
-        getAuthSession();
 
     const user =
         getCurrentUser();
 
 
+    const session =
+        getAuthSession();
+
+
+    /*
+     * Both user and session are required.
+     */
+
     if (
-        !session ||
-        !user
+        !user ||
+        !session
     ) {
 
         return false;
@@ -274,7 +468,15 @@ function isAuthenticated() {
     }
 
 
-    if (!session.token) {
+    /*
+     * Session token is required.
+     */
+
+    if (
+        !session.token
+    ) {
+
+        clearAuthentication();
 
         return false;
 
@@ -282,30 +484,24 @@ function isAuthenticated() {
 
 
     /*
-     * Check session expiration if available.
+     * Check expiration.
      */
 
-    if (session.expires_at) {
+    if (
+        isSessionExpired_(
+            session
+        )
+    ) {
 
-        const expiresAt =
-            new Date(
-                session.expires_at
-            );
+        console.warn(
+            "Stored authentication session has expired."
+        );
 
 
-        if (
-            !isNaN(
-                expiresAt.getTime()
-            ) &&
-            expiresAt.getTime() <=
-                Date.now()
-        ) {
+        clearAuthentication();
 
-            clearAuthentication();
 
-            return false;
-
-        }
+        return false;
 
     }
 
@@ -316,7 +512,7 @@ function isAuthenticated() {
 
 
 /* ============================================================
-   9. GET AUTHENTICATED REQUEST DATA
+   11. GET AUTHENTICATED REQUEST DATA
    ============================================================ */
 
 function getAuthenticatedRequestData(
@@ -340,7 +536,69 @@ function getAuthenticatedRequestData(
 
 
 /* ============================================================
-   10. LOGOUT
+   12. CLEAR AUTHENTICATION
+   ============================================================ */
+
+function clearAuthentication() {
+
+    try {
+
+        localStorage.removeItem(
+            AUTH_STORAGE_KEYS.USER
+        );
+
+
+        localStorage.removeItem(
+            AUTH_STORAGE_KEYS.SESSION
+        );
+
+
+        /*
+         * Remove the OLD authentication
+         * keys used by the previous 10D.
+         *
+         * This prevents old authentication
+         * data from causing confusion.
+         */
+
+        localStorage.removeItem(
+            "afc_user"
+        );
+
+
+        localStorage.removeItem(
+            "afc_session_token"
+        );
+
+
+        localStorage.removeItem(
+            "afc_session_expires_at"
+        );
+
+
+        console.log(
+            "Authentication cleared."
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Unable to clear authentication:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* ============================================================
+   13. LOGOUT
    ============================================================ */
 
 async function logoutUserFrontend() {
@@ -350,10 +608,7 @@ async function logoutUserFrontend() {
 
 
     /*
-     * Try to notify the backend.
-     *
-     * Even if the backend request fails,
-     * we still clear the local session.
+     * Notify backend when possible.
      */
 
     if (token) {
@@ -365,13 +620,20 @@ async function logoutUserFrontend() {
                 "logout",
 
                 {
+
                     token:
                         token
+
                 }
 
             );
 
         } catch (error) {
+
+            /*
+             * Local logout must still happen
+             * even if the backend request fails.
+             */
 
             console.warn(
                 "Backend logout request failed:",
@@ -382,6 +644,10 @@ async function logoutUserFrontend() {
 
     }
 
+
+    /*
+     * Always clear local authentication.
+     */
 
     clearAuthentication();
 
@@ -400,41 +666,15 @@ async function logoutUserFrontend() {
 
 
 /* ============================================================
-   11. CLEAR AUTHENTICATION
+   14. REQUIRE LOGIN
    ============================================================ */
 
-function clearAuthentication() {
-
-    try {
-
-        localStorage.removeItem(
-            AUTH_STORAGE_KEYS.SESSION
-        );
-
-        localStorage.removeItem(
-            AUTH_STORAGE_KEYS.USER
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Unable to clear authentication:",
-            error
-        );
-
-    }
-
-
-    console.log(
-        "Authentication cleared."
-    );
-
-}
-
-
-/* ============================================================
-   12. PROTECT PAGE
-   ============================================================ */
+/**
+ * Use this on protected pages:
+ *
+ * AUTH.requireLogin();
+ *
+ */
 
 function requireLogin(
     redirectPage = "login.html"
@@ -450,12 +690,14 @@ function requireLogin(
 
 
     console.warn(
-        "Authentication required."
+        "Authentication required. Redirecting to:",
+        redirectPage
     );
 
 
-    window.location.href =
-        redirectPage;
+    window.location.replace(
+        redirectPage
+    );
 
 
     return false;
@@ -464,19 +706,33 @@ function requireLogin(
 
 
 /* ============================================================
-   13. REDIRECT IF ALREADY LOGGED IN
+   15. REDIRECT IF ALREADY AUTHENTICATED
    ============================================================ */
 
+/**
+ * Use this on login.html.
+ *
+ * If a valid session already exists,
+ * send the user to dashboard.html.
+ */
+
 function redirectIfAuthenticated(
-    redirectPage = "index.html"
+    redirectPage = "dashboard.html"
 ) {
 
     if (
         isAuthenticated()
     ) {
 
-        window.location.href =
-            redirectPage;
+        console.log(
+            "Existing authenticated session found."
+        );
+
+
+        window.location.replace(
+            redirectPage
+        );
+
 
         return true;
 
@@ -489,7 +745,7 @@ function redirectIfAuthenticated(
 
 
 /* ============================================================
-   14. GET USER DISPLAY NAME
+   16. GET USER DISPLAY NAME
    ============================================================ */
 
 function getUserDisplayName() {
@@ -518,19 +774,22 @@ function getUserDisplayName() {
 
 
     return (
+
         firstName +
+
         (
             lastName
                 ? " " + lastName
                 : ""
         )
+
     ).trim();
 
 }
 
 
 /* ============================================================
-   15. GET USER FIRST NAME
+   17. GET USER FIRST NAME
    ============================================================ */
 
 function getUserFirstName() {
@@ -554,7 +813,7 @@ function getUserFirstName() {
 
 
 /* ============================================================
-   16. GET USER ID
+   18. GET USER ID
    ============================================================ */
 
 function getCurrentUserId() {
@@ -578,7 +837,7 @@ function getCurrentUserId() {
 
 
 /* ============================================================
-   17. AUTH STATE SUMMARY
+   19. GET AUTH STATE
    ============================================================ */
 
 function getAuthState() {
@@ -612,7 +871,9 @@ function getAuthState() {
 
         userId:
             user
-                ? user.user_id || ""
+                ? String(
+                    user.user_id || ""
+                )
                 : "",
 
         displayName:
@@ -631,91 +892,222 @@ function getAuthState() {
 
 
 /* ============================================================
-   18. GLOBAL EXPORT
+   20. DEBUG AUTH STATE
    ============================================================ */
 
-window.AUTH =
-    {
+function debugAuthentication() {
 
-        save:
-            saveAuthentication,
+    const state =
+        getAuthState();
 
-        getSession:
-            getAuthSession,
 
-        getUser:
-            getCurrentUser,
+    console.log(
+        "========== AFC AUTH STATE =========="
+    );
 
-        getToken:
-            getAuthToken,
 
-        isAuthenticated:
-            isAuthenticated,
+    console.log(
+        "Authenticated:",
+        state.authenticated
+    );
 
-        getState:
-            getAuthState,
 
-        getUserId:
-            getCurrentUserId,
+    console.log(
+        "User:",
+        state.user
+    );
 
-        getDisplayName:
-            getUserDisplayName,
 
-        getFirstName:
-            getUserFirstName,
+    console.log(
+        "Session:",
+        state.session
+    );
 
-        getRequestData:
-            getAuthenticatedRequestData,
 
-        logout:
-            logoutUserFrontend,
+    console.log(
+        "Token exists:",
+        Boolean(
+            state.session &&
+            state.session.token
+        )
+    );
 
-        clear:
-            clearAuthentication,
 
-        requireLogin:
-            requireLogin,
+    console.log(
+        "===================================="
+    );
 
-        redirectIfAuthenticated:
-            redirectIfAuthenticated
 
-    };
+    return state;
+
+}
 
 
 /* ============================================================
-   19. GLOBAL HELPERS
+   21. GLOBAL AUTH OBJECT
+   ============================================================ */
+
+window.AUTH = {
+
+    /*
+     * Save authentication
+     */
+
+    save:
+        saveAuthentication,
+
+
+    /*
+     * Session
+     */
+
+    getSession:
+        getAuthSession,
+
+
+    /*
+     * User
+     */
+
+    getUser:
+        getCurrentUser,
+
+
+    /*
+     * Token
+     */
+
+    getToken:
+        getAuthToken,
+
+
+    /*
+     * Authentication status
+     */
+
+    isAuthenticated:
+        isAuthenticated,
+
+
+    /*
+     * Complete state
+     */
+
+    getState:
+        getAuthState,
+
+
+    /*
+     * User ID
+     */
+
+    getUserId:
+        getCurrentUserId,
+
+
+    /*
+     * Names
+     */
+
+    getDisplayName:
+        getUserDisplayName,
+
+    getFirstName:
+        getUserFirstName,
+
+
+    /*
+     * Request helper
+     */
+
+    getRequestData:
+        getAuthenticatedRequestData,
+
+
+    /*
+     * Logout
+     */
+
+    logout:
+        logoutUserFrontend,
+
+
+    /*
+     * Clear local session
+     */
+
+    clear:
+        clearAuthentication,
+
+
+    /*
+     * Protect pages
+     */
+
+    requireLogin:
+        requireLogin,
+
+
+    /*
+     * Redirect already authenticated users
+     */
+
+    redirectIfAuthenticated:
+        redirectIfAuthenticated,
+
+
+    /*
+     * Debug
+     */
+
+    debug:
+        debugAuthentication
+
+};
+
+
+/* ============================================================
+   22. GLOBAL COMPATIBILITY HELPERS
    ============================================================ */
 
 window.saveAuthentication =
     saveAuthentication;
 
+
 window.isAuthenticated =
     isAuthenticated;
+
 
 window.getCurrentUser =
     getCurrentUser;
 
+
 window.getAuthToken =
     getAuthToken;
 
+
 window.getAuthState =
     getAuthState;
+
 
 window.logoutUserFrontend =
     logoutUserFrontend;
 
 
 /* ============================================================
-   20. STARTUP LOG
+   23. STARTUP LOG
    ============================================================ */
 
 console.log(
-    "AFC Isiu Youth Portal authentication state loaded.",
-    {
-        authenticated:
-            isAuthenticated(),
-
-        user:
-            getCurrentUser()
-    }
+    "AFC Isiu Youth Portal — 10E Authentication State loaded."
 );
+
+console.log(
+    "Current authentication state:",
+    getAuthState()
+);
+
+
+/* ============================================================
+   END OF 10E
+   ============================================================ */
