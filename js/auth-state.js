@@ -8,39 +8,24 @@
  * ------------------------------------------------------------
  * Central authentication state manager for the frontend.
  *
- * 10E is the SINGLE source of truth for frontend
+ * IMPORTANT:
+ * ------------------------------------------------------------
+ * This file is the SINGLE source of truth for frontend
  * authentication storage.
  *
- * Responsibilities:
+ * Authentication is stored in localStorage.
  *
- * 1. Store authenticated user
- * 2. Store authenticated session
- * 3. Retrieve authenticated user
- * 4. Retrieve session token
- * 5. Check session expiration
- * 6. Protect authenticated pages
- * 7. Redirect authenticated users
- * 8. Logout from backend
- * 9. Clear authentication state
+ * Guests may access public pages such as:
  *
- * LOGIN FLOW:
+ *     index.html
+ *     pages/lessons.html
+ *     pages/gallery.html
  *
- *     AUTH.save(result.data)
+ * Authentication is required for member-only features such as:
  *
- * Expected authentication data:
- *
- * {
- *     user: {
- *         user_id: "...",
- *         first_name: "...",
- *         last_name: "..."
- *     },
- *
- *     session: {
- *         token: "...",
- *         expires_at: "..."
- *     }
- * }
+ *     pages/quiz.html
+ *     pages/profile.html
+ *     pages/notifications.html
  *
  * ============================================================
  */
@@ -172,32 +157,13 @@ function saveAuthentication(loginResult) {
     }
 
 
-    /*
-     * Support both:
-     *
-     * AUTH.save(result.data)
-     *
-     * and, defensively:
-     *
-     * AUTH.save(result)
-     *
-     */
-
-    const source =
-        loginResult.data &&
-        typeof loginResult.data === "object"
-            ? loginResult.data
-            : loginResult;
-
-
     const user =
-        source.user ||
-        source.member ||
+        loginResult.user ||
         null;
 
 
     const session =
-        source.session ||
+        loginResult.session ||
         null;
 
 
@@ -230,10 +196,6 @@ function saveAuthentication(loginResult) {
 
     try {
 
-        /*
-         * Save USER.
-         */
-
         localStorage.setItem(
 
             AUTH_STORAGE_KEYS.USER,
@@ -243,10 +205,6 @@ function saveAuthentication(loginResult) {
         );
 
 
-        /*
-         * Save SESSION.
-         */
-
         localStorage.setItem(
 
             AUTH_STORAGE_KEYS.SESSION,
@@ -255,10 +213,6 @@ function saveAuthentication(loginResult) {
 
         );
 
-
-        /*
-         * Verify the saved information.
-         */
 
         const savedUser =
             getStoredAuthUser_();
@@ -388,12 +342,6 @@ function isSessionExpired_(session) {
         !session.expires_at
     ) {
 
-        /*
-         * No expiration supplied.
-         *
-         * Backend remains the final authority.
-         */
-
         return false;
 
     }
@@ -415,13 +363,6 @@ function isSessionExpired_(session) {
             "Invalid session expiration date:",
             session.expires_at
         );
-
-
-        /*
-         * Do not destroy a potentially valid
-         * backend session because of a frontend
-         * date parsing issue.
-         */
 
         return false;
 
@@ -450,10 +391,6 @@ function isAuthenticated() {
         getAuthSession();
 
 
-    /*
-     * Both user and session are required.
-     */
-
     if (
         !user ||
         !session
@@ -463,10 +400,6 @@ function isAuthenticated() {
 
     }
 
-
-    /*
-     * Session token is mandatory.
-     */
 
     if (
         !session.token
@@ -478,10 +411,6 @@ function isAuthenticated() {
 
     }
 
-
-    /*
-     * Check expiration.
-     */
 
     if (
         isSessionExpired_(
@@ -537,10 +466,6 @@ function clearAuthentication() {
 
     try {
 
-        /*
-         * Current authentication keys.
-         */
-
         localStorage.removeItem(
             AUTH_STORAGE_KEYS.USER
         );
@@ -552,10 +477,7 @@ function clearAuthentication() {
 
 
         /*
-         * Previous authentication keys.
-         *
-         * Keep these removals for migration
-         * compatibility.
+         * Remove legacy authentication keys.
          */
 
         localStorage.removeItem(
@@ -587,7 +509,6 @@ function clearAuthentication() {
             error
         );
 
-
         return false;
 
     }
@@ -605,31 +526,29 @@ async function logoutUserFrontend() {
         getAuthToken();
 
 
-    /*
-     * Try to notify backend.
-     */
-
-    if (
-        token &&
-        typeof API !== "undefined" &&
-        API &&
-        typeof API.post === "function"
-    ) {
+    if (token) {
 
         try {
 
-            await API.post(
+            if (
+                typeof API !== "undefined" &&
+                typeof API.post === "function"
+            ) {
 
-                "logout",
+                await API.post(
 
-                {
+                    "logout",
 
-                    token:
-                        token
+                    {
 
-                }
+                        token:
+                            token
 
-            );
+                    }
+
+                );
+
+            }
 
         } catch (error) {
 
@@ -638,7 +557,7 @@ async function logoutUserFrontend() {
              */
 
             console.warn(
-                "Backend logout request failed. Continuing with local logout.",
+                "Backend logout request failed:",
                 error
             );
 
@@ -646,10 +565,6 @@ async function logoutUserFrontend() {
 
     }
 
-
-    /*
-     * Always clear local authentication.
-     */
 
     clearAuthentication();
 
@@ -702,7 +617,16 @@ function requireLogin(
 
 /* ============================================================
    15. REDIRECT IF ALREADY AUTHENTICATED
-   ============================================================ */
+   ============================================================
+ *
+ * IMPORTANT:
+ * ------------------------------------------------------------
+ * There is NO dashboard.html.
+ *
+ * Authenticated users are sent to index.html.
+ *
+ * ============================================================
+ */
 
 function redirectIfAuthenticated(
     redirectPage = "index.html"
@@ -825,7 +749,39 @@ function getCurrentUserId() {
 
 
 /* ============================================================
-   19. GET AUTH STATE
+   19. GET USER AVATAR
+   ============================================================ */
+
+function getCurrentUserAvatar() {
+
+    const user =
+        getCurrentUser();
+
+
+    if (!user) {
+
+        return "";
+
+    }
+
+
+    return String(
+
+        user.avatar_url ||
+        user.avatar ||
+        user.profile_photo ||
+        user.photo_url ||
+        user.image_url ||
+        user.profile_image ||
+        ""
+
+    ).trim();
+
+}
+
+
+/* ============================================================
+   20. GET AUTH STATE
    ============================================================ */
 
 function getAuthState() {
@@ -872,6 +828,11 @@ function getAuthState() {
         firstName:
             user
                 ? getUserFirstName()
+                : "",
+
+        avatar:
+            user
+                ? getCurrentUserAvatar()
                 : ""
 
     };
@@ -880,7 +841,7 @@ function getAuthState() {
 
 
 /* ============================================================
-   20. DEBUG AUTH STATE
+   21. DEBUG AUTH STATE
    ============================================================ */
 
 function debugAuthentication() {
@@ -932,70 +893,31 @@ function debugAuthentication() {
 
 
 /* ============================================================
-   21. GLOBAL AUTH OBJECT
+   22. GLOBAL AUTH OBJECT
    ============================================================ */
 
 window.AUTH = {
 
-    /*
-     * Save authentication
-     */
-
     save:
         saveAuthentication,
-
-
-    /*
-     * Session
-     */
 
     getSession:
         getAuthSession,
 
-
-    /*
-     * User
-     */
-
     getUser:
         getCurrentUser,
-
-
-    /*
-     * Token
-     */
 
     getToken:
         getAuthToken,
 
-
-    /*
-     * Authentication status
-     */
-
     isAuthenticated:
         isAuthenticated,
-
-
-    /*
-     * Complete state
-     */
 
     getState:
         getAuthState,
 
-
-    /*
-     * User ID
-     */
-
     getUserId:
         getCurrentUserId,
-
-
-    /*
-     * Names
-     */
 
     getDisplayName:
         getUserDisplayName,
@@ -1003,50 +925,23 @@ window.AUTH = {
     getFirstName:
         getUserFirstName,
 
-
-    /*
-     * Request helper
-     */
+    getAvatar:
+        getCurrentUserAvatar,
 
     getRequestData:
         getAuthenticatedRequestData,
 
-
-    /*
-     * Logout
-     */
-
     logout:
         logoutUserFrontend,
-
-
-    /*
-     * Clear local session
-     */
 
     clear:
         clearAuthentication,
 
-
-    /*
-     * Protect pages
-     */
-
     requireLogin:
         requireLogin,
 
-
-    /*
-     * Redirect already authenticated users
-     */
-
     redirectIfAuthenticated:
         redirectIfAuthenticated,
-
-
-    /*
-     * Debug
-     */
 
     debug:
         debugAuthentication
@@ -1055,7 +950,7 @@ window.AUTH = {
 
 
 /* ============================================================
-   22. GLOBAL COMPATIBILITY HELPERS
+   23. GLOBAL COMPATIBILITY HELPERS
    ============================================================ */
 
 window.saveAuthentication =
@@ -1078,18 +973,21 @@ window.getAuthState =
     getAuthState;
 
 
+window.getCurrentUserAvatar =
+    getCurrentUserAvatar;
+
+
 window.logoutUserFrontend =
     logoutUserFrontend;
 
 
 /* ============================================================
-   23. STARTUP LOG
+   24. STARTUP LOG
    ============================================================ */
 
 console.log(
     "AFC Isiu Youth Portal — 10E Authentication State loaded."
 );
-
 
 console.log(
     "Current authentication state:",
