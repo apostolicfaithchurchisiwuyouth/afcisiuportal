@@ -5,29 +5,21 @@
 
 
 /* ============================================================
-   1. SIDEBAR BRAND
+   SIDEBAR BRAND
    ============================================================ */
 
 .sidebar-brand {
-
     height: 82px;
-
     padding: 0 20px;
 
     display: flex;
     align-items: center;
-
     gap: 11px;
 
     border-bottom: 1px solid var(--border);
-
-    flex-shrink: 0;
-
 }
 
-
 .brand-mark {
-
     width: 40px;
     height: 40px;
 
@@ -35,88 +27,53 @@
 
     border-radius: 12px;
 
-    background:
-        linear-gradient(
-            145deg,
-            var(--brand),
-            #7a1688
-        );
-
+    background: var(--brand);
     color: #fff;
 
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
-
 
 .brand-mark svg {
-
     width: 21px;
     height: 21px;
-
 }
 
-
 .brand-text {
-
     min-width: 0;
 
     display: flex;
     flex-direction: column;
-
 }
-
 
 .brand-text strong {
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size: 0.94rem;
-
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
     font-weight: 700;
-
-    color: var(--ink);
-
 }
 
-
 .brand-text span {
-
-    margin-top: 2px;
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.7rem;
-
+    font-family: var(--font-body);
+    font-size: 0.68rem;
     color: var(--ink-muted);
-
 }
 
 
 /* ============================================================
-   2. SIDEBAR NAVIGATION
+   SIDEBAR NAVIGATION
    ============================================================ */
 
 .sidebar-navigation {
-
     padding: 18px 12px;
 
     display: flex;
     flex-direction: column;
 
     gap: 5px;
-
 }
 
-
 .nav-item {
-
     position: relative;
 
     min-height: 44px;
@@ -132,63 +89,34 @@
 
     color: var(--ink-soft);
 
-    font-family:
-        "DM Sans",
-        sans-serif;
-
+    font-family: var(--font-body);
     font-size: 0.82rem;
-
     font-weight: 600;
 
     text-decoration: none;
 
     transition:
         background var(--transition),
-        color var(--transition),
-        transform var(--transition);
-
+        color var(--transition);
 }
-
 
 .nav-item svg {
-
     width: 19px;
     height: 19px;
-
-    flex-shrink: 0;
-
 }
-
 
 .nav-item:hover {
-
     background: var(--background);
-
     color: var(--brand);
-
 }
-
-
-.nav-item:active {
-
-    transform: scale(0.98);
-
-}
-
 
 .nav-item.active {
-
     background: var(--brand-light);
-
     color: var(--brand);
-
 }
 
-
 .nav-item.active svg {
-
     stroke-width: 2.3;
-
 }
 
 
@@ -197,7 +125,6 @@
    ============================================================ */
 
 .notification-badge {
-
     margin-left: auto;
 
     min-width: 20px;
@@ -208,7 +135,6 @@
     border-radius: 10px;
 
     background: var(--accent);
-
     color: #fff;
 
     display: flex;
@@ -216,41 +142,36 @@
     justify-content: center;
 
     font-size: 0.62rem;
-
     font-weight: 700;
-
 }
 
 
 /* ============================================================
-   3. SIDEBAR FOOTER
+   SIDEBAR FOOTER
    ============================================================ */
 
 .sidebar-footer {
-
     margin-top: auto;
 
     padding: 14px;
 
     border-top: 1px solid var(--border);
-
 }
 
+
+/* ============================================================
+   GUEST SIDEBAR
+   ============================================================ */
 
 .sidebar-guest {
-
     display: flex;
     align-items: center;
-
     gap: 10px;
 
-    padding: 8px;
-
+    padding: 9px;
 }
 
-
 .sidebar-guest-icon {
-
     width: 36px;
     height: 36px;
 
@@ -258,72 +179,43 @@
 
     border-radius: 50%;
 
-    background: var(--brand-light);
-
-    color: var(--brand);
-
     display: flex;
     align-items: center;
     justify-content: center;
 
+    background: var(--brand-light);
+    color: var(--brand);
 }
-
 
 .sidebar-guest-icon svg {
-
     width: 18px;
     height: 18px;
-
 }
 
-
 .sidebar-guest-copy {
-
     min-width: 0;
 
     display: flex;
     flex-direction: column;
-
 }
-
 
 .sidebar-guest-copy strong {
-
     font-size: 0.76rem;
-
+    font-weight: 700;
 }
 
-
 .sidebar-guest-copy small {
-
-    margin-top: 2px;
-
-    color: var(--ink-muted);
-
     font-size: 0.63rem;
-
+    color: var(--ink-muted);
     line-height: 1.35;
-
 }
 
 
 /* ============================================================
-   4. SIDEBAR PROFILE
+   SIDEBAR PROFILE
    ============================================================ */
 
-.sidebar-member {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 7px;
-
-}
-
-
 .sidebar-profile {
-
     display: flex;
     align-items: center;
 
@@ -334,92 +226,115 @@
     border-radius: 12px;
 
     color: inherit;
-
     text-decoration: none;
-
 }
-
 
 .sidebar-profile:hover {
-
     background: var(--background);
-
 }
 
-
 .sidebar-profile > div:last-child {
-
     min-width: 0;
 
     display: flex;
     flex-direction: column;
-
 }
-
 
 .sidebar-profile strong {
-
-    font-size: 0.76rem;
+    font-size: 0.75rem;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
 }
 
-
 .sidebar-profile small {
-
-    margin-top: 2px;
-
     color: var(--ink-muted);
-
     font-size: 0.63rem;
-
 }
 
 
 /* ============================================================
-   5. AVATARS
+   AVATARS
    ============================================================ */
 
-.avatar {
+.avatar,
+.header-avatar,
+.bottom-nav-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    border-radius: 50%;
+
+    overflow: hidden;
+}
+
+.avatar {
     width: 36px;
     height: 36px;
 
     flex: 0 0 36px;
 
-    border-radius: 50%;
+    background: var(--brand-light);
+    color: var(--brand);
+}
 
-    overflow: hidden;
+.avatar svg {
+    width: 18px;
+    height: 18px;
+}
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+/* ============================================================
+   HEADER AVATAR
+   ============================================================ */
+
+.header-avatar {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+    max-width: 42px;
+
+    flex: 0 0 42px;
 
     background:
         linear-gradient(
             145deg,
-            var(--brand),
+            #4a0754,
             #8b2c99
         );
 
     color: #fff;
 
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
+    text-decoration: none;
 
-    font-weight: 700;
+    border: 2px solid rgba(74, 7, 84, 0.12);
 
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
+.header-avatar-content {
+    width: 100%;
+    height: 100%;
 
-.avatar img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.header-avatar-content svg {
+    width: 19px;
+    height: 19px;
+}
+
+.header-avatar-image {
     width: 100%;
     height: 100%;
 
@@ -428,69 +343,14 @@
     display: block;
 
     border-radius: 50%;
-
 }
 
 
 /* ============================================================
-   6. SIDEBAR LOGOUT
-   ============================================================ */
-
-.sidebar-logout {
-
-    width: 100%;
-
-    min-height: 38px;
-
-    padding: 0 10px;
-
-    border: 0;
-
-    border-radius: 10px;
-
-    background: transparent;
-
-    color: var(--red);
-
-    display: flex;
-    align-items: center;
-
-    gap: 9px;
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.75rem;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-}
-
-
-.sidebar-logout:hover {
-
-    background: var(--red-light);
-
-}
-
-
-.sidebar-logout svg {
-
-    width: 17px;
-    height: 17px;
-
-}
-
-
-/* ============================================================
-   7. GENERIC ICON BUTTON
+   GENERIC ICON BUTTON
    ============================================================ */
 
 .icon-button {
-
     width: 40px;
     height: 40px;
 
@@ -505,49 +365,33 @@
     border-radius: 11px;
 
     background: transparent;
-
     color: var(--ink-soft);
 
     cursor: pointer;
 
+    padding: 0;
+
     transition:
         background var(--transition),
-        color var(--transition),
-        transform var(--transition);
-
+        color var(--transition);
 }
-
 
 .icon-button:hover {
-
     background: var(--background);
-
     color: var(--brand);
-
 }
-
-
-.icon-button:active {
-
-    transform: scale(0.94);
-
-}
-
 
 .icon-button svg {
-
-    width: 20px;
-    height: 20px;
-
+    width: 21px;
+    height: 21px;
 }
 
 
 /* ============================================================
-   8. HEADER ICON
+   HEADER ICON
    ============================================================ */
 
 .header-icon-button {
-
     position: relative;
 
     width: 42px;
@@ -555,7 +399,7 @@
 
     min-width: 42px;
 
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
 
@@ -567,109 +411,22 @@
 
     text-decoration: none;
 
+    transition:
+        background var(--transition),
+        color var(--transition);
 }
-
 
 .header-icon-button:hover {
-
     background: var(--background);
-
     color: var(--brand);
-
 }
-
 
 .header-icon-button svg {
-
-    width: 20px;
-    height: 20px;
-
+    width: 21px;
+    height: 21px;
 }
-
-
-/* ============================================================
-   9. HEADER AVATAR
-   ============================================================ */
-
-.header-avatar {
-
-    width: 42px;
-    height: 42px;
-
-    min-width: 42px;
-    max-width: 42px;
-
-    flex: 0 0 42px;
-
-    border-radius: 50%;
-
-    overflow: hidden;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            var(--brand),
-            #8b2c99
-        );
-
-    color: #fff;
-
-    text-decoration: none;
-
-    border: 2px solid
-        rgba(74, 7, 84, 0.12);
-
-    box-shadow:
-        0 4px 14px
-        rgba(0, 0, 0, 0.12);
-
-}
-
-
-.header-avatar-content {
-
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size: 0.92rem;
-
-    font-weight: 700;
-
-}
-
-
-.header-avatar-image {
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    display: block;
-
-    border-radius: 50%;
-
-}
-
-
-/* ============================================================
-   10. NOTIFICATION DOT
-   ============================================================ */
 
 .header-notification-dot {
-
     position: absolute;
 
     top: 7px;
@@ -683,27 +440,21 @@
     background: var(--accent);
 
     border: 2px solid var(--surface);
-
 }
 
 
 /* ============================================================
-   11. MOBILE OVERLAY
+   MOBILE OVERLAY
    ============================================================ */
 
 .mobile-overlay {
-
     position: fixed;
-
     inset: 0;
 
-    background:
-        rgba(15, 8, 20, 0.48);
+    background: rgba(18, 9, 20, 0.45);
 
     opacity: 0;
-
     visibility: hidden;
-
     pointer-events: none;
 
     transition:
@@ -711,56 +462,42 @@
         visibility 0.25s ease;
 
     z-index: 1100;
-
 }
-
 
 .mobile-overlay.active {
-
     opacity: 1;
-
     visibility: visible;
-
     pointer-events: auto;
-
 }
 
 
 /* ============================================================
-   12. UTILITY
-   ============================================================ */
-
-[hidden] {
-
-    display: none !important;
-
-}
-
-
-/* ============================================================
-   13. FOCUS
+   GLOBAL FOCUS
    ============================================================ */
 
 button,
 a {
-
     -webkit-tap-highlight-color: transparent;
-
 }
-
 
 button:focus-visible,
 a:focus-visible {
-
     outline: 2px solid var(--brand);
-
     outline-offset: 3px;
-
 }
 
 
 /* ============================================================
-   14. REDUCED MOTION
+   HIDDEN
+   ============================================================ */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* ============================================================
+   REDUCED MOTION
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -768,7 +505,6 @@ a:focus-visible {
     *,
     *::before,
     *::after {
-
         scroll-behavior: auto !important;
 
         transition-duration: 0.01ms !important;
@@ -776,7 +512,6 @@ a:focus-visible {
         animation-duration: 0.01ms !important;
 
         animation-iteration-count: 1 !important;
-
     }
 
 }
