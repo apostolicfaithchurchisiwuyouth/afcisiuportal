@@ -1,0 +1,11 @@
+{
+    "name": "AFC Isiu Youth Portal",
+    "short_name": "AFC Isiu Youth",
+    "description": "AFC Isiu Youth Portal",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f8f7f9",
+    "theme_color": "#4a0754",
+    "orientation": "portrait-primary",
+    "icons": []
+}
