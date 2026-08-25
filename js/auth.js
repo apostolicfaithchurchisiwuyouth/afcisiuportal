@@ -1,66 +1,101 @@
 /**
  * ============================================================
- * AUTH FOUNDATION
- * STEP 10A
+ * AFC ISIU YOUTH PORTAL
+ * AUTHENTICATION FOUNDATION
  * ============================================================
  */
 
-const AUTH = {
 
-    STORAGE_KEY:
-        "afc_isiu_youth_session",
+const AUTH_STORAGE_KEY =
+    "afc_current_user";
 
 
-    getSession() {
+/**
+ * ------------------------------------------------------------
+ * GET CURRENT USER
+ * ------------------------------------------------------------
+ */
 
-        try {
+function getCurrentUser() {
 
-            const stored =
-                localStorage.getItem(
-                    this.STORAGE_KEY
-                );
+    try {
 
-            if (!stored) {
-                return null;
-            }
-
-            return JSON.parse(stored);
-
-        } catch (error) {
-
-            console.error(
-                "Session read error:",
-                error
+        const stored =
+            localStorage.getItem(
+                AUTH_STORAGE_KEY
             );
 
+
+        if (!stored) {
             return null;
         }
-    },
 
 
-    saveSession(session) {
-
-        localStorage.setItem(
-            this.STORAGE_KEY,
-            JSON.stringify(session)
+        return JSON.parse(
+            stored
         );
 
-    },
+    } catch (error) {
 
-
-    clearSession() {
-
-        localStorage.removeItem(
-            this.STORAGE_KEY
+        console.warn(
+            "Unable to read current user.",
+            error
         );
 
-    },
-
-
-    isLoggedIn() {
-
-        return !!this.getSession();
+        return null;
 
     }
 
-};
+}
+
+
+/**
+ * ------------------------------------------------------------
+ * SAVE CURRENT USER
+ * ------------------------------------------------------------
+ */
+
+function saveCurrentUser(user) {
+
+    if (!user) {
+        return false;
+    }
+
+
+    localStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify(user)
+    );
+
+
+    return true;
+
+}
+
+
+/**
+ * ------------------------------------------------------------
+ * CLEAR CURRENT USER
+ * ------------------------------------------------------------
+ */
+
+function clearCurrentUser() {
+
+    localStorage.removeItem(
+        AUTH_STORAGE_KEY
+    );
+
+}
+
+
+/**
+ * ------------------------------------------------------------
+ * IS LOGGED IN
+ * ------------------------------------------------------------
+ */
+
+function isLoggedIn() {
+
+    return !!getCurrentUser();
+
+}
