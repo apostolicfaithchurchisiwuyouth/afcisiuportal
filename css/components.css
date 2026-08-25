@@ -10,25 +10,19 @@
 .sidebar-brand {
     height: 82px;
     padding: 0 20px;
-
     display: flex;
     align-items: center;
     gap: 11px;
-
     border-bottom: 1px solid var(--border);
 }
 
 .brand-mark {
     width: 40px;
     height: 40px;
-
     flex: 0 0 40px;
-
     border-radius: 12px;
-
     background: var(--brand);
     color: #fff;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,7 +35,6 @@
 
 .brand-text {
     min-width: 0;
-
     display: flex;
     flex-direction: column;
 }
@@ -55,44 +48,30 @@
     color: var(--ink-muted);
 }
 
-
 /* ============================================================
    2. SIDEBAR NAVIGATION
    ============================================================ */
 
 .sidebar-navigation {
     padding: 18px 12px;
-
     display: flex;
     flex-direction: column;
-
     gap: 5px;
 }
 
 .nav-item {
     position: relative;
-
     min-height: 44px;
-
     padding: 0 13px;
-
     border-radius: 11px;
-
     display: flex;
     align-items: center;
-
     gap: 12px;
-
     color: var(--ink-soft);
-
     font-size: 0.78rem;
     font-weight: 600;
-
     text-decoration: none;
-
-    transition:
-        background var(--transition),
-        color var(--transition);
+    transition: background var(--transition), color var(--transition);
 }
 
 .nav-item svg {
@@ -116,24 +95,17 @@
 
 .notification-badge {
     margin-left: auto;
-
     min-width: 20px;
     height: 20px;
-
     padding: 0 5px;
-
     border-radius: 10px;
-
     background: var(--accent);
     color: #fff;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 0.62rem;
 }
-
 
 /* ============================================================
    3. SIDEBAR PROFILE
@@ -141,22 +113,16 @@
 
 .sidebar-footer {
     margin-top: auto;
-
     padding: 14px;
-
     border-top: 1px solid var(--border);
 }
 
 .sidebar-profile {
     display: flex;
     align-items: center;
-
     gap: 10px;
-
     padding: 9px;
-
     border-radius: 12px;
-
     color: inherit;
     text-decoration: none;
 }
@@ -167,14 +133,12 @@
 
 .sidebar-profile > div:last-child {
     min-width: 0;
-
     display: flex;
     flex-direction: column;
 }
 
 .sidebar-profile strong {
     font-size: 0.75rem;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -185,7 +149,6 @@
     font-size: 0.63rem;
 }
 
-
 /* ============================================================
    4. AVATARS
    ============================================================ */
@@ -195,17 +158,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: var(--brand-light);
     color: var(--brand);
-
     border-radius: 50%;
 }
 
 .avatar {
     width: 36px;
     height: 36px;
-
     flex: 0 0 36px;
 }
 
@@ -217,9 +177,7 @@
 .header-avatar {
     width: 37px;
     height: 37px;
-
     flex: 0 0 37px;
-
     text-decoration: none;
 }
 
@@ -228,7 +186,6 @@
     height: 18px;
 }
 
-
 /* ============================================================
    5. GENERIC ICON BUTTON
    ============================================================ */
@@ -236,23 +193,15 @@
 .icon-button {
     width: 40px;
     height: 40px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border: 0;
-
     border-radius: 11px;
-
     background: transparent;
     color: var(--ink-soft);
-
     cursor: pointer;
-
-    transition:
-        background var(--transition),
-        color var(--transition);
+    transition: background var(--transition), color var(--transition);
 }
 
 .icon-button:hover {
@@ -265,32 +214,22 @@
     height: 20px;
 }
 
-
 /* ============================================================
    6. HEADER ICON
    ============================================================ */
 
 .header-icon-button {
     position: relative;
-
     width: 38px;
     height: 38px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
-
     background: transparent;
-
     color: var(--ink-soft);
-
     text-decoration: none;
-
-    transition:
-        background var(--transition),
-        color var(--transition);
+    transition: background var(--transition), color var(--transition);
 }
 
 .header-icon-button:hover {
@@ -305,20 +244,14 @@
 
 .header-notification-dot {
     position: absolute;
-
     top: 7px;
     right: 7px;
-
     width: 7px;
     height: 7px;
-
     border-radius: 50%;
-
     background: var(--accent);
-
     border: 2px solid #fff;
 }
-
 
 /* ============================================================
    7. MOBILE OVERLAY
@@ -327,24 +260,19 @@
 .mobile-overlay {
     position: fixed;
     inset: 0;
-
     background: rgba(18, 9, 20, 0.42);
-
     opacity: 0;
     visibility: hidden;
-
-    transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-
-    z-index: 90;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 1100;
 }
 
 .mobile-overlay.active {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
-
 
 /* ============================================================
    8. GLOBAL FOCUS
@@ -361,23 +289,17 @@ a:focus-visible {
     outline-offset: 3px;
 }
 
-
 /* ============================================================
    9. REDUCED MOTION
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-
     *,
     *::before,
     *::after {
         scroll-behavior: auto !important;
-
         transition-duration: 0.01ms !important;
-
         animation-duration: 0.01ms !important;
-
         animation-iteration-count: 1 !important;
     }
-
 }
