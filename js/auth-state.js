@@ -8,24 +8,17 @@
  * ------------------------------------------------------------
  * Central authentication state manager for the frontend.
  *
- * IMPORTANT:
- * ------------------------------------------------------------
- * This file is the SINGLE source of truth for frontend
- * authentication storage.
- *
- * Authentication is stored in localStorage.
- *
- * Guests may access public pages such as:
- *
- *     index.html
- *     pages/lessons.html
- *     pages/gallery.html
- *
- * Authentication is required for member-only features such as:
- *
- *     pages/quiz.html
- *     pages/profile.html
- *     pages/notifications.html
+ * Responsibilities:
+ * 1. Store authenticated user
+ * 2. Store authenticated session
+ * 3. Retrieve authenticated user
+ * 4. Retrieve session token
+ * 5. Check session expiration
+ * 6. Protect authenticated pages
+ * 7. Redirect authenticated users
+ * 8. Logout from backend
+ * 9. Clear authentication state
+ * 10. Provide user display/avatar helpers
  *
  * ============================================================
  */
@@ -35,7 +28,7 @@
 
 /* ============================================================
    1. STORAGE KEYS
-   ============================================================ */
+============================================================ */
 
 const AUTH_STORAGE_KEYS = {
 
@@ -50,7 +43,7 @@ const AUTH_STORAGE_KEYS = {
 
 /* ============================================================
    2. SAFE JSON PARSER
-   ============================================================ */
+============================================================ */
 
 function parseStoredJSON_(value) {
 
@@ -59,7 +52,6 @@ function parseStoredJSON_(value) {
         return null;
 
     }
-
 
     try {
 
@@ -81,7 +73,7 @@ function parseStoredJSON_(value) {
 
 /* ============================================================
    3. GET STORED USER
-   ============================================================ */
+============================================================ */
 
 function getStoredAuthUser_() {
 
@@ -91,7 +83,6 @@ function getStoredAuthUser_() {
             localStorage.getItem(
                 AUTH_STORAGE_KEYS.USER
             );
-
 
         return parseStoredJSON_(stored);
 
@@ -111,7 +102,7 @@ function getStoredAuthUser_() {
 
 /* ============================================================
    4. GET STORED SESSION
-   ============================================================ */
+============================================================ */
 
 function getStoredAuthSession_() {
 
@@ -121,7 +112,6 @@ function getStoredAuthSession_() {
             localStorage.getItem(
                 AUTH_STORAGE_KEYS.SESSION
             );
-
 
         return parseStoredJSON_(stored);
 
@@ -141,7 +131,7 @@ function getStoredAuthSession_() {
 
 /* ============================================================
    5. SAVE AUTHENTICATION
-   ============================================================ */
+============================================================ */
 
 function saveAuthentication(loginResult) {
 
@@ -284,7 +274,7 @@ function saveAuthentication(loginResult) {
 
 /* ============================================================
    6. GET CURRENT SESSION
-   ============================================================ */
+============================================================ */
 
 function getAuthSession() {
 
@@ -295,7 +285,7 @@ function getAuthSession() {
 
 /* ============================================================
    7. GET CURRENT USER
-   ============================================================ */
+============================================================ */
 
 function getCurrentUser() {
 
@@ -306,7 +296,7 @@ function getCurrentUser() {
 
 /* ============================================================
    8. GET AUTH TOKEN
-   ============================================================ */
+============================================================ */
 
 function getAuthToken() {
 
@@ -333,7 +323,7 @@ function getAuthToken() {
 
 /* ============================================================
    9. CHECK SESSION EXPIRATION
-   ============================================================ */
+============================================================ */
 
 function isSessionExpired_(session) {
 
@@ -379,7 +369,7 @@ function isSessionExpired_(session) {
 
 /* ============================================================
    10. CHECK AUTHENTICATION
-   ============================================================ */
+============================================================ */
 
 function isAuthenticated() {
 
@@ -425,7 +415,6 @@ function isAuthenticated() {
 
         clearAuthentication();
 
-
         return false;
 
     }
@@ -438,9 +427,11 @@ function isAuthenticated() {
 
 /* ============================================================
    11. GET AUTHENTICATED REQUEST DATA
-   ============================================================ */
+============================================================ */
 
-function getAuthenticatedRequestData(payload = {}) {
+function getAuthenticatedRequestData(
+    payload = {}
+) {
 
     const token =
         getAuthToken();
@@ -460,7 +451,7 @@ function getAuthenticatedRequestData(payload = {}) {
 
 /* ============================================================
    12. CLEAR AUTHENTICATION
-   ============================================================ */
+============================================================ */
 
 function clearAuthentication() {
 
@@ -477,7 +468,7 @@ function clearAuthentication() {
 
 
         /*
-         * Remove legacy authentication keys.
+         * Legacy keys.
          */
 
         localStorage.removeItem(
@@ -518,7 +509,7 @@ function clearAuthentication() {
 
 /* ============================================================
    13. LOGOUT
-   ============================================================ */
+============================================================ */
 
 async function logoutUserFrontend() {
 
@@ -552,10 +543,6 @@ async function logoutUserFrontend() {
 
         } catch (error) {
 
-            /*
-             * Local logout must still happen.
-             */
-
             console.warn(
                 "Backend logout request failed:",
                 error
@@ -584,7 +571,7 @@ async function logoutUserFrontend() {
 
 /* ============================================================
    14. REQUIRE LOGIN
-   ============================================================ */
+============================================================ */
 
 function requireLogin(
     redirectPage = "login.html"
@@ -617,16 +604,7 @@ function requireLogin(
 
 /* ============================================================
    15. REDIRECT IF ALREADY AUTHENTICATED
-   ============================================================
- *
- * IMPORTANT:
- * ------------------------------------------------------------
- * There is NO dashboard.html.
- *
- * Authenticated users are sent to index.html.
- *
- * ============================================================
- */
+============================================================ */
 
 function redirectIfAuthenticated(
     redirectPage = "index.html"
@@ -658,7 +636,7 @@ function redirectIfAuthenticated(
 
 /* ============================================================
    16. GET USER DISPLAY NAME
-   ============================================================ */
+============================================================ */
 
 function getUserDisplayName() {
 
@@ -702,7 +680,7 @@ function getUserDisplayName() {
 
 /* ============================================================
    17. GET USER FIRST NAME
-   ============================================================ */
+============================================================ */
 
 function getUserFirstName() {
 
@@ -726,7 +704,7 @@ function getUserFirstName() {
 
 /* ============================================================
    18. GET USER ID
-   ============================================================ */
+============================================================ */
 
 function getCurrentUserId() {
 
@@ -750,9 +728,9 @@ function getCurrentUserId() {
 
 /* ============================================================
    19. GET USER AVATAR
-   ============================================================ */
+============================================================ */
 
-function getCurrentUserAvatar() {
+function getUserAvatar() {
 
     const user =
         getCurrentUser();
@@ -765,24 +743,67 @@ function getCurrentUserAvatar() {
     }
 
 
-    return String(
+    /*
+     * Support several possible backend
+     * avatar/image field names.
+     */
 
-        user.avatar_url ||
-        user.avatar ||
-        user.profile_photo ||
-        user.photo_url ||
-        user.image_url ||
-        user.profile_image ||
-        ""
+    const possibleAvatarFields = [
 
-    ).trim();
+        "avatar_url",
+
+        "avatar",
+
+        "profile_image",
+
+        "profile_image_url",
+
+        "image_url",
+
+        "photo_url",
+
+        "photo",
+
+        "picture",
+
+        "image"
+
+    ];
+
+
+    for (
+        let i = 0;
+        i < possibleAvatarFields.length;
+        i++
+    ) {
+
+        const field =
+            possibleAvatarFields[i];
+
+
+        const value =
+            String(
+                user[field] || ""
+            ).trim();
+
+
+        if (value) {
+
+            return value;
+
+        }
+
+    }
+
+
+    return "";
 
 }
 
 
 /* ============================================================
    20. GET AUTH STATE
-   ============================================================ */
+============================================================ */
 
 function getAuthState() {
 
@@ -832,7 +853,7 @@ function getAuthState() {
 
         avatar:
             user
-                ? getCurrentUserAvatar()
+                ? getUserAvatar()
                 : ""
 
     };
@@ -842,7 +863,7 @@ function getAuthState() {
 
 /* ============================================================
    21. DEBUG AUTH STATE
-   ============================================================ */
+============================================================ */
 
 function debugAuthentication() {
 
@@ -883,6 +904,12 @@ function debugAuthentication() {
 
 
     console.log(
+        "Avatar:",
+        state.avatar
+    );
+
+
+    console.log(
         "===================================="
     );
 
@@ -894,7 +921,7 @@ function debugAuthentication() {
 
 /* ============================================================
    22. GLOBAL AUTH OBJECT
-   ============================================================ */
+============================================================ */
 
 window.AUTH = {
 
@@ -926,7 +953,7 @@ window.AUTH = {
         getUserFirstName,
 
     getAvatar:
-        getCurrentUserAvatar,
+        getUserAvatar,
 
     getRequestData:
         getAuthenticatedRequestData,
@@ -951,7 +978,7 @@ window.AUTH = {
 
 /* ============================================================
    23. GLOBAL COMPATIBILITY HELPERS
-   ============================================================ */
+============================================================ */
 
 window.saveAuthentication =
     saveAuthentication;
@@ -973,8 +1000,8 @@ window.getAuthState =
     getAuthState;
 
 
-window.getCurrentUserAvatar =
-    getCurrentUserAvatar;
+window.getUserAvatar =
+    getUserAvatar;
 
 
 window.logoutUserFrontend =
@@ -983,11 +1010,12 @@ window.logoutUserFrontend =
 
 /* ============================================================
    24. STARTUP LOG
-   ============================================================ */
+============================================================ */
 
 console.log(
     "AFC Isiu Youth Portal — 10E Authentication State loaded."
 );
+
 
 console.log(
     "Current authentication state:",
@@ -997,4 +1025,4 @@ console.log(
 
 /* ============================================================
    END OF 10E
-   ============================================================ */
+============================================================ */
