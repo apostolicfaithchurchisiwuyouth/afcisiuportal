@@ -1,240 +1,64 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   HOME PAGE ONLY
-   ------------------------------------------------------------
-   IMPORTANT:
-   This file styles ONLY homepage-specific elements.
-   Global layout, header, sidebar, bottom navigation and
-   reusable components are controlled by:
-   variables.css
-   base.css
-   layout.css
-   components.css
+   HOME PAGE STYLES
 ============================================================ */
 
 
 /* ============================================================
-   1. HOME PAGE VARIABLES
+   HOME PAGE
 ============================================================ */
 
 .home-page {
 
-    --home-purple-soft:
-        #f5eafa;
-
-    --home-orange-soft:
-        #fff1e8;
-
-    --home-blue-soft:
-        #eff6ff;
-
-    --home-green-soft:
-        #ecfdf5;
-
-    --home-card-shadow:
-        0 6px 24px rgba(42, 20, 48, 0.055);
-
-    --home-card-shadow-hover:
-        0 14px 35px rgba(42, 20, 48, 0.10);
+    width: 100%;
 
 }
 
 
 /* ============================================================
-   2. HOME HERO
+   HEADER
 ============================================================ */
 
-.home-hero {
+.top-header {
 
-    position: relative;
+    min-height: 72px;
 
-    min-height: 245px;
+}
+
+
+.header-left {
 
     display: flex;
+
     align-items: center;
-    justify-content: space-between;
 
-    gap: 30px;
-
-    padding:
-        34px
-        38px;
-
-    overflow: hidden;
-
-    border-radius:
-        var(--radius-xl);
-
-    background:
-        linear-gradient(
-            135deg,
-            #4a0754 0%,
-            #5d0b68 55%,
-            #74117f 100%
-        );
-
-    color: #fff;
-
-    box-shadow:
-        0 16px 42px
-        rgba(74, 7, 84, 0.16);
-}
-
-
-/* ------------------------------------------------------------
-   HERO DECORATIVE SHAPES
------------------------------------------------------------- */
-
-.home-hero::before {
-
-    content: "";
-
-    position: absolute;
-
-    width: 300px;
-    height: 300px;
-
-    right: -110px;
-    top: -145px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 255, 255, 0.065);
-
-    pointer-events: none;
-}
-
-
-.home-hero::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 210px;
-    height: 210px;
-
-    right: 110px;
-    bottom: -155px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
-    pointer-events: none;
-}
-
-
-/* ============================================================
-   3. HERO CONTENT
-============================================================ */
-
-.home-hero-content {
-
-    position: relative;
-
-    z-index: 2;
+    gap: 12px;
 
     min-width: 0;
 
-    flex: 1;
 }
 
 
-.hero-state {
+.header-actions {
 
-    max-width: 680px;
-}
+    display: flex;
 
+    align-items: center;
 
-/* ============================================================
-   4. HERO SECTION LABEL
-============================================================ */
+    justify-content: flex-end;
 
-.home-hero .section-label {
+    gap: 10px;
 
-    margin: 0 0 9px;
+    margin-left: auto;
 
-    color:
-        rgba(255, 255, 255, 0.68);
-
-    font-size: 0.68rem;
-
-    font-weight: 700;
-
-    letter-spacing: 0.09em;
-
-    text-transform: uppercase;
 }
 
 
 /* ============================================================
-   5. HERO HEADING
+   MOBILE BRAND
 ============================================================ */
 
-.home-hero h2 {
-
-    margin:
-        0
-        0
-        11px;
-
-    font-family:
-        "Bricolage Grotesque",
-        "DM Sans",
-        sans-serif;
-
-    font-size:
-        clamp(
-            2rem,
-            4vw,
-            3.05rem
-        );
-
-    line-height: 1.03;
-
-    letter-spacing: -0.045em;
-
-    font-weight: 700;
-
-    color: #fff;
-}
-
-
-.home-hero h2 span {
-
-    color:
-        #f6c7ff;
-}
-
-
-/* ============================================================
-   6. HERO DESCRIPTION
-============================================================ */
-
-.home-hero p {
-
-    margin: 0;
-
-    max-width: 570px;
-
-    color:
-        rgba(255, 255, 255, 0.78);
-
-    font-size: 0.86rem;
-
-    line-height: 1.6;
-}
-
-
-/* ============================================================
-   7. HERO ACTIONS
-============================================================ */
-
-.hero-actions,
-.member-hero-actions {
+.mobile-brand {
 
     display: flex;
 
@@ -242,1388 +66,1154 @@
 
     gap: 9px;
 
-    margin-top: 22px;
+    text-decoration: none;
 
-    flex-wrap: wrap;
+    color: inherit;
+
+    min-width: 0;
+
+}
+
+
+.mobile-brand-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #7a1688
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 16px rgba(
+            74,
+            7,
+            84,
+            0.24
+        );
+
+}
+
+
+.mobile-brand-icon svg {
+
+    width: 21px;
+
+    height: 21px;
+
+    stroke-width: 2.1;
+
+}
+
+
+.mobile-brand-text {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    line-height: 1.05;
+
+    white-space: nowrap;
+
+}
+
+
+.mobile-brand-text strong {
+
+    font-family:
+        "Bricolage Grotesque",
+        sans-serif;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+
+}
+
+
+.mobile-brand-text small {
+
+    margin-top: 3px;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    font-size: 0.74rem;
+
+    font-weight: 600;
+
+    opacity: 0.68;
+
+    letter-spacing: 0.01em;
+
 }
 
 
 /* ============================================================
-   8. HERO ACTION BUTTONS
+   HEADER ACCOUNT BUTTON
+============================================================ */
+
+.header-icon-button {
+
+    position: relative;
+
+    width: 42px;
+
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-decoration: none;
+
+    color: inherit;
+
+}
+
+
+.header-icon-button svg {
+
+    width: 20px;
+
+    height: 20px;
+
+}
+
+
+.header-avatar {
+
+    width: 42px;
+
+    height: 42px;
+
+    min-width: 42px;
+
+    max-width: 42px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-decoration: none;
+
+    flex-shrink: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #8b2c99
+        );
+
+    color: #ffffff;
+
+    border: 2px solid rgba(
+        74,
+        7,
+        84,
+        0.12
+    );
+
+    box-shadow:
+        0 4px 14px rgba(
+            0,
+            0,
+            0,
+            0.12
+        );
+
+}
+
+
+.header-avatar-content {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-family:
+        "Bricolage Grotesque",
+        sans-serif;
+
+    font-size: 0.92rem;
+
+    font-weight: 700;
+
+}
+
+
+.header-avatar-content svg {
+
+    width: 19px;
+
+    height: 19px;
+
+}
+
+
+.header-avatar-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    border-radius: 50%;
+
+}
+
+
+.header-notification-dot {
+
+    position: absolute;
+
+    top: 7px;
+
+    right: 6px;
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ea580c;
+
+    border: 2px solid
+        var(--surface, #ffffff);
+
+}
+
+
+/* ============================================================
+   HERO
+============================================================ */
+
+.home-hero {
+
+    padding:
+        clamp(26px, 5vw, 52px);
+
+}
+
+
+.home-hero h2 {
+
+    font-size:
+        clamp(
+            2rem,
+            5vw,
+            3.45rem
+        );
+
+    line-height: 1.04;
+
+    letter-spacing: -0.04em;
+
+}
+
+
+.home-hero p {
+
+    max-width: 650px;
+
+    font-size:
+        clamp(
+            1rem,
+            2vw,
+            1.12rem
+        );
+
+    line-height: 1.65;
+
+}
+
+
+.section-label {
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+
+}
+
+
+.section-heading h2 {
+
+    font-size:
+        clamp(
+            1.35rem,
+            3vw,
+            1.75rem
+        );
+
+}
+
+
+/* ============================================================
+   HERO BUTTONS
 ============================================================ */
 
 .primary-action-button,
 .secondary-action-button {
 
-    min-height: 42px;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 8px;
+    min-height: 48px;
 
     padding:
-        0
-        15px;
+        0 17px;
 
-    border-radius: 11px;
+    font-size: 0.94rem;
 
-    font-size: 0.75rem;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-    cursor: pointer;
-
-    transition:
-        transform var(--transition),
-        background var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition);
-}
-
-
-.primary-action-button {
-
-    background: #fff;
-
-    color: var(--brand);
-
-    box-shadow:
-        0 7px 18px
-        rgba(0, 0, 0, 0.12);
-}
-
-
-.primary-action-button:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 10px 24px
-        rgba(0, 0, 0, 0.16);
-}
-
-
-.secondary-action-button {
-
-    background:
-        rgba(255, 255, 255, 0.09);
-
-    color: #fff;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.24);
-}
-
-
-.secondary-action-button:hover {
-
-    transform:
-        translateY(-2px);
-
-    background:
-        rgba(255, 255, 255, 0.15);
 }
 
 
 .primary-action-button svg,
 .secondary-action-button svg {
 
-    width: 16px;
-    height: 16px;
+    width: 18px;
+
+    height: 18px;
+
 }
 
 
 /* ============================================================
-   9. HERO VISUAL
-============================================================ */
-
-.home-hero-visual {
-
-    position: relative;
-
-    z-index: 2;
-
-    width: 150px;
-    height: 150px;
-
-    flex: 0 0 150px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-}
-
-
-/* ============================================================
-   10. HERO ORBIT
-============================================================ */
-
-.hero-icon-orbit {
-
-    width: 126px;
-    height: 126px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.16);
-
-    background:
-        rgba(255, 255, 255, 0.055);
-}
-
-
-/* ============================================================
-   11. HERO ICON
-============================================================ */
-
-.hero-icon {
-
-    width: 78px;
-    height: 78px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 25px;
-
-    background:
-        rgba(255, 255, 255, 0.12);
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.17);
-
-    color: #fff;
-
-    box-shadow:
-        0 12px 28px
-        rgba(0, 0, 0, 0.12);
-}
-
-
-.hero-icon svg {
-
-    width: 34px;
-    height: 34px;
-
-    stroke-width: 1.8;
-}
-
-
-/* ============================================================
-   12. QUICK ACCESS
-============================================================ */
-
-.quick-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 14px;
-}
-
-
-/* ============================================================
-   13. QUICK CARD
+   QUICK CARDS
 ============================================================ */
 
 .quick-card {
 
-    min-width: 0;
-
-    min-height: 88px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
+    min-height: 92px;
 
     padding:
-        15px
-        16px;
+        17px 18px;
 
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        var(--radius-md);
-
-    background:
-        var(--surface);
-
-    box-shadow:
-        var(--home-card-shadow);
-
-    color: inherit;
-
-    text-decoration: none;
-
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        border-color var(--transition);
-}
-
-
-.quick-card:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        var(--home-card-shadow-hover);
-
-    border-color:
-        var(--border-dark);
-}
-
-
-/* ============================================================
-   14. QUICK CARD ICON
-============================================================ */
-
-.quick-card-icon {
-
-    width: 46px;
-    height: 46px;
-
-    flex: 0 0 46px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-}
-
-
-.quick-card-icon svg {
-
-    width: 20px;
-    height: 20px;
-}
-
-
-/* COLOR VARIANTS */
-
-.quick-card-icon.purple {
-
-    background:
-        var(--home-purple-soft);
-
-    color:
-        var(--brand);
-}
-
-
-.quick-card-icon.orange {
-
-    background:
-        var(--home-orange-soft);
-
-    color:
-        var(--accent);
-}
-
-
-.quick-card-icon.blue {
-
-    background:
-        var(--home-blue-soft);
-
-    color:
-        var(--blue);
-}
-
-
-.quick-card-icon.green {
-
-    background:
-        var(--home-green-soft);
-
-    color:
-        var(--green);
-}
-
-
-/* ============================================================
-   15. QUICK CARD CONTENT
-============================================================ */
-
-.quick-card-content {
-
-    min-width: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
 }
 
 
 .quick-card-content strong {
 
-    color:
-        var(--ink);
+    font-size: 1rem;
 
-    font-size: 0.83rem;
-
-    font-weight: 700;
 }
 
 
 .quick-card-content span {
 
-    overflow: hidden;
+    font-size: 0.88rem;
 
-    color:
-        var(--ink-muted);
+    line-height: 1.45;
 
-    font-size: 0.68rem;
-
-    line-height: 1.4;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
 }
 
 
 /* ============================================================
-   16. QUICK CARD ARROW
-============================================================ */
-
-.quick-card-arrow {
-
-    width: 17px;
-    height: 17px;
-
-    flex: 0 0 17px;
-
-    margin-left: auto;
-
-    color:
-        var(--ink-muted);
-
-    transition:
-        transform var(--transition),
-        color var(--transition);
-}
-
-
-.quick-card:hover
-.quick-card-arrow {
-
-    color:
-        var(--brand);
-
-    transform:
-        translateX(3px);
-}
-
-
-/* ============================================================
-   17. MEMBER DASHBOARD
-============================================================ */
-
-.dashboard-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 16px;
-
-    margin-top: 30px;
-}
-
-
-/* ============================================================
-   18. DASHBOARD CARD
-============================================================ */
-
-.dashboard-card {
-
-    min-width: 0;
-
-    min-height: 245px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    overflow: hidden;
-
-    background:
-        var(--surface);
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        var(--radius-lg);
-
-    box-shadow:
-        var(--home-card-shadow);
-}
-
-
-/* ============================================================
-   19. DASHBOARD CARD HEADER
-============================================================ */
-
-.dashboard-card-header {
-
-    padding:
-        17px
-        19px
-        14px;
-
-    border-bottom:
-        1px solid
-        var(--border);
-}
-
-
-.dashboard-card-title {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-}
-
-
-/* ============================================================
-   20. SMALL ICON
-============================================================ */
-
-.small-icon {
-
-    width: 39px;
-    height: 39px;
-
-    flex: 0 0 39px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-}
-
-
-.small-icon svg {
-
-    width: 18px;
-    height: 18px;
-}
-
-
-.small-icon.purple {
-
-    background:
-        var(--home-purple-soft);
-
-    color:
-        var(--brand);
-}
-
-
-.small-icon.orange {
-
-    background:
-        var(--home-orange-soft);
-
-    color:
-        var(--accent);
-}
-
-
-/* ============================================================
-   21. DASHBOARD CARD LABEL
-============================================================ */
-
-.card-label {
-
-    display: block;
-
-    margin-bottom: 2px;
-
-    color:
-        var(--ink-muted);
-
-    font-size: 0.61rem;
-
-    font-weight: 700;
-
-    letter-spacing: 0.08em;
-
-    text-transform: uppercase;
-}
-
-
-.dashboard-card-title h3 {
-
-    margin: 0;
-
-    color:
-        var(--ink);
-
-    font-size: 0.92rem;
-
-    font-weight: 700;
-}
-
-
-/* ============================================================
-   22. DASHBOARD BODY
-============================================================ */
-
-.dashboard-card-body {
-
-    flex: 1;
-
-    min-width: 0;
-
-    padding:
-        15px
-        19px;
-}
-
-
-/* ============================================================
-   23. DASHBOARD LINK
-============================================================ */
-
-.dashboard-card .text-link {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    padding:
-        12px
-        19px
-        15px;
-
-    color:
-        var(--brand);
-
-    font-size: 0.72rem;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-    border-top:
-        1px solid
-        var(--border);
-}
-
-
-.dashboard-card .text-link svg {
-
-    width: 14px;
-    height: 14px;
-
-    transition:
-        transform var(--transition);
-}
-
-
-.dashboard-card .text-link:hover svg {
-
-    transform:
-        translateX(3px);
-}
-
-
-/* ============================================================
-   24. EMPTY STATE
-============================================================ */
-
-.empty-state {
-
-    min-height: 145px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 9px;
-
-    padding: 18px;
-
-    text-align: center;
-
-    color:
-        var(--ink-muted);
-}
-
-
-.empty-state-icon {
-
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-
-    background:
-        var(--background);
-
-    color:
-        var(--ink-muted);
-}
-
-
-.empty-state-icon svg {
-
-    width: 19px;
-    height: 19px;
-}
-
-
-.empty-state p {
-
-    margin: 0;
-
-    max-width: 280px;
-
-    font-size: 0.72rem;
-
-    line-height: 1.5;
-}
-
-
-/* ============================================================
-   25. NOTIFICATION PREVIEW
-============================================================ */
-
-.notification-preview {
-
-    min-height: 120px;
-
-    overflow: hidden;
-
-    background:
-        var(--surface);
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        var(--radius-md);
-
-    box-shadow:
-        var(--home-card-shadow);
-}
-
-
-.notification-preview .empty-state {
-
-    min-height: 120px;
-}
-
-
-/* ============================================================
-   26. GUEST INFORMATION
-============================================================ */
-
-.guest-information {
-
-    margin-top: 34px;
-}
-
-
-/* ============================================================
-   27. FEATURE GRID
-============================================================ */
-
-.feature-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            3,
-            minmax(0, 1fr)
-        );
-
-    gap: 14px;
-}
-
-
-/* ============================================================
-   28. FEATURE CARD
+   FEATURE CARDS
 ============================================================ */
 
 .feature-card {
 
-    min-width: 0;
+    padding: 22px;
 
-    padding:
-        20px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        var(--radius-md);
-
-    background:
-        var(--surface);
-
-    box-shadow:
-        var(--home-card-shadow);
 }
 
-
-/* ============================================================
-   29. FEATURE ICON
-============================================================ */
-
-.feature-icon {
-
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    margin-bottom: 14px;
-
-    border-radius: 12px;
-}
-
-
-.feature-icon svg {
-
-    width: 19px;
-    height: 19px;
-}
-
-
-.feature-icon.purple {
-
-    background:
-        var(--home-purple-soft);
-
-    color:
-        var(--brand);
-}
-
-
-.feature-icon.orange {
-
-    background:
-        var(--home-orange-soft);
-
-    color:
-        var(--accent);
-}
-
-
-.feature-icon.blue {
-
-    background:
-        var(--home-blue-soft);
-
-    color:
-        var(--blue);
-}
-
-
-/* ============================================================
-   30. FEATURE CARD TYPOGRAPHY
-============================================================ */
 
 .feature-card h3 {
 
-    margin:
-        0
-        0
-        6px;
+    font-size: 1.12rem;
 
-    color:
-        var(--ink);
-
-    font-family:
-        "Bricolage Grotesque",
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.94rem;
-
-    font-weight: 700;
 }
 
 
 .feature-card p {
 
-    margin: 0;
+    font-size: 0.92rem;
 
-    color:
-        var(--ink-soft);
+    line-height: 1.58;
 
-    font-size: 0.72rem;
-
-    line-height: 1.55;
 }
 
 
 /* ============================================================
-   31. HOME SECTION SPACING
+   DASHBOARD
 ============================================================ */
 
-.home-page .section-block {
+.dashboard-card-body {
 
-    margin-top: 30px;
+    font-size: 0.92rem;
+
 }
 
 
-.home-page .section-heading {
+.dashboard-card h3 {
 
-    margin-bottom: 14px;
+    font-size: 1.08rem;
+
 }
 
 
-.home-page .section-heading h2 {
+.home-content-preview h4 {
+
+    font-size: 1rem;
+
+}
+
+
+.home-content-preview p {
+
+    font-size: 0.88rem;
+
+    line-height: 1.5;
+
+}
+
+
+/* ============================================================
+   MOBILE BOTTOM NAVIGATION
+============================================================ */
+
+.bottom-navigation {
+
+    min-height: 72px;
+
+    padding:
+        7px
+        max(
+            10px,
+            env(safe-area-inset-right)
+        )
+        calc(
+            7px +
+            env(safe-area-inset-bottom)
+        )
+        max(
+            10px,
+            env(safe-area-inset-left)
+        );
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-around;
+
+    gap: 2px;
+
+}
+
+
+.bottom-nav-item {
+
+    min-width: 54px;
+
+    min-height: 58px;
+
+    padding:
+        5px 5px 3px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 4px;
+
+    text-decoration: none;
+
+}
+
+
+.bottom-nav-icon {
+
+    width: 22px;
+
+    height: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.bottom-nav-icon svg {
+
+    width: 21px;
+
+    height: 21px;
+
+    stroke-width: 2.1;
+
+}
+
+
+.bottom-nav-label {
 
     font-family:
-        "Bricolage Grotesque",
         "DM Sans",
         sans-serif;
 
-    font-size: 1.13rem;
+    font-size: 0.74rem;
 
-    line-height: 1.2;
+    line-height: 1;
 
-    font-weight: 700;
+    font-weight: 600;
 
-    letter-spacing: -0.02em;
+    white-space: nowrap;
+
 }
 
 
 /* ============================================================
-   32. HOME SECTION LABEL
+   CENTER QUIZ BUTTON
 ============================================================ */
 
-.home-page .section-heading .section-label {
+.bottom-nav-center {
+
+    position: relative;
+
+    margin-top: -17px;
+
+    min-height: 68px;
+
+    justify-content: flex-start;
+
+    gap: 3px;
+
+}
+
+
+.bottom-nav-main {
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #7a1688
+        );
+
+    color: #ffffff;
+
+    border:
+        4px solid
+        var(--bg, #f7faf8);
+
+    box-shadow:
+        0 7px 20px rgba(
+            74,
+            7,
+            84,
+            0.25
+        );
+
+}
+
+
+.bottom-nav-main-icon {
+
+    width: 22px;
+
+    height: 22px;
+
+}
+
+
+.bottom-nav-center-label {
+
+    margin-top: -1px;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    font-size: 0.74rem;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+}
+
+
+/* ============================================================
+   BOTTOM AVATAR
+============================================================ */
+
+.bottom-nav-avatar {
+
+    width: 25px;
+
+    height: 25px;
+
+    min-width: 25px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #8b2c99
+        );
+
+    color: #ffffff;
+
+    font-family:
+        "Bricolage Grotesque",
+        sans-serif;
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+
+}
+
+
+.bottom-avatar-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
 
     display: block;
 
-    margin-bottom: 4px;
+    border-radius: 50%;
 
-    color:
-        var(--brand);
-
-    font-size: 0.62rem;
-
-    font-weight: 700;
-
-    letter-spacing: 0.09em;
-
-    text-transform: uppercase;
 }
 
 
 /* ============================================================
-   33. MEMBER / GUEST STATE
+   SIDEBAR MOBILE BEHAVIOUR
 ============================================================ */
 
-.hero-state[hidden],
-#memberDashboardContent[hidden],
-#sidebarMember[hidden],
-.member-header-actions[hidden] {
+@media (max-width: 900px) {
 
-    display: none !important;
-}
+    .sidebar {
 
+        position: fixed;
 
-/* ============================================================
-   34. TABLET
-============================================================ */
+        top: 0;
 
-@media (max-width: 1000px) {
+        left: 0;
 
-    .home-hero {
+        bottom: 0;
 
-        padding:
-            30px;
+        z-index: 1200;
+
+        transform:
+            translateX(-105%);
+
+        transition:
+            transform 0.25s ease;
+
+        visibility: hidden;
 
     }
 
 
-    .home-hero-visual {
+    .sidebar.open {
 
-        width: 125px;
-        height: 125px;
+        transform:
+            translateX(0);
 
-        flex-basis: 125px;
+        visibility: visible;
+
     }
 
 
-    .hero-icon-orbit {
+    .mobile-overlay {
 
-        width: 108px;
-        height: 108px;
-    }
+        position: fixed;
 
+        inset: 0;
 
-    .hero-icon {
+        z-index: 1100;
 
-        width: 70px;
-        height: 70px;
-
-        border-radius: 22px;
-    }
-
-
-    .hero-icon svg {
-
-        width: 30px;
-        height: 30px;
-    }
-
-
-    .feature-grid {
-
-        grid-template-columns:
-            repeat(
-                3,
-                minmax(0, 1fr)
+        background:
+            rgba(
+                15,
+                8,
+                20,
+                0.48
             );
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        pointer-events: none;
+
+        transition:
+            opacity 0.25s ease,
+            visibility 0.25s ease;
+
     }
 
-}
+
+    .mobile-overlay.active {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+
+    }
 
 
-/* ============================================================
-   35. MOBILE
-============================================================ */
+    .mobile-menu-open {
 
-@media (max-width: 700px) {
+        overflow: hidden;
+
+    }
+
+
+    .top-header {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        padding:
+            10px
+            14px;
+
+    }
+
+
+    .header-left {
+
+        flex: 1;
+
+        min-width: 0;
+
+    }
+
+
+    .mobile-brand {
+
+        min-width: 0;
+
+    }
+
+
+    .mobile-brand-text {
+
+        overflow: hidden;
+
+    }
+
+
+    .mobile-brand-text strong,
+    .mobile-brand-text small {
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+    }
+
+
+    .header-actions {
+
+        flex-shrink: 0;
+
+    }
+
+
+    .mobile-menu-button {
+
+        width: 40px;
+
+        height: 40px;
+
+        min-width: 40px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
 
     .home-hero {
 
-        min-height: 205px;
-
         padding:
-            25px
-            21px;
+            28px 18px;
 
-        border-radius:
-            var(--radius-lg);
-
-        gap: 10px;
     }
 
 
     .home-hero h2 {
 
-        font-size: 1.75rem;
+        font-size:
+            clamp(
+                2rem,
+                9vw,
+                2.75rem
+            );
 
-        letter-spacing: -0.04em;
     }
 
 
     .home-hero p {
 
-        max-width: 270px;
+        font-size: 1rem;
 
-        font-size: 0.73rem;
-
-        line-height: 1.5;
-    }
-
-
-    .home-hero .section-label {
-
-        font-size: 0.59rem;
-    }
-
-
-    .hero-actions,
-    .member-hero-actions {
-
-        gap: 7px;
-
-        margin-top: 17px;
-    }
-
-
-    .primary-action-button,
-    .secondary-action-button {
-
-        min-height: 39px;
-
-        padding:
-            0
-            12px;
-
-        border-radius: 10px;
-
-        font-size: 0.68rem;
-    }
-
-
-    .primary-action-button svg,
-    .secondary-action-button svg {
-
-        width: 15px;
-        height: 15px;
-    }
-
-
-    .home-hero-visual {
-
-        width: 72px;
-        height: 72px;
-
-        flex-basis: 72px;
-
-        align-self: center;
-    }
-
-
-    .hero-icon-orbit {
-
-        width: 72px;
-        height: 72px;
-    }
-
-
-    .hero-icon {
-
-        width: 50px;
-        height: 50px;
-
-        border-radius: 16px;
-    }
-
-
-    .hero-icon svg {
-
-        width: 23px;
-        height: 23px;
-    }
-
-
-    /* QUICK ACCESS */
-
-    .quick-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 10px;
-    }
-
-
-    .quick-card {
-
-        min-height: 74px;
-
-        padding:
-            12px
-            13px;
-
-        border-radius:
-            var(--radius-md);
-    }
-
-
-    .quick-card-icon {
-
-        width: 42px;
-        height: 42px;
-
-        flex-basis: 42px;
-
-        border-radius: 12px;
-    }
-
-
-    .quick-card-icon svg {
-
-        width: 18px;
-        height: 18px;
     }
 
 
     .quick-card-content strong {
 
-        font-size: 0.78rem;
+        font-size: 1rem;
+
     }
 
 
     .quick-card-content span {
 
-        font-size: 0.65rem;
-    }
+        font-size: 0.9rem;
 
-
-    /* DASHBOARD */
-
-    .dashboard-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 11px;
-
-        margin-top: 24px;
-    }
-
-
-    .dashboard-card {
-
-        min-height: 225px;
-
-        border-radius:
-            var(--radius-md);
-    }
-
-
-    .dashboard-card-header {
-
-        padding:
-            15px
-            16px
-            12px;
-    }
-
-
-    .dashboard-card-body {
-
-        padding:
-            12px
-            16px;
-    }
-
-
-    .dashboard-card .text-link {
-
-        padding:
-            11px
-            16px
-            14px;
-    }
-
-
-    /* GUEST INFORMATION */
-
-    .guest-information {
-
-        margin-top: 27px;
-    }
-
-
-    .feature-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 10px;
-    }
-
-
-    .feature-card {
-
-        padding:
-            17px;
-    }
-
-
-    .feature-icon {
-
-        width: 39px;
-        height: 39px;
-
-        margin-bottom: 11px;
-
-        border-radius: 11px;
-    }
-
-
-    .feature-card h3 {
-
-        font-size: 0.86rem;
     }
 
 
     .feature-card p {
 
-        font-size: 0.68rem;
-    }
+        font-size: 0.93rem;
 
-
-    /* SECTION */
-
-    .home-page .section-block {
-
-        margin-top: 25px;
-    }
-
-
-    .home-page .section-heading h2 {
-
-        font-size: 1rem;
     }
 
 }
 
 
 /* ============================================================
-   36. SMALL PHONES
+   SMALL PHONES
 ============================================================ */
 
-@media (max-width: 380px) {
+@media (max-width: 480px) {
 
-    .home-hero {
+    .mobile-brand-icon {
 
-        padding:
-            22px
-            17px;
+        width: 39px;
+
+        height: 39px;
+
+        min-width: 39px;
+
+    }
+
+
+    .mobile-brand-text strong {
+
+        font-size: 0.96rem;
+
+    }
+
+
+    .mobile-brand-text small {
+
+        font-size: 0.72rem;
+
+    }
+
+
+    .header-icon-button,
+    .header-avatar {
+
+        width: 40px;
+
+        height: 40px;
+
+        min-width: 40px;
+
+    }
+
+
+    .header-actions {
+
+        gap: 7px;
+
     }
 
 
     .home-hero h2 {
 
-        font-size: 1.55rem;
+        font-size: 2rem;
+
     }
 
 
     .home-hero p {
 
-        font-size: 0.68rem;
-    }
+        font-size: 0.98rem;
 
+        line-height: 1.58;
 
-    .home-hero-visual {
-
-        width: 58px;
-        height: 58px;
-
-        flex-basis: 58px;
-    }
-
-
-    .hero-icon-orbit {
-
-        width: 58px;
-        height: 58px;
-    }
-
-
-    .hero-icon {
-
-        width: 43px;
-        height: 43px;
-
-        border-radius: 13px;
-    }
-
-
-    .hero-icon svg {
-
-        width: 20px;
-        height: 20px;
     }
 
 
     .primary-action-button,
     .secondary-action-button {
 
-        min-height: 37px;
+        min-height: 46px;
+
+        font-size: 0.9rem;
+
+    }
+
+
+    .quick-card {
 
         padding:
-            0
-            10px;
+            15px;
 
-        font-size: 0.64rem;
+    }
+
+
+    .quick-card-content strong {
+
+        font-size: 0.98rem;
+
     }
 
 
     .quick-card-content span {
 
-        max-width: 180px;
+        font-size: 0.86rem;
+
+    }
+
+
+    .bottom-navigation {
+
+        min-height: 70px;
+
+    }
+
+
+    .bottom-nav-label,
+    .bottom-nav-center-label {
+
+        font-size: 0.72rem;
+
+    }
+
+
+    .bottom-nav-center {
+
+        margin-top: -15px;
+
+    }
+
+
+    .bottom-nav-main {
+
+        width: 50px;
+
+        height: 50px;
+
     }
 
 }
 
 
 /* ============================================================
-   37. TOUCH DEVICES
+   VERY SMALL PHONES
 ============================================================ */
 
-@media (hover: none) {
+@media (max-width: 360px) {
 
-    .quick-card:hover {
+    .mobile-brand {
 
-        transform: none;
+        gap: 6px;
 
-        box-shadow:
-            var(--home-card-shadow);
     }
 
 
-    .primary-action-button:hover,
-    .secondary-action-button:hover {
+    .mobile-brand-icon {
 
-        transform: none;
+        width: 36px;
+
+        height: 36px;
+
+        min-width: 36px;
+
     }
 
 
-    .quick-card:hover
-    .quick-card-arrow {
+    .mobile-brand-icon svg {
 
-        transform: none;
+        width: 18px;
+
+        height: 18px;
+
+    }
+
+
+    .mobile-brand-text strong {
+
+        font-size: 0.9rem;
+
+    }
+
+
+    .mobile-brand-text small {
+
+        font-size: 0.67rem;
+
+    }
+
+
+    .header-icon-button,
+    .header-avatar {
+
+        width: 37px;
+
+        height: 37px;
+
+        min-width: 37px;
+
+    }
+
+
+    .bottom-nav-item {
+
+        min-width: 48px;
+
+    }
+
+
+    .bottom-nav-label,
+    .bottom-nav-center-label {
+
+        font-size: 0.67rem;
+
+    }
+
+}
+
+
+/* ============================================================
+   ACCESSIBILITY
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sidebar,
+    .mobile-overlay {
+
+        transition: none;
+
+    }
+
+}
+
+
+/* ============================================================
+   LOGOUT SPINNER
+============================================================ */
+
+.spin {
+
+    animation:
+        homeSpin 0.8s linear infinite;
+
+}
+
+
+@keyframes homeSpin {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
     }
 
 }
