@@ -1,68 +1,67 @@
 /**
  * ============================================================
+ * AFC ISIU YOUTH PORTAL
  * API FOUNDATION
- * STEP 10A
  * ============================================================
  */
 
-const API = {
 
-    baseUrl: "",
+async function apiRequest(
+    action,
+    payload = {}
+) {
 
+    if (
+        !API_CONFIG ||
+        !API_CONFIG.BASE_URL
+    ) {
 
-    async call(action, data = {}) {
+        throw new Error(
+            "API configuration is missing."
+        );
 
-        if (!this.baseUrl) {
-
-            console.warn(
-                "API base URL has not been configured yet."
-            );
-
-            return {
-                success: false,
-                message: "API is not configured yet."
-            };
-        }
-
-
-        try {
-
-            const response = await fetch(
-                this.baseUrl,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8"
-                    },
-
-                    body: JSON.stringify({
-                        action: action,
-                        data: data
-                    })
-                }
-            );
-
-
-            const result =
-                await response.json();
-
-            return result;
-
-
-        } catch (error) {
-
-            console.error(
-                "API Error:",
-                error
-            );
-
-            return {
-                success: false,
-                message:
-                    "Unable to connect to the server."
-            };
-        }
     }
 
-};
+
+    const response =
+        await fetch(
+            API_CONFIG.BASE_URL,
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "text/plain;charset=utf-8"
+                },
+
+                body:
+                    JSON.stringify({
+
+                        action:
+                            action,
+
+                        ...payload
+
+                    })
+
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Backend request failed."
+        );
+
+    }
+
+
+    const data =
+        await response.json();
+
+
+    return data;
+
+}
