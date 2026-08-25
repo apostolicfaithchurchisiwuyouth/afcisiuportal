@@ -3,398 +3,194 @@
    HOME PAGE STYLES
 ============================================================ */
 
-
-/* ============================================================
-   HOME PAGE
-============================================================ */
-
 .home-page {
-
     width: 100%;
-
 }
-
 
 /* ============================================================
    HEADER
+   IMPORTANT: HEADER STYLING LEFT IN PLACE
 ============================================================ */
 
 .top-header {
-
     min-height: 72px;
-
 }
-
 
 .header-left {
-
     display: flex;
-
     align-items: center;
-
     gap: 12px;
-
     min-width: 0;
-
 }
-
 
 .header-actions {
-
     display: flex;
-
     align-items: center;
-
     justify-content: flex-end;
-
     gap: 10px;
-
     margin-left: auto;
-
 }
-
 
 /* ============================================================
    MOBILE BRAND
 ============================================================ */
 
 .mobile-brand {
-
     display: flex;
-
     align-items: center;
-
     gap: 9px;
-
     text-decoration: none;
-
     color: inherit;
-
     min-width: 0;
-
 }
-
 
 .mobile-brand-icon {
-
     width: 42px;
-
     height: 42px;
-
     min-width: 42px;
-
     border-radius: 50%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #4a0754,
-            #7a1688
-        );
-
+    background: linear-gradient(145deg, #4a0754, #7a1688);
     color: #ffffff;
-
-    box-shadow:
-        0 5px 16px rgba(
-            74,
-            7,
-            84,
-            0.24
-        );
-
+    box-shadow: 0 5px 16px rgba(74, 7, 84, 0.24);
 }
-
 
 .mobile-brand-icon svg {
-
     width: 21px;
-
     height: 21px;
-
     stroke-width: 2.1;
-
 }
-
 
 .mobile-brand-text {
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     line-height: 1.05;
-
     white-space: nowrap;
-
 }
-
 
 .mobile-brand-text strong {
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
+    font-family: "Bricolage Grotesque", sans-serif;
     font-size: 1rem;
-
     font-weight: 700;
-
     letter-spacing: -0.02em;
-
 }
-
 
 .mobile-brand-text small {
-
     margin-top: 3px;
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
+    font-family: "DM Sans", sans-serif;
     font-size: 0.74rem;
-
     font-weight: 600;
-
     opacity: 0.68;
-
     letter-spacing: 0.01em;
-
 }
-
 
 /* ============================================================
    HEADER ACCOUNT BUTTON
 ============================================================ */
 
 .header-icon-button {
-
     position: relative;
-
     width: 42px;
-
     height: 42px;
-
     min-width: 42px;
-
     border-radius: 50%;
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     text-decoration: none;
-
     color: inherit;
-
 }
-
 
 .header-icon-button svg {
-
     width: 20px;
-
     height: 20px;
-
 }
-
 
 .header-avatar {
-
     width: 42px;
-
     height: 42px;
-
     min-width: 42px;
-
     max-width: 42px;
-
     border-radius: 50%;
-
     overflow: hidden;
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     text-decoration: none;
-
     flex-shrink: 0;
-
-    background:
-        linear-gradient(
-            145deg,
-            #4a0754,
-            #8b2c99
-        );
-
+    background: linear-gradient(145deg, #4a0754, #8b2c99);
     color: #ffffff;
-
-    border: 2px solid rgba(
-        74,
-        7,
-        84,
-        0.12
-    );
-
-    box-shadow:
-        0 4px 14px rgba(
-            0,
-            0,
-            0,
-            0.12
-        );
-
+    border: 2px solid rgba(74, 7, 84, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
-
 
 .header-avatar-content {
-
     width: 100%;
-
     height: 100%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
+    font-family: "Bricolage Grotesque", sans-serif;
     font-size: 0.92rem;
-
     font-weight: 700;
-
 }
-
 
 .header-avatar-content svg {
-
     width: 19px;
-
     height: 19px;
-
 }
-
 
 .header-avatar-image {
-
     width: 100%;
-
     height: 100%;
-
     object-fit: cover;
-
     display: block;
-
     border-radius: 50%;
-
 }
-
 
 .header-notification-dot {
-
     position: absolute;
-
     top: 7px;
-
     right: 6px;
-
     width: 8px;
-
     height: 8px;
-
     border-radius: 50%;
-
     background: #ea580c;
-
-    border: 2px solid
-        var(--surface, #ffffff);
-
+    border: 2px solid var(--surface, #ffffff);
 }
 
-
 /* ============================================================
-   HERO
+   HERO / CONTENT SIZING
 ============================================================ */
 
 .home-hero {
-
-    padding:
-        clamp(26px, 5vw, 52px);
-
+    padding: clamp(28px, 5vw, 52px);
 }
-
 
 .home-hero h2 {
-
-    font-size:
-        clamp(
-            2rem,
-            5vw,
-            3.45rem
-        );
-
+    font-size: clamp(2.15rem, 5vw, 3.45rem);
     line-height: 1.04;
-
     letter-spacing: -0.04em;
-
 }
-
 
 .home-hero p {
-
     max-width: 650px;
-
-    font-size:
-        clamp(
-            1rem,
-            2vw,
-            1.12rem
-        );
-
+    font-size: clamp(1.02rem, 2vw, 1.14rem);
     line-height: 1.65;
-
 }
-
 
 .section-label {
-
-    font-size: 0.82rem;
-
+    font-size: 0.86rem;
     font-weight: 700;
-
     letter-spacing: 0.06em;
-
 }
-
 
 .section-heading h2 {
-
-    font-size:
-        clamp(
-            1.35rem,
-            3vw,
-            1.75rem
-        );
-
+    font-size: clamp(1.4rem, 3vw, 1.75rem);
 }
-
 
 /* ============================================================
    HERO BUTTONS
@@ -402,568 +198,339 @@
 
 .primary-action-button,
 .secondary-action-button {
-
-    min-height: 48px;
-
-    padding:
-        0 17px;
-
-    font-size: 0.94rem;
-
+    min-height: 50px;
+    padding: 0 18px;
+    font-size: 0.98rem;
 }
-
 
 .primary-action-button svg,
 .secondary-action-button svg {
-
-    width: 18px;
-
-    height: 18px;
-
+    width: 19px;
+    height: 19px;
 }
-
 
 /* ============================================================
    QUICK CARDS
 ============================================================ */
 
 .quick-card {
-
-    min-height: 92px;
-
-    padding:
-        17px 18px;
-
+    min-height: 96px;
+    padding: 18px 19px;
 }
-
 
 .quick-card-content strong {
-
-    font-size: 1rem;
-
+    font-size: 1.03rem;
 }
-
 
 .quick-card-content span {
-
-    font-size: 0.88rem;
-
+    font-size: 0.9rem;
     line-height: 1.45;
-
 }
-
 
 /* ============================================================
    FEATURE CARDS
 ============================================================ */
 
 .feature-card {
-
-    padding: 22px;
-
+    padding: 23px;
 }
-
 
 .feature-card h3 {
-
-    font-size: 1.12rem;
-
+    font-size: 1.15rem;
 }
-
 
 .feature-card p {
-
-    font-size: 0.92rem;
-
+    font-size: 0.95rem;
     line-height: 1.58;
-
 }
-
 
 /* ============================================================
    DASHBOARD
 ============================================================ */
 
 .dashboard-card-body {
-
-    font-size: 0.92rem;
-
+    font-size: 0.94rem;
 }
-
 
 .dashboard-card h3 {
-
-    font-size: 1.08rem;
-
+    font-size: 1.1rem;
 }
-
 
 .home-content-preview h4 {
-
-    font-size: 1rem;
-
+    font-size: 1.02rem;
 }
-
 
 .home-content-preview p {
-
-    font-size: 0.88rem;
-
+    font-size: 0.9rem;
     line-height: 1.5;
-
 }
-
 
 /* ============================================================
-   MOBILE BOTTOM NAVIGATION
-============================================================ */
-
-.bottom-navigation {
-
-    min-height: 72px;
-
-    padding:
-        7px
-        max(
-            10px,
-            env(safe-area-inset-right)
-        )
-        calc(
-            7px +
-            env(safe-area-inset-bottom)
-        )
-        max(
-            10px,
-            env(safe-area-inset-left)
-        );
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-around;
-
-    gap: 2px;
-
-}
-
-
-.bottom-nav-item {
-
-    min-width: 54px;
-
-    min-height: 58px;
-
-    padding:
-        5px 5px 3px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: flex-start;
-
-    gap: 4px;
-
-    text-decoration: none;
-
-}
-
-
-.bottom-nav-icon {
-
-    width: 22px;
-
-    height: 22px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.bottom-nav-icon svg {
-
-    width: 21px;
-
-    height: 21px;
-
-    stroke-width: 2.1;
-
-}
-
-
-.bottom-nav-label {
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.74rem;
-
-    line-height: 1;
-
-    font-weight: 600;
-
-    white-space: nowrap;
-
-}
-
-
-/* ============================================================
-   CENTER QUIZ BUTTON
-============================================================ */
-
-.bottom-nav-center {
-
-    position: relative;
-
-    margin-top: -17px;
-
-    min-height: 68px;
-
-    justify-content: flex-start;
-
-    gap: 3px;
-
-}
-
-
-.bottom-nav-main {
-
-    width: 52px;
-
-    height: 52px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #4a0754,
-            #7a1688
-        );
-
-    color: #ffffff;
-
-    border:
-        4px solid
-        var(--bg, #f7faf8);
-
-    box-shadow:
-        0 7px 20px rgba(
-            74,
-            7,
-            84,
-            0.25
-        );
-
-}
-
-
-.bottom-nav-main-icon {
-
-    width: 22px;
-
-    height: 22px;
-
-}
-
-
-.bottom-nav-center-label {
-
-    margin-top: -1px;
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.74rem;
-
-    line-height: 1;
-
-    font-weight: 700;
-
-}
-
-
-/* ============================================================
-   BOTTOM AVATAR
-============================================================ */
-
-.bottom-nav-avatar {
-
-    width: 25px;
-
-    height: 25px;
-
-    min-width: 25px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    background:
-        linear-gradient(
-            145deg,
-            #4a0754,
-            #8b2c99
-        );
-
-    color: #ffffff;
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size: 0.72rem;
-
-    font-weight: 700;
-
-}
-
-
-.bottom-avatar-image {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-    display: block;
-
-    border-radius: 50%;
-
-}
-
-
-/* ============================================================
-   SIDEBAR MOBILE BEHAVIOUR
+   MOBILE SIDEBAR + CONTENT
 ============================================================ */
 
 @media (max-width: 900px) {
 
     .sidebar {
-
         position: fixed;
-
         top: 0;
-
         left: 0;
-
         bottom: 0;
-
+        width: var(--sidebar-width);
         z-index: 1200;
-
-        transform:
-            translateX(-105%);
-
-        transition:
-            transform 0.25s ease;
-
+        transform: translate3d(-105%, 0, 0);
+        transition: transform 0.25s ease;
         visibility: hidden;
-
+        pointer-events: none;
     }
-
 
     .sidebar.open {
-
-        transform:
-            translateX(0);
-
+        transform: translate3d(0, 0, 0);
         visibility: visible;
-
+        pointer-events: auto;
     }
-
 
     .mobile-overlay {
-
         position: fixed;
-
         inset: 0;
-
         z-index: 1100;
-
-        background:
-            rgba(
-                15,
-                8,
-                20,
-                0.48
-            );
-
+        background: rgba(15, 8, 20, 0.48);
         opacity: 0;
-
         visibility: hidden;
-
         pointer-events: none;
-
-        transition:
-            opacity 0.25s ease,
-            visibility 0.25s ease;
-
+        transition: opacity 0.25s ease, visibility 0.25s ease;
     }
-
 
     .mobile-overlay.active {
-
         opacity: 1;
-
         visibility: visible;
-
         pointer-events: auto;
-
     }
-
 
     .mobile-menu-open {
-
         overflow: hidden;
-
     }
-
 
     .top-header {
-
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
-
         gap: 12px;
-
-        padding:
-            10px
-            14px;
-
+        padding: 10px 14px;
     }
-
 
     .header-left {
-
         flex: 1;
-
         min-width: 0;
-
     }
-
 
     .mobile-brand {
-
         min-width: 0;
-
     }
-
 
     .mobile-brand-text {
-
         overflow: hidden;
-
     }
-
 
     .mobile-brand-text strong,
     .mobile-brand-text small {
-
         overflow: hidden;
-
         text-overflow: ellipsis;
-
     }
-
 
     .header-actions {
-
         flex-shrink: 0;
-
     }
-
 
     .mobile-menu-button {
-
         width: 40px;
-
         height: 40px;
-
         min-width: 40px;
-
         display: inline-flex;
-
         align-items: center;
-
         justify-content: center;
-
+        cursor: pointer;
+        touch-action: manipulation;
     }
-
 
     .home-hero {
-
-        padding:
-            28px 18px;
-
+        padding: 30px 18px;
     }
-
 
     .home-hero h2 {
-
-        font-size:
-            clamp(
-                2rem,
-                9vw,
-                2.75rem
-            );
-
+        font-size: clamp(2.05rem, 9vw, 2.8rem);
     }
-
 
     .home-hero p {
-
-        font-size: 1rem;
-
+        font-size: 1.02rem;
     }
-
 
     .quick-card-content strong {
-
-        font-size: 1rem;
-
+        font-size: 1.03rem;
     }
-
 
     .quick-card-content span {
-
-        font-size: 0.9rem;
-
+        font-size: 0.92rem;
     }
-
 
     .feature-card p {
-
-        font-size: 0.93rem;
-
+        font-size: 0.95rem;
     }
-
 }
 
+/* ============================================================
+   MOBILE BOTTOM NAVIGATION
+============================================================ */
+
+@media (max-width: 700px) {
+
+    .bottom-navigation {
+        min-height: var(--bottom-nav-height);
+        padding:
+            7px
+            max(10px, env(safe-area-inset-right))
+            calc(7px + env(safe-area-inset-bottom))
+            max(10px, env(safe-area-inset-left));
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 2px;
+    }
+
+    .bottom-nav-item {
+        min-width: 54px;
+        min-height: 60px;
+        padding: 5px 5px 3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        text-decoration: none;
+    }
+
+    .bottom-nav-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bottom-nav-icon svg {
+        width: 22px;
+        height: 22px;
+        stroke-width: 2.1;
+    }
+
+    .bottom-nav-label {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.76rem;
+        line-height: 1;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* ========================================================
+       CENTER QUIZ
+    ======================================================== */
+
+    .bottom-nav-center {
+        position: relative;
+        justify-content: flex-start;
+        padding: 0;
+        gap: 0;
+        overflow: visible;
+    }
+
+    .bottom-nav-main {
+        position: absolute;
+        left: 50%;
+        top: -18px;
+        transform: translateX(-50%);
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(145deg, #4a0754, #7a1688);
+        color: #ffffff;
+        border: 4px solid var(--surface);
+        box-shadow: 0 8px 20px rgba(74, 7, 84, 0.25);
+        z-index: 2;
+    }
+
+    .bottom-nav-main-icon {
+        width: 24px;
+        height: 24px;
+        stroke-width: 2.2;
+        margin: 0;
+    }
+
+    .bottom-nav-center-label {
+        position: absolute;
+        left: 50%;
+        top: 43px;
+        transform: translateX(-50%);
+        margin: 0;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.76rem;
+        line-height: 1;
+        font-weight: 700;
+        color: var(--brand);
+        white-space: nowrap;
+    }
+
+    /* ========================================================
+       GUEST / MEMBER PROFILE SLOT
+    ======================================================== */
+
+    .bottom-nav-profile {
+        cursor: pointer;
+    }
+
+    .bottom-profile-icon,
+    .bottom-nav-avatar {
+        width: 27px;
+        height: 27px;
+        min-width: 27px;
+        min-height: 27px;
+        flex: 0 0 27px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .bottom-profile-icon {
+        background: var(--brand-light);
+        color: var(--brand);
+    }
+
+    .bottom-profile-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .bottom-nav-avatar {
+        background: linear-gradient(145deg, #4a0754, #8b2c99);
+        color: #ffffff;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+
+    .bottom-avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 50%;
+    }
+}
 
 /* ============================================================
    SMALL PHONES
@@ -972,129 +539,76 @@
 @media (max-width: 480px) {
 
     .mobile-brand-icon {
-
         width: 39px;
-
         height: 39px;
-
         min-width: 39px;
-
     }
-
 
     .mobile-brand-text strong {
-
         font-size: 0.96rem;
-
     }
-
 
     .mobile-brand-text small {
-
         font-size: 0.72rem;
-
     }
-
 
     .header-icon-button,
     .header-avatar {
-
         width: 40px;
-
         height: 40px;
-
         min-width: 40px;
-
     }
-
 
     .header-actions {
-
         gap: 7px;
-
     }
-
 
     .home-hero h2 {
-
-        font-size: 2rem;
-
+        font-size: 2.05rem;
     }
-
 
     .home-hero p {
-
-        font-size: 0.98rem;
-
+        font-size: 1rem;
         line-height: 1.58;
-
     }
-
 
     .primary-action-button,
     .secondary-action-button {
-
-        min-height: 46px;
-
-        font-size: 0.9rem;
-
+        min-height: 48px;
+        font-size: 0.94rem;
     }
-
 
     .quick-card {
-
-        padding:
-            15px;
-
+        padding: 16px;
     }
-
 
     .quick-card-content strong {
-
-        font-size: 0.98rem;
-
+        font-size: 1rem;
     }
-
 
     .quick-card-content span {
-
-        font-size: 0.86rem;
-
+        font-size: 0.88rem;
     }
-
 
     .bottom-navigation {
-
-        min-height: 70px;
-
+        min-height: 74px;
     }
-
 
     .bottom-nav-label,
     .bottom-nav-center-label {
-
         font-size: 0.72rem;
-
     }
-
-
-    .bottom-nav-center {
-
-        margin-top: -15px;
-
-    }
-
 
     .bottom-nav-main {
-
-        width: 50px;
-
-        height: 50px;
-
+        width: 55px;
+        height: 55px;
+        top: -16px;
     }
 
+    .bottom-nav-center-label {
+        top: 42px;
+    }
 }
-
 
 /* ============================================================
    VERY SMALL PHONES
@@ -1103,74 +617,54 @@
 @media (max-width: 360px) {
 
     .mobile-brand {
-
         gap: 6px;
-
     }
-
 
     .mobile-brand-icon {
-
         width: 36px;
-
         height: 36px;
-
         min-width: 36px;
-
     }
-
 
     .mobile-brand-icon svg {
-
         width: 18px;
-
         height: 18px;
-
     }
-
 
     .mobile-brand-text strong {
-
         font-size: 0.9rem;
-
     }
-
 
     .mobile-brand-text small {
-
         font-size: 0.67rem;
-
     }
-
 
     .header-icon-button,
     .header-avatar {
-
         width: 37px;
-
         height: 37px;
-
         min-width: 37px;
-
     }
-
 
     .bottom-nav-item {
-
         min-width: 48px;
-
     }
-
 
     .bottom-nav-label,
     .bottom-nav-center-label {
-
-        font-size: 0.67rem;
-
+        font-size: 0.68rem;
     }
 
-}
+    .bottom-nav-main {
+        width: 52px;
+        height: 52px;
+        top: -15px;
+    }
 
+    .bottom-nav-center-label {
+        top: 40px;
+    }
+}
 
 /* ============================================================
    ACCESSIBILITY
@@ -1180,40 +674,19 @@
 
     .sidebar,
     .mobile-overlay {
-
         transition: none;
-
     }
-
 }
-
 
 /* ============================================================
    LOGOUT SPINNER
 ============================================================ */
 
 .spin {
-
-    animation:
-        homeSpin 0.8s linear infinite;
-
+    animation: homeSpin 0.8s linear infinite;
 }
 
-
 @keyframes homeSpin {
-
-    from {
-
-        transform:
-            rotate(0deg);
-
-    }
-
-    to {
-
-        transform:
-            rotate(360deg);
-
-    }
-
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
