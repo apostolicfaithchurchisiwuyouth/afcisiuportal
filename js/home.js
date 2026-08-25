@@ -9,23 +9,21 @@
  * ------------------------------------------------------------
  * index.html is BOTH:
  *
- * 1. Public / Guest Home
- * 2. Authenticated Member Home
+ * 1. Public/guest homepage
+ * 2. Authenticated member homepage
  *
  * Guests CAN:
- *
- *     - View lessons
- *     - Read lessons
- *     - View gallery
- *     - View public portal information
+ *   - View lessons
+ *   - Read lessons
+ *   - View gallery
+ *   - View public content
  *
  * Members CAN additionally:
- *
- *     - Take quizzes
- *     - View profile
- *     - View notifications
- *     - Track member activity
- *     - Access other authenticated features
+ *   - Take quizzes
+ *   - Track quiz activity
+ *   - View profile
+ *   - View notifications
+ *   - Access member dashboard information
  *
  * ============================================================
  */
@@ -35,7 +33,7 @@
 
 /* ============================================================
    1. HOME STATE
-   ============================================================ */
+============================================================ */
 
 const HOME_STATE = {
 
@@ -65,7 +63,7 @@ const HOME_STATE = {
 
 /* ============================================================
    2. DOM READY
-   ============================================================ */
+============================================================ */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -75,7 +73,7 @@ document.addEventListener(
 
 /* ============================================================
    3. INITIALIZE HOME
-   ============================================================ */
+============================================================ */
 
 async function initializeHome() {
 
@@ -96,27 +94,62 @@ async function initializeHome() {
     );
 
 
-    determineAuthentication();
+    HOME_STATE.authenticated =
+        typeof AUTH !== "undefined" &&
+        typeof AUTH.isAuthenticated === "function"
+            ? AUTH.isAuthenticated()
+            : false;
 
+
+    if (
+        HOME_STATE.authenticated &&
+        typeof AUTH.getUser === "function"
+    ) {
+
+        HOME_STATE.user =
+            AUTH.getUser();
+
+    } else {
+
+        HOME_STATE.user =
+            null;
+
+    }
+
+
+    /*
+     * Set visual state BEFORE loading data.
+     */
 
     applyHomeMode();
 
 
+    /*
+     * Set all events once.
+     */
+
     setupHomeEvents();
 
 
+    /*
+     * Load public content.
+     *
+     * Guests are allowed to see lessons.
+     */
+
     await loadPublicHomeData();
 
+
+    /*
+     * Load member-only information
+     * only when authenticated.
+     */
 
     if (
         HOME_STATE.authenticated
     ) {
 
         await loadMemberHomeData();
-
-    } else {
-
-        renderGuestMemberAreas();
 
     }
 
@@ -137,38 +170,8 @@ async function initializeHome() {
 
 
 /* ============================================================
-   4. DETERMINE AUTHENTICATION
-   ============================================================ */
-
-function determineAuthentication() {
-
-    HOME_STATE.authenticated =
-
-        typeof AUTH !== "undefined" &&
-
-        typeof AUTH.isAuthenticated === "function"
-
-            ? AUTH.isAuthenticated()
-
-            : false;
-
-
-    HOME_STATE.user =
-
-        HOME_STATE.authenticated &&
-
-        typeof AUTH.getUser === "function"
-
-            ? AUTH.getUser()
-
-            : null;
-
-}
-
-
-/* ============================================================
-   5. APPLY HOME MODE
-   ============================================================ */
+   4. APPLY HOME MODE
+============================================================ */
 
 function applyHomeMode() {
 
@@ -183,7 +186,6 @@ function applyHomeMode() {
             !HOME_STATE.authenticated
         );
 
-
         body.classList.toggle(
             "member-mode",
             HOME_STATE.authenticated
@@ -192,45 +194,68 @@ function applyHomeMode() {
     }
 
 
-    updateHero();
+    updateWelcomeSection();
 
+    updateHeaderActions();
 
-    updateHeader();
-
-
-    updateSidebar();
-
+    updateSidebarProfile();
 
     updateMemberOnlyElements();
 
-
-    updateProtectedLinks();
-
+    updateBottomAccount();
 
     updateNavigation();
-
-
-    const pageTitle =
-        document.getElementById(
-            "pageTitle"
-        );
-
-
-    if (pageTitle) {
-
-        pageTitle.textContent =
-            "Home";
-
-    }
 
 }
 
 
 /* ============================================================
-   6. HERO
-   ============================================================ */
+   5. UPDATE MEMBER-ONLY ELEMENTS
+============================================================ */
 
-function updateHero() {
+function updateMemberOnlyElements() {
+
+    const memberElements =
+        document.querySelectorAll(
+            ".member-only"
+        );
+
+
+    memberElements.forEach(function(element) {
+
+        element.hidden =
+            !HOME_STATE.authenticated;
+
+    });
+
+
+    const guestInformation =
+        document.getElementById(
+            "guestInformation"
+        );
+
+
+    if (guestInformation) {
+
+        guestInformation.hidden =
+            HOME_STATE.authenticated;
+
+    }
+
+
+    const memberDashboard =
+        document.getElementById(
+            "memberDashboardContent"
+        );
+
+
+    if (memberDashboard) {
+
+        memberDashboard.hidden =
+            !HOME_STATE.authenticated;
+
+    }
+
 
     const guestHero =
         document.getElementById(
@@ -260,15 +285,56 @@ function updateHero() {
     }
 
 
+    /*
+     * Sidebar account blocks.
+     */
+
+    const sidebarGuest =
+        document.getElementById(
+            "sidebarGuest"
+        );
+
+
+    const sidebarMember =
+        document.getElementById(
+            "sidebarMember"
+        );
+
+
+    if (sidebarGuest) {
+
+        sidebarGuest.hidden =
+            HOME_STATE.authenticated;
+
+    }
+
+
+    if (sidebarMember) {
+
+        sidebarMember.hidden =
+            !HOME_STATE.authenticated;
+
+    }
+
+}
+
+
+/* ============================================================
+   6. WELCOME SECTION
+============================================================ */
+
+function updateWelcomeSection() {
+
+    const welcomeName =
+        document.getElementById(
+            "welcomeUserName"
+        );
+
+
     if (
-        HOME_STATE.authenticated
+        HOME_STATE.authenticated &&
+        HOME_STATE.user
     ) {
-
-        const welcomeName =
-            document.getElementById(
-                "welcomeUserName"
-            );
-
 
         if (welcomeName) {
 
@@ -278,135 +344,336 @@ function updateHero() {
 
         }
 
+    } else {
+
+        if (welcomeName) {
+
+            welcomeName.textContent =
+                "Friend";
+
+        }
+
     }
 
 }
 
 
 /* ============================================================
-   7. HEADER
-   ============================================================
- *
- * The header already contains:
- *
- *     #guestHeaderActions
- *     #memberHeaderActions
- *
- * We simply switch between them.
- *
- * NO EXTRA HEADER BUTTONS ARE CREATED.
- *
- * ============================================================
- */
+   7. HEADER ACTIONS
+============================================================ */
 
-function updateHeader() {
+function updateHeaderActions() {
 
-    const guestActions =
+    const guestAvatar =
         document.getElementById(
-            "guestHeaderActions"
+            "guestAccountAvatar"
         );
 
 
-    const memberActions =
+    const memberAvatar =
         document.getElementById(
-            "memberHeaderActions"
+            "memberAccountAvatar"
         );
 
 
-    if (guestActions) {
+    const notificationButton =
+        document.getElementById(
+            "headerNotificationButton"
+        );
 
-        guestActions.hidden =
+
+    /*
+     * GUEST.
+     */
+
+    if (
+        guestAvatar
+    ) {
+
+        guestAvatar.hidden =
             HOME_STATE.authenticated;
 
     }
 
 
-    if (memberActions) {
+    /*
+     * MEMBER.
+     */
 
-        memberActions.hidden =
+    if (
+        memberAvatar
+    ) {
+
+        memberAvatar.hidden =
             !HOME_STATE.authenticated;
 
     }
 
 
     /*
-     * Guest account circle.
+     * Notification bell is visible for everyone.
+     *
+     * Guests can see the bell, but member
+     * notification pages can still be protected.
      */
 
-    updateGuestHeaderAvatar();
+    if (notificationButton) {
+
+        notificationButton.hidden =
+            false;
+
+    }
 
 
     /*
-     * Member profile circle.
+     * Update member avatar.
      */
 
-    updateMemberHeaderAvatar();
+    if (
+        HOME_STATE.authenticated &&
+        memberAvatar
+    ) {
 
-
-    /*
-     * Notification link.
-     *
-     * Guests see the bell but are taken to
-     * login when they click it.
-     *
-     * Members go to notifications.
-     */
-
-    const notificationLinks =
-        document.querySelectorAll(
-            ".header-notification-link"
+        renderHeaderAvatar(
+            memberAvatar
         );
 
-
-    notificationLinks.forEach(function(link) {
-
-        link.href =
-            HOME_STATE.authenticated
-                ? "pages/notifications.html"
-                : "login.html";
-
-    });
+    }
 
 }
 
 
 /* ============================================================
-   8. GUEST HEADER AVATAR
-   ============================================================ */
+   8. HEADER AVATAR
+============================================================ */
 
-function updateGuestHeaderAvatar() {
+function renderHeaderAvatar(
+    container
+) {
 
-    const button =
-        document.getElementById(
-            "guestHeaderAvatar"
-        );
-
-
-    if (!button) {
+    if (!container) {
 
         return;
 
     }
 
 
-    button.innerHTML = `
-
-        <span
-            data-lucide="user-round"
-            aria-hidden="true"
-        ></span>
-
-    `;
+    const avatar =
+        getAvatar();
 
 
-    button.title =
-        "Login";
+    if (avatar) {
+
+        container.innerHTML = `
+
+            <img
+                src="${escapeHtml(avatar)}"
+                alt="Profile"
+                class="user-avatar-image"
+                onerror="this.style.display='none'; this.parentElement.classList.add('avatar-fallback'); this.parentElement.querySelector('.avatar-fallback-letter').hidden=false;"
+            >
+
+            <span
+                class="avatar-fallback-letter"
+                hidden
+            >
+                ${escapeHtml(
+                    getAvatarLetter()
+                )}
+            </span>
+
+        `;
+
+    } else {
+
+        container.innerHTML = `
+
+            <span class="avatar-fallback-letter">
+
+                ${escapeHtml(
+                    getAvatarLetter()
+                )}
+
+            </span>
+
+        `;
+
+    }
+
+}
 
 
-    button.setAttribute(
-        "aria-label",
-        "Login"
-    );
+/* ============================================================
+   9. SIDEBAR PROFILE
+============================================================ */
+
+function updateSidebarProfile() {
+
+    const nameElement =
+        document.getElementById(
+            "sidebarUserName"
+        );
+
+
+    const avatarElement =
+        document.getElementById(
+            "sidebarAvatar"
+        );
+
+
+    if (
+        HOME_STATE.authenticated &&
+        HOME_STATE.user
+    ) {
+
+        if (nameElement) {
+
+            nameElement.textContent =
+                getDisplayName() ||
+                "Member";
+
+        }
+
+
+        if (avatarElement) {
+
+            const avatar =
+                getAvatar();
+
+
+            if (avatar) {
+
+                avatarElement.innerHTML = `
+
+                    <img
+                        src="${escapeHtml(avatar)}"
+                        alt="Profile"
+                        class="user-avatar-image"
+                    >
+
+                `;
+
+            } else {
+
+                avatarElement.textContent =
+                    getAvatarLetter();
+
+            }
+
+        }
+
+    } else {
+
+        if (nameElement) {
+
+            nameElement.textContent =
+                "Welcome";
+
+        }
+
+    }
+
+}
+
+
+/* ============================================================
+   10. BOTTOM ACCOUNT / PROFILE
+============================================================ */
+
+function updateBottomAccount() {
+
+    const accountNav =
+        document.getElementById(
+            "bottomAccountNav"
+        );
+
+
+    const accountIcon =
+        document.getElementById(
+            "bottomAccountIcon"
+        );
+
+
+    const accountLabel =
+        document.getElementById(
+            "bottomAccountLabel"
+        );
+
+
+    if (!accountNav) {
+
+        return;
+
+    }
+
+
+    if (
+        HOME_STATE.authenticated
+    ) {
+
+        /*
+         * MEMBER
+         */
+
+        accountNav.href =
+            "pages/profile.html";
+
+        accountNav.setAttribute(
+            "aria-label",
+            "My profile"
+        );
+
+
+        if (accountLabel) {
+
+            accountLabel.textContent =
+                "Profile";
+
+        }
+
+
+        if (accountIcon) {
+
+            accountIcon.setAttribute(
+                "data-lucide",
+                "user-round"
+            );
+
+        }
+
+    } else {
+
+        /*
+         * GUEST
+         */
+
+        accountNav.href =
+            "login.html";
+
+        accountNav.setAttribute(
+            "aria-label",
+            "Login or create an account"
+        );
+
+
+        if (accountLabel) {
+
+            accountLabel.textContent =
+                "Account";
+
+        }
+
+
+        if (accountIcon) {
+
+            accountIcon.setAttribute(
+                "data-lucide",
+                "user-round"
+            );
+
+        }
+
+    }
 
 
     refreshIcons();
@@ -415,298 +682,8 @@ function updateGuestHeaderAvatar() {
 
 
 /* ============================================================
-   9. MEMBER HEADER AVATAR
-   ============================================================ */
-
-function updateMemberHeaderAvatar() {
-
-    const avatar =
-        document.getElementById(
-            "headerAvatarLetter"
-        );
-
-
-    if (!avatar) {
-
-        return;
-
-    }
-
-
-    const user =
-        HOME_STATE.user;
-
-
-    const avatarUrl =
-        getUserAvatar();
-
-
-    if (avatarUrl) {
-
-        avatar.innerHTML = `
-
-            <img
-                src="${escapeHtml(avatarUrl)}"
-                alt="${escapeHtml(
-                    getDisplayName() ||
-                    "Profile"
-                )}"
-                class="header-avatar-image"
-                onerror="this.parentElement.innerHTML='<span>${escapeHtml(
-                    getUserInitial()
-                )}</span>';"
-            >
-
-        `;
-
-    } else {
-
-        avatar.innerHTML = `
-
-            <span>
-                ${escapeHtml(
-                    getUserInitial()
-                )}
-            </span>
-
-        `;
-
-    }
-
-
-    avatar.setAttribute(
-        "title",
-        getDisplayName() ||
-        "My Profile"
-    );
-
-
-    avatar.setAttribute(
-        "aria-label",
-        getDisplayName() ||
-        "My Profile"
-    );
-
-}
-
-
-/* ============================================================
-   10. SIDEBAR
-   ============================================================ */
-
-function updateSidebar() {
-
-    const guest =
-        document.getElementById(
-            "sidebarGuest"
-        );
-
-
-    const member =
-        document.getElementById(
-            "sidebarMember"
-        );
-
-
-    if (guest) {
-
-        guest.hidden =
-            HOME_STATE.authenticated;
-
-    }
-
-
-    if (member) {
-
-        member.hidden =
-            !HOME_STATE.authenticated;
-
-    }
-
-
-    const nameElement =
-        document.getElementById(
-            "sidebarUserName"
-        );
-
-
-    if (
-        nameElement &&
-        HOME_STATE.authenticated
-    ) {
-
-        nameElement.textContent =
-            getDisplayName() ||
-            "Member";
-
-    }
-
-
-    const sidebarAvatar =
-        document.getElementById(
-            "sidebarAvatar"
-        );
-
-
-    if (
-        sidebarAvatar &&
-        HOME_STATE.authenticated
-    ) {
-
-        const avatarUrl =
-            getUserAvatar();
-
-
-        if (avatarUrl) {
-
-            sidebarAvatar.innerHTML = `
-
-                <img
-                    src="${escapeHtml(avatarUrl)}"
-                    alt=""
-                    class="sidebar-avatar-image"
-                    onerror="this.parentElement.innerHTML='<span>${escapeHtml(
-                        getUserInitial()
-                    )}</span>';"
-                >
-
-            `;
-
-        } else {
-
-            sidebarAvatar.textContent =
-                getUserInitial();
-
-        }
-
-    }
-
-}
-
-
-/* ============================================================
-   11. MEMBER-ONLY ELEMENTS
-   ============================================================ */
-
-function updateMemberOnlyElements() {
-
-    document
-        .querySelectorAll(
-            ".member-only"
-        )
-        .forEach(function(element) {
-
-            /*
-             * Member-only navigation remains hidden
-             * from guests.
-             */
-
-            element.hidden =
-                !HOME_STATE.authenticated;
-
-        });
-
-
-    const memberDashboard =
-        document.getElementById(
-            "memberDashboardContent"
-        );
-
-
-    if (memberDashboard) {
-
-        memberDashboard.hidden =
-            !HOME_STATE.authenticated;
-
-    }
-
-
-    const guestInformation =
-        document.getElementById(
-            "guestInformation"
-        );
-
-
-    if (guestInformation) {
-
-        guestInformation.hidden =
-            HOME_STATE.authenticated;
-
-    }
-
-}
-
-
-/* ============================================================
-   12. PROTECTED LINKS
-   ============================================================
- *
- * Lessons are deliberately NOT included here.
- *
- * Guests can freely open:
- *
- *     pages/lessons.html
- *
- * Quiz requires login.
- *
- * ============================================================
- */
-
-function updateProtectedLinks() {
-
-    const protectedLinks =
-        document.querySelectorAll(
-            "[data-auth-required='true']"
-        );
-
-
-    protectedLinks.forEach(function(link) {
-
-        if (
-            HOME_STATE.authenticated
-        ) {
-
-            link.dataset.originalHref =
-                link.dataset.originalHref ||
-                link.getAttribute("href") ||
-                "";
-
-
-            if (
-                link.dataset.memberHref
-            ) {
-
-                link.href =
-                    link.dataset.memberHref;
-
-            }
-
-        } else {
-
-            if (
-                !link.dataset.originalHref
-            ) {
-
-                link.dataset.originalHref =
-                    link.getAttribute("href") ||
-                    "";
-
-            }
-
-
-            link.href =
-                "login.html";
-
-        }
-
-    });
-
-}
-
-
-/* ============================================================
-   13. NAVIGATION
-   ============================================================ */
+   11. NAVIGATION STATE
+============================================================ */
 
 function updateNavigation() {
 
@@ -722,29 +699,12 @@ function updateNavigation() {
 
         });
 
-
-    /*
-     * Ensure lesson links remain public.
-     */
-
-    document
-        .querySelectorAll(
-            'a[href="pages/lessons.html"]'
-        )
-        .forEach(function(link) {
-
-            link.removeAttribute(
-                "data-auth-required"
-            );
-
-        });
-
 }
 
 
 /* ============================================================
-   14. PUBLIC HOME DATA
-   ============================================================ */
+   12. PUBLIC HOME DATA
+============================================================ */
 
 async function loadPublicHomeData() {
 
@@ -760,8 +720,8 @@ async function loadPublicHomeData() {
 
 
 /* ============================================================
-   15. MEMBER HOME DATA
-   ============================================================ */
+   13. MEMBER HOME DATA
+============================================================ */
 
 async function loadMemberHomeData() {
 
@@ -777,36 +737,8 @@ async function loadMemberHomeData() {
 
 
 /* ============================================================
-   16. GUEST MEMBER AREAS
-   ============================================================ */
-
-function renderGuestMemberAreas() {
-
-    const quizContainer =
-        document.getElementById(
-            "quizSummary"
-        );
-
-
-    if (quizContainer) {
-
-        renderGuestQuiz(
-            quizContainer
-        );
-
-    }
-
-
-    updateNotificationBadges(
-        0
-    );
-
-}
-
-
-/* ============================================================
-   17. LOAD CURRENT LESSON
-   ============================================================ */
+   14. LOAD CURRENT LESSON
+============================================================ */
 
 async function loadCurrentLesson() {
 
@@ -864,6 +796,7 @@ async function loadCurrentLesson() {
             HOME_STATE.lesson
         );
 
+
     } catch (error) {
 
         console.error(
@@ -883,8 +816,8 @@ async function loadCurrentLesson() {
 
 
 /* ============================================================
-   18. RENDER CURRENT LESSON
-   ============================================================ */
+   15. RENDER CURRENT LESSON
+============================================================ */
 
 function renderCurrentLesson(
     container,
@@ -979,8 +912,8 @@ function renderCurrentLesson(
 
 
 /* ============================================================
-   19. EMPTY LESSON
-   ============================================================ */
+   16. EMPTY LESSON
+============================================================ */
 
 function renderEmptyLesson(
     container,
@@ -1015,8 +948,8 @@ function renderEmptyLesson(
 
 
 /* ============================================================
-   20. LOAD ANNOUNCEMENTS
-   ============================================================ */
+   17. LOAD ANNOUNCEMENTS
+============================================================ */
 
 async function loadPublicAnnouncements() {
 
@@ -1045,10 +978,16 @@ async function loadPublicAnnouncements() {
             );
 
 
+        /*
+         * Only use announcements as preview
+         * when no member notifications replace them.
+         */
+
         renderAnnouncementsPreview(
             container,
             HOME_STATE.announcements
         );
+
 
     } catch (error) {
 
@@ -1080,7 +1019,6 @@ async function loadPublicAnnouncements() {
 
             `;
 
-
             refreshIcons();
 
         }
@@ -1091,8 +1029,8 @@ async function loadPublicAnnouncements() {
 
 
 /* ============================================================
-   21. RENDER ANNOUNCEMENTS
-   ============================================================ */
+   18. RENDER ANNOUNCEMENTS
+============================================================ */
 
 function renderAnnouncementsPreview(
     container,
@@ -1130,7 +1068,6 @@ function renderAnnouncementsPreview(
             </div>
 
         `;
-
 
         refreshIcons();
 
@@ -1235,8 +1172,8 @@ function renderAnnouncementsPreview(
 
 
 /* ============================================================
-   22. LOAD QUIZ STATUS
-   ============================================================ */
+   19. LOAD QUIZ STATUS
+============================================================ */
 
 async function loadQuizStatus() {
 
@@ -1292,6 +1229,7 @@ async function loadQuizStatus() {
             result
         );
 
+
     } catch (error) {
 
         console.error(
@@ -1310,8 +1248,8 @@ async function loadQuizStatus() {
 
 
 /* ============================================================
-   23. GUEST QUIZ
-   ============================================================ */
+   20. GUEST QUIZ
+============================================================ */
 
 function renderGuestQuiz(
     container
@@ -1337,9 +1275,8 @@ function renderGuestQuiz(
                 </strong>
 
                 <p>
-                    Log in or create an account to
-                    take the weekly quiz and track
-                    your progress.
+                    Create an account or log in to
+                    access your member quiz experience.
                 </p>
 
             </div>
@@ -1355,8 +1292,8 @@ function renderGuestQuiz(
 
 
 /* ============================================================
-   24. RENDER QUIZ SUMMARY
-   ============================================================ */
+   21. RENDER QUIZ SUMMARY
+============================================================ */
 
 function renderQuizSummary(
     container,
@@ -1431,6 +1368,7 @@ function renderQuizSummary(
 
         `;
 
+
     } else if (
         status === "completed" ||
         status === "submitted"
@@ -1470,6 +1408,7 @@ function renderQuizSummary(
             </div>
 
         `;
+
 
     } else {
 
@@ -1517,8 +1456,8 @@ function renderQuizSummary(
 
 
 /* ============================================================
-   25. QUIZ ERROR
-   ============================================================ */
+   22. QUIZ ERROR
+============================================================ */
 
 function renderQuizError(
     container
@@ -1551,18 +1490,14 @@ function renderQuizError(
 
 
 /* ============================================================
-   26. LOAD NOTIFICATIONS
-   ============================================================ */
+   23. LOAD NOTIFICATIONS
+============================================================ */
 
 async function loadNotifications() {
 
     if (
         !HOME_STATE.authenticated
     ) {
-
-        updateNotificationBadges(
-            0
-        );
 
         return;
 
@@ -1593,28 +1528,21 @@ async function loadNotifications() {
 
 
         HOME_STATE.notifications =
-
             Array.isArray(
                 data.notifications
             )
-
                 ? data.notifications
-
                 : Array.isArray(result)
-
                     ? result
-
                     : [];
 
 
         updateNotificationBadges(
-
             Number(
                 data.unreadCount ||
                 result?.unreadCount ||
                 0
             )
-
         );
 
 
@@ -1635,6 +1563,7 @@ async function loadNotifications() {
 
         }
 
+
     } catch (error) {
 
         console.warn(
@@ -1648,8 +1577,8 @@ async function loadNotifications() {
 
 
 /* ============================================================
-   27. MEMBER NOTIFICATION PREVIEW
-   ============================================================ */
+   24. MEMBER NOTIFICATION PREVIEW
+============================================================ */
 
 function renderMemberNotificationPreview(
     container,
@@ -1751,8 +1680,8 @@ function renderMemberNotificationPreview(
 
 
 /* ============================================================
-   28. NOTIFICATION BADGES
-   ============================================================ */
+   25. NOTIFICATION BADGES
+============================================================ */
 
 function updateNotificationBadges(
     count
@@ -1762,10 +1691,6 @@ function updateNotificationBadges(
 
         document.getElementById(
             "desktopNotificationBadge"
-        ),
-
-        document.getElementById(
-            "notificationBadge"
         )
 
     ];
@@ -1817,17 +1742,18 @@ function updateNotificationBadges(
 
 
 /* ============================================================
-   29. HOME EVENTS
-   ============================================================ */
+   26. HOME EVENTS
+============================================================ */
 
 function setupHomeEvents() {
 
     /*
-     * Prevent duplicate event registration.
+     * Prevent duplicate listeners if HOME.refresh()
+     * is called later.
      */
 
     if (
-        HOME_STATE.eventsReady
+        HOME_STATE.eventsBound
     ) {
 
         return;
@@ -1835,13 +1761,13 @@ function setupHomeEvents() {
     }
 
 
-    HOME_STATE.eventsReady =
+    HOME_STATE.eventsBound =
         true;
 
 
-    /*
-     * Logout delegation.
-     */
+    /* --------------------------------------------------------
+       LOGOUT BUTTONS
+    -------------------------------------------------------- */
 
     document.addEventListener(
         "click",
@@ -1871,9 +1797,9 @@ function setupHomeEvents() {
     );
 
 
-    /*
-     * Mobile menu.
-     */
+    /* --------------------------------------------------------
+       MOBILE MENU
+    -------------------------------------------------------- */
 
     const menuButton =
         document.getElementById(
@@ -1900,30 +1826,38 @@ function setupHomeEvents() {
 
         menuButton.addEventListener(
             "click",
-            function() {
+            function(event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
 
                 const isOpen =
-                    sidebar.classList.toggle(
+                    sidebar.classList.contains(
                         "open"
                     );
 
 
-                overlay?.classList.toggle(
-                    "active",
-                    isOpen
-                );
+                if (isOpen) {
 
+                    closeMobileMenu();
 
-                menuButton.setAttribute(
-                    "aria-expanded",
-                    String(isOpen)
-                );
+                } else {
+
+                    openMobileMenu();
+
+                }
 
             }
         );
 
     }
 
+
+    /* --------------------------------------------------------
+       OVERLAY
+    -------------------------------------------------------- */
 
     if (overlay) {
 
@@ -1931,20 +1865,7 @@ function setupHomeEvents() {
             "click",
             function() {
 
-                sidebar?.classList.remove(
-                    "open"
-                );
-
-
-                overlay.classList.remove(
-                    "active"
-                );
-
-
-                menuButton?.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
+                closeMobileMenu();
 
             }
         );
@@ -1952,14 +1873,13 @@ function setupHomeEvents() {
     }
 
 
-    /*
-     * Close mobile sidebar when navigation
-     * item is selected.
-     */
+    /* --------------------------------------------------------
+       SIDEBAR NAVIGATION
+    -------------------------------------------------------- */
 
     document
         .querySelectorAll(
-            ".sidebar .nav-item"
+            ".sidebar .nav-item, .sidebar .sidebar-profile"
         )
         .forEach(function(item) {
 
@@ -1967,39 +1887,205 @@ function setupHomeEvents() {
                 "click",
                 function() {
 
-                    sidebar?.classList.remove(
-                        "open"
-                    );
-
-
-                    overlay?.classList.remove(
-                        "active"
-                    );
-
-
-                    menuButton?.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
+                    closeMobileMenu();
 
                 }
             );
 
         });
 
+
+    /* --------------------------------------------------------
+       ESCAPE KEY
+    -------------------------------------------------------- */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeMobileMenu();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Prevent clicks inside sidebar from
+     * closing the menu through accidental
+     * bubbling behavior.
+     */
+
+    if (sidebar) {
+
+        sidebar.addEventListener(
+            "click",
+            function(event) {
+
+                event.stopPropagation();
+
+            }
+        );
+
+    }
+
 }
 
 
 /* ============================================================
-   30. LOGOUT
-   ============================================================ */
+   27. OPEN MOBILE MENU
+============================================================ */
+
+function openMobileMenu() {
+
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "mobileOverlay"
+        );
+
+
+    const menuButton =
+        document.getElementById(
+            "mobileMenuButton"
+        );
+
+
+    if (sidebar) {
+
+        sidebar.classList.add(
+            "open"
+        );
+
+    }
+
+
+    if (overlay) {
+
+        overlay.classList.add(
+            "active"
+        );
+
+        overlay.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+    }
+
+
+    if (menuButton) {
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        menuButton.setAttribute(
+            "aria-label",
+            "Close navigation menu"
+        );
+
+    }
+
+
+    document.body.classList.add(
+        "mobile-menu-open"
+    );
+
+}
+
+
+/* ============================================================
+   28. CLOSE MOBILE MENU
+============================================================ */
+
+function closeMobileMenu() {
+
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "mobileOverlay"
+        );
+
+
+    const menuButton =
+        document.getElementById(
+            "mobileMenuButton"
+        );
+
+
+    if (sidebar) {
+
+        sidebar.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    if (overlay) {
+
+        overlay.classList.remove(
+            "active"
+        );
+
+        overlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    if (menuButton) {
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        menuButton.setAttribute(
+            "aria-label",
+            "Open navigation menu"
+        );
+
+    }
+
+
+    document.body.classList.remove(
+        "mobile-menu-open"
+    );
+
+}
+
+
+/* ============================================================
+   29. LOGOUT
+============================================================ */
 
 async function handleHomeLogout(
     button
 ) {
 
     if (
-        !button ||
+        button &&
         button.dataset.loggingOut ===
         "true"
     ) {
@@ -2009,29 +2095,36 @@ async function handleHomeLogout(
     }
 
 
-    button.dataset.loggingOut =
-        "true";
+    if (button) {
+
+        button.dataset.loggingOut =
+            "true";
+
+        button.disabled =
+            true;
+
+    }
 
 
-    button.disabled =
-        true;
+    if (button) {
+
+        button.innerHTML = `
+
+            <span
+                data-lucide="loader-circle"
+                class="spin"
+            ></span>
+
+            <span>
+                Logging out...
+            </span>
+
+        `;
 
 
-    button.innerHTML = `
+        refreshIcons();
 
-        <span
-            data-lucide="loader-circle"
-            class="spin"
-        ></span>
-
-        <span>
-            Logging out...
-        </span>
-
-    `;
-
-
-    refreshIcons();
+    }
 
 
     try {
@@ -2072,6 +2165,10 @@ async function handleHomeLogout(
     }
 
 
+    /*
+     * Go back to the unified homepage.
+     */
+
     window.location.href =
         "index.html";
 
@@ -2079,8 +2176,8 @@ async function handleHomeLogout(
 
 
 /* ============================================================
-   31. GET FIRST NAME
-   ============================================================ */
+   30. HELPER — FIRST NAME
+============================================================ */
 
 function getFirstName() {
 
@@ -2097,17 +2194,26 @@ function getFirstName() {
     }
 
 
-    return String(
-        HOME_STATE.user?.first_name ||
-        ""
-    ).trim();
+    if (
+        HOME_STATE.user
+    ) {
+
+        return String(
+            HOME_STATE.user.first_name ||
+            ""
+        ).trim();
+
+    }
+
+
+    return "";
 
 }
 
 
 /* ============================================================
-   32. GET DISPLAY NAME
-   ============================================================ */
+   31. HELPER — DISPLAY NAME
+============================================================ */
 
 function getDisplayName() {
 
@@ -2124,35 +2230,44 @@ function getDisplayName() {
     }
 
 
-    const first =
-        String(
-            HOME_STATE.user?.first_name ||
-            ""
+    if (
+        HOME_STATE.user
+    ) {
+
+        const first =
+            String(
+                HOME_STATE.user.first_name ||
+                ""
+            ).trim();
+
+
+        const last =
+            String(
+                HOME_STATE.user.last_name ||
+                ""
+            ).trim();
+
+
+        return (
+            first +
+            (
+                last
+                    ? " " + last
+                    : ""
+            )
         ).trim();
 
-
-    const last =
-        String(
-            HOME_STATE.user?.last_name ||
-            ""
-        ).trim();
+    }
 
 
-    return (
-        first +
-        (
-            last
-                ? " " + last
-                : ""
-        )
-    ).trim();
+    return "";
 
 }
 
 
 /* ============================================================
-   33. GET USER ID
-   ============================================================ */
+   32. HELPER — USER ID
+============================================================ */
 
 function getUserId() {
 
@@ -2178,8 +2293,8 @@ function getUserId() {
 
 
 /* ============================================================
-   34. GET TOKEN
-   ============================================================ */
+   33. HELPER — TOKEN
+============================================================ */
 
 function getToken() {
 
@@ -2202,10 +2317,10 @@ function getToken() {
 
 
 /* ============================================================
-   35. GET USER AVATAR
-   ============================================================ */
+   34. HELPER — AVATAR
+============================================================ */
 
-function getUserAvatar() {
+function getAvatar() {
 
     if (
         typeof AUTH !== "undefined" &&
@@ -2220,37 +2335,68 @@ function getUserAvatar() {
     }
 
 
-    const user =
-        HOME_STATE.user;
+    if (
+        HOME_STATE.user
+    ) {
+
+        const possibleFields = [
+
+            "avatar_url",
+
+            "avatar",
+
+            "profile_image",
+
+            "profile_image_url",
+
+            "image_url",
+
+            "photo_url",
+
+            "photo",
+
+            "picture",
+
+            "image"
+
+        ];
 
 
-    if (!user) {
+        for (
+            let i = 0;
+            i < possibleFields.length;
+            i++
+        ) {
 
-        return "";
+            const value =
+                String(
+                    HOME_STATE.user[
+                        possibleFields[i]
+                    ] || ""
+                ).trim();
+
+
+            if (value) {
+
+                return value;
+
+            }
+
+        }
 
     }
 
 
-    return String(
-
-        user.avatar_url ||
-        user.avatar ||
-        user.profile_photo ||
-        user.photo_url ||
-        user.image_url ||
-        user.profile_image ||
-        ""
-
-    ).trim();
+    return "";
 
 }
 
 
 /* ============================================================
-   36. GET USER INITIAL
-   ============================================================ */
+   35. HELPER — AVATAR LETTER
+============================================================ */
 
-function getUserInitial() {
+function getAvatarLetter() {
 
     const firstName =
         getFirstName();
@@ -2284,8 +2430,8 @@ function getUserInitial() {
 
 
 /* ============================================================
-   37. EXTRACT ARRAY
-   ============================================================ */
+   36. EXTRACT ARRAY
+============================================================ */
 
 function extractArray(
     result,
@@ -2352,8 +2498,8 @@ function extractArray(
 
 
 /* ============================================================
-   38. FORMAT DATE
-   ============================================================ */
+   37. FORMAT DATE
+============================================================ */
 
 function formatDisplayDate(
     value
@@ -2395,27 +2541,24 @@ function formatDisplayDate(
                 "numeric"
 
         }
-
     );
 
 }
 
 
 /* ============================================================
-   39. ESCAPE HTML
-   ============================================================ */
+   38. ESCAPE HTML
+============================================================ */
 
 function escapeHtml(
     value
 ) {
 
     return String(
-
         value === undefined ||
         value === null
             ? ""
             : value
-
     )
 
         .replace(
@@ -2447,8 +2590,8 @@ function escapeHtml(
 
 
 /* ============================================================
-   40. REFRESH ICONS
-   ============================================================ */
+   39. REFRESH ICONS
+============================================================ */
 
 function refreshIcons() {
 
@@ -2456,11 +2599,11 @@ function refreshIcons() {
 
         if (
             window.lucide &&
-            typeof lucide.createIcons ===
+            typeof window.lucide.createIcons ===
                 "function"
         ) {
 
-            lucide.createIcons();
+            window.lucide.createIcons();
 
         }
 
@@ -2477,8 +2620,8 @@ function refreshIcons() {
 
 
 /* ============================================================
-   41. PUBLIC GLOBAL OBJECT
-   ============================================================ */
+   40. PUBLIC GLOBAL OBJECT
+============================================================ */
 
 window.HOME = {
 
@@ -2500,6 +2643,12 @@ window.HOME = {
     loadNotifications:
         loadNotifications,
 
+    openMenu:
+        openMobileMenu,
+
+    closeMenu:
+        closeMobileMenu,
+
     logout:
         handleHomeLogout
 
@@ -2508,7 +2657,7 @@ window.HOME = {
 
 /* ============================================================
    STARTUP LOG
-   ============================================================ */
+============================================================ */
 
 console.log(
     "AFC Isiu Youth Portal — home.js loaded."
