@@ -1,27 +1,21 @@
 /**
  * ============================================================
  * AFC ISIU YOUTH PORTAL V2
- * STEP 10D — AUTHENTICATION FRONTEND
- * FILE: js/auth.js
+ * 10D — AUTHENTICATION FRONTEND LOGIC
  * ============================================================
  *
- * Handles:
+ * Works with:
  *
- * 1. Login
- * 2. Registration
- * 3. Institution loading
- * 4. Password visibility
- * 5. Form validation
- * 6. Session storage
- * 7. Authentication view switching
+ * 02_Router.gs
+ * 03_Auth.gs
+ * 10B API CONNECTION LAYER
  *
  * IMPORTANT:
+ * Backend action names:
  *
- * This file uses the existing API layer:
- *
- * js/api.js
- *
- * Do not put Google Apps Script code here.
+ * register
+ * login
+ * getinstitutions
  *
  * ============================================================
  */
@@ -30,165 +24,97 @@
 
 
 /* ============================================================
-   1. AUTH CONFIGURATION
-   ============================================================ */
-
-const AUTH_FRONTEND_CONFIG = {
-
-    /*
-     * Where the user goes after successful login.
-     *
-     * We can change this later when the dashboard is ready.
-     */
-
-    AFTER_LOGIN:
-        "index.html",
-
-    /*
-     * Where the user goes after successful registration.
-     */
-
-    AFTER_REGISTER:
-        "index.html",
-
-    /*
-     * Minimum password length.
-     *
-     * Must match 03_Auth.gs.
-     */
-
-    PASSWORD_MIN_LENGTH:
-        8
-
-};
-
-
-/* ============================================================
-   2. DOM HELPERS
-   ============================================================ */
-
-function $(selector) {
-
-    return document.querySelector(
-        selector
-    );
-
-}
-
-
-function $$(selector) {
-
-    return Array.from(
-        document.querySelectorAll(
-            selector
-        )
-    );
-
-}
-
-
-/* ============================================================
-   3. AUTH VIEW ELEMENTS
+   1. DOM ELEMENTS
    ============================================================ */
 
 const loginView =
-    $("#loginView");
+    document.getElementById("loginView");
 
 const registerView =
-    $("#registerView");
+    document.getElementById("registerView");
+
+const loginForm =
+    document.getElementById("loginForm");
+
+const registerForm =
+    document.getElementById("registerForm");
 
 const showRegisterButton =
-    $("#showRegisterButton");
+    document.getElementById("showRegisterButton");
 
 const showLoginButton =
-    $("#showLoginButton");
+    document.getElementById("showLoginButton");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const registerButton =
+    document.getElementById("registerButton");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+const registerMessage =
+    document.getElementById("registerMessage");
+
+const institutionSelect =
+    document.getElementById("institution");
 
 
 /* ============================================================
-   4. SWITCH TO REGISTER
+   2. SWITCH LOGIN / REGISTER
    ============================================================ */
 
-function showRegisterView() {
+function showLogin() {
 
-    if (!loginView || !registerView) {
-        return;
-    }
+    loginView.classList.add("active");
 
-
-    loginView.classList.remove(
-        "active"
-    );
-
-    registerView.classList.add(
-        "active"
-    );
-
+    registerView.classList.remove("active");
 
     clearMessage(
-        $("#loginMessage")
+        loginMessage
     );
 
     clearMessage(
-        $("#registerMessage")
+        registerMessage
     );
-
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
-
 }
 
 
-/* ============================================================
-   5. SWITCH TO LOGIN
-   ============================================================ */
+function showRegister() {
 
-function showLoginView() {
+    registerView.classList.add("active");
 
-    if (!loginView || !registerView) {
-        return;
-    }
-
-
-    registerView.classList.remove(
-        "active"
-    );
-
-    loginView.classList.add(
-        "active"
-    );
-
+    loginView.classList.remove("active");
 
     clearMessage(
-        $("#registerMessage")
+        loginMessage
     );
 
     clearMessage(
-        $("#loginMessage")
+        registerMessage
     );
 
+    loadInstitutions();
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
-
 }
 
-
-/* ============================================================
-   6. AUTH VIEW EVENTS
-   ============================================================ */
 
 if (showRegisterButton) {
 
     showRegisterButton.addEventListener(
         "click",
-        showRegisterView
+        showRegister
     );
-
 }
 
 
@@ -196,181 +122,211 @@ if (showLoginButton) {
 
     showLoginButton.addEventListener(
         "click",
-        showLoginView
+        showLogin
     );
-
 }
 
 
 /* ============================================================
-   7. MESSAGE HELPERS
+   3. MESSAGE HELPERS
    ============================================================ */
 
 function showMessage(
     element,
     message,
-    type
+    type = "error"
 ) {
 
     if (!element) {
         return;
     }
-
 
     element.textContent =
         message || "";
 
-
     element.className =
         "form-message";
-
 
     if (message) {
 
         element.classList.add(
-            type || "error"
+            type
         );
-
     }
-
 }
 
 
-function clearMessage(
-    element
-) {
+function clearMessage(element) {
 
     if (!element) {
         return;
     }
 
-
-    element.textContent = "";
+    element.textContent =
+        "";
 
     element.className =
         "form-message";
-
 }
 
 
 /* ============================================================
-   8. BUTTON LOADING
+   4. BUTTON LOADING
    ============================================================ */
 
 function setButtonLoading(
     button,
-    loading
+    loading,
+    loadingText
 ) {
 
     if (!button) {
         return;
     }
 
+    if (loading) {
 
-    const text =
-        button.querySelector(
-            ".button-text"
+        button.classList.add(
+            "loading"
         );
 
-    const loadingElement =
-        button.querySelector(
-            ".button-loading"
+        button.disabled =
+            true;
+
+        button.dataset.originalText =
+            button.querySelector(
+                ".button-text"
+            )?.textContent ||
+            "";
+
+        if (loadingText) {
+
+            const text =
+                button.querySelector(
+                    ".button-text"
+                );
+
+            if (text) {
+
+                text.textContent =
+                    loadingText;
+            }
+        }
+
+    } else {
+
+        button.classList.remove(
+            "loading"
         );
 
+        button.disabled =
+            false;
 
-    button.disabled =
-        loading;
+        const text =
+            button.querySelector(
+                ".button-text"
+            );
 
+        if (text) {
 
-    if (text) {
-
-        text.hidden =
-            loading;
-
+            text.textContent =
+                button.dataset.originalText ||
+                "";
+        }
     }
-
-
-    if (loadingElement) {
-
-        loadingElement.hidden =
-            !loading;
-
-    }
-
 }
 
 
 /* ============================================================
-   9. PASSWORD TOGGLE
+   5. PASSWORD VISIBILITY
    ============================================================ */
 
 function setupPasswordToggles() {
 
-    const toggles =
-        $$(".password-toggle");
+    const buttons =
+        document.querySelectorAll(
+            ".password-toggle"
+        );
 
 
-    toggles.forEach(function(toggle) {
+    buttons.forEach(function(button) {
 
-        toggle.addEventListener(
+        button.addEventListener(
             "click",
             function() {
 
                 const targetId =
-                    toggle.dataset.target;
-
+                    button.dataset.passwordTarget;
 
                 const input =
                     document.getElementById(
                         targetId
                     );
 
-
                 if (!input) {
                     return;
                 }
 
 
-                const isPassword =
-                    input.type === "password";
+                const eyeOpen =
+                    button.querySelector(
+                        ".eye-open"
+                    );
 
-
-                input.type =
-                    isPassword
-                        ? "text"
-                        : "password";
-
-
-                toggle.setAttribute(
-                    "aria-label",
-                    isPassword
-                        ? "Hide password"
-                        : "Show password"
-                );
-
-
-                const icon =
-                    toggle.querySelector(
-                        "[data-lucide]"
+                const eyeClosed =
+                    button.querySelector(
+                        ".eye-closed"
                     );
 
 
-                if (icon) {
+                if (
+                    input.type ===
+                    "password"
+                ) {
 
-                    icon.setAttribute(
-                        "data-lucide",
-                        isPassword
-                            ? "eye-off"
-                            : "eye"
+                    input.type =
+                        "text";
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Hide password"
                     );
 
-                }
+                    button.setAttribute(
+                        "title",
+                        "Hide password"
+                    );
 
+                    eyeOpen?.classList.add(
+                        "hidden"
+                    );
 
-                if (window.lucide) {
+                    eyeClosed?.classList.remove(
+                        "hidden"
+                    );
 
-                    lucide.createIcons();
+                } else {
 
+                    input.type =
+                        "password";
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                    button.setAttribute(
+                        "title",
+                        "Show password"
+                    );
+
+                    eyeOpen?.classList.remove(
+                        "hidden"
+                    );
+
+                    eyeClosed?.classList.add(
+                        "hidden"
+                    );
                 }
 
             }
@@ -381,143 +337,130 @@ function setupPasswordToggles() {
 }
 
 
+setupPasswordToggles();
+
+
 /* ============================================================
-   10. LOAD INSTITUTIONS
+   6. LOAD INSTITUTIONS
    ============================================================ */
+
+let institutionsLoaded =
+    false;
+
 
 async function loadInstitutions() {
 
-    const select =
-        $("#institutionId");
-
-
-    if (!select) {
+    if (
+        !institutionSelect ||
+        institutionsLoaded
+    ) {
         return;
     }
 
 
-    select.innerHTML = `
+    institutionSelect.innerHTML =
+        '<option value="">Loading institutions...</option>';
 
-        <option value="">
-            Loading institutions...
-        </option>
-
-    `;
+    institutionSelect.disabled =
+        true;
 
 
     try {
 
-        /*
-         * Existing backend route:
-         *
-         * getinstitutions
-         */
-
-        const response =
+        const result =
             await API.get(
                 "getinstitutions"
             );
 
 
         /*
-         * The backend may return:
-         *
-         * response.institutions
-         *
-         * or
-         *
-         * response.data.institutions
-         *
-         * or
-         *
-         * response.data
-         *
-         * We support all three.
+         * Support several possible backend response shapes.
          */
 
-        let institutions = [];
+        let institutions =
+            [];
 
 
         if (
-            response &&
             Array.isArray(
-                response.institutions
+                result
             )
         ) {
 
             institutions =
-                response.institutions;
+                result;
 
         } else if (
-            response &&
-            response.data &&
             Array.isArray(
-                response.data.institutions
+                result.institutions
             )
         ) {
 
             institutions =
-                response.data.institutions;
+                result.institutions;
 
         } else if (
-            response &&
+            result.data &&
             Array.isArray(
-                response.data
+                result.data.institutions
             )
         ) {
 
             institutions =
-                response.data;
+                result.data.institutions;
 
+        } else if (
+            result.data &&
+            Array.isArray(
+                result.data
+            )
+        ) {
+
+            institutions =
+                result.data;
         }
 
 
-        select.innerHTML = `
-
-            <option value="">
-                Select your institution
-            </option>
-
-        `;
+        institutionSelect.innerHTML =
+            "";
 
 
-        if (!institutions.length) {
+        const defaultOption =
+            document.createElement(
+                "option"
+            );
 
-            select.innerHTML = `
+        defaultOption.value =
+            "";
 
-                <option value="">
-                    No institutions available
-                </option>
+        defaultOption.textContent =
+            institutions.length
+                ? "Select your institution"
+                : "No institutions available";
 
-            `;
-
-            return;
-
-        }
+        institutionSelect.appendChild(
+            defaultOption
+        );
 
 
         institutions.forEach(
             function(institution) {
 
-                const institutionId =
+                const id =
                     institution.institution_id ||
                     institution.id ||
                     "";
 
 
-                const institutionName =
+                const name =
                     institution.institution_name ||
                     institution.name ||
+                    institution.title ||
                     "";
 
 
-                if (
-                    !institutionId ||
-                    !institutionName
-                ) {
-
+                if (!id || !name) {
                     return;
-
                 }
 
 
@@ -526,16 +469,23 @@ async function loadInstitutions() {
                         "option"
                     );
 
-
                 option.value =
-                    institutionId;
-
+                    id;
 
                 option.textContent =
-                    institutionName;
+                    name;
 
 
-                select.appendChild(
+                /*
+                 * Keep institution name available
+                 * for registration.
+                 */
+
+                option.dataset.institutionName =
+                    name;
+
+
+                institutionSelect.appendChild(
                     option
                 );
 
@@ -543,29 +493,39 @@ async function loadInstitutions() {
         );
 
 
+        institutionsLoaded =
+            institutions.length > 0;
+
+
     } catch (error) {
 
         console.error(
-            "Institution loading error:",
+            "Unable to load institutions:",
             error
         );
 
 
-        select.innerHTML = `
+        institutionSelect.innerHTML =
+            '<option value="">Unable to load institutions</option>';
 
-            <option value="">
-                Unable to load institutions
-            </option>
 
-        `;
+        showMessage(
+            registerMessage,
+            "We could not load the institution list. Please refresh the page and try again.",
+            "error"
+        );
 
+
+    } finally {
+
+        institutionSelect.disabled =
+            false;
     }
-
 }
 
 
 /* ============================================================
-   11. VALIDATE EMAIL
+   7. VALIDATE EMAIL
    ============================================================ */
 
 function isValidEmail(
@@ -576,331 +536,11 @@ function isValidEmail(
         .test(
             email
         );
-
 }
 
 
 /* ============================================================
-   12. VALIDATE REGISTRATION FORM
-   ============================================================ */
-
-function validateRegistrationData(
-    data
-) {
-
-    if (!data.first_name) {
-
-        return "Please enter your first name.";
-
-    }
-
-
-    if (!data.last_name) {
-
-        return "Please enter your last name.";
-
-    }
-
-
-    if (
-        !data.email ||
-        !isValidEmail(data.email)
-    ) {
-
-        return "Please enter a valid email address.";
-
-    }
-
-
-    if (!data.password) {
-
-        return "Please create a password.";
-
-    }
-
-
-    if (
-        data.password.length <
-        AUTH_FRONTEND_CONFIG.PASSWORD_MIN_LENGTH
-    ) {
-
-        return (
-            "Your password must contain at least " +
-            AUTH_FRONTEND_CONFIG.PASSWORD_MIN_LENGTH +
-            " characters."
-        );
-
-    }
-
-
-    if (
-        data.password !==
-        data.confirm_password
-    ) {
-
-        return "Your passwords do not match.";
-
-    }
-
-
-    if (!data.date_of_birth) {
-
-        return "Please enter your date of birth.";
-
-    }
-
-
-    if (!data.institution_id) {
-
-        return "Please select your school or institution.";
-
-    }
-
-
-    if (!data.level) {
-
-        return "Please select your level.";
-
-    }
-
-
-    return "";
-
-}
-
-
-/* ============================================================
-   13. GET REGISTRATION DATA
-   ============================================================ */
-
-function getRegistrationData() {
-
-    /*
-     * IMPORTANT:
-     *
-     * These names intentionally match
-     * 03_Auth.gs exactly.
-     */
-
-    return {
-
-        first_name:
-            $("#firstName")?.value.trim() || "",
-
-        last_name:
-            $("#lastName")?.value.trim() || "",
-
-        email:
-            $("#registerEmail")?.value.trim().toLowerCase() || "",
-
-        phone:
-            $("#phone")?.value.trim() || "",
-
-        password:
-            $("#registerPassword")?.value || "",
-
-        confirm_password:
-            $("#confirmPassword")?.value || "",
-
-        date_of_birth:
-            $("#dateOfBirth")?.value || "",
-
-        institution_id:
-            $("#institutionId")?.value || "",
-
-        course:
-            $("#course")?.value.trim() || "",
-
-        level:
-            $("#level")?.value || "",
-
-        gender:
-            $("#gender")?.value || "",
-
-        language:
-            $("#language")?.value || "en",
-
-        theme:
-            $("#theme")?.value || "system"
-
-    };
-
-}
-
-
-/* ============================================================
-   14. REGISTER USER
-   ============================================================ */
-
-async function handleRegistration(
-    event
-) {
-
-    event.preventDefault();
-
-
-    const form =
-        event.currentTarget;
-
-
-    const button =
-        $("#registerSubmit");
-
-
-    const message =
-        $("#registerMessage");
-
-
-    clearMessage(
-        message
-    );
-
-
-    const data =
-        getRegistrationData();
-
-
-    /*
-     * FRONTEND VALIDATION
-     */
-
-    const validationMessage =
-        validateRegistrationData(
-            data
-        );
-
-
-    if (validationMessage) {
-
-        showMessage(
-            message,
-            validationMessage,
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    setButtonLoading(
-        button,
-        true
-    );
-
-
-    try {
-
-        /*
-         * IMPORTANT:
-         *
-         * This is the action that caused
-         * the previous "Unknown API action"
-         * error.
-         *
-         * 02_Router.gs now accepts:
-         *
-         * registerUser
-         *
-         * and sends it to:
-         *
-         * registerUser(request)
-         */
-
-        const result =
-            await API.post(
-                "registerUser",
-                data
-            );
-
-
-        console.log(
-            "REGISTRATION RESULT:",
-            result
-        );
-
-
-        /*
-         * Save returned user information
-         * if available.
-         */
-
-        const user =
-            result?.data?.user ||
-            result?.data ||
-            result?.user ||
-            null;
-
-
-        if (user) {
-
-            localStorage.setItem(
-                "afc_user",
-                JSON.stringify(user)
-            );
-
-        }
-
-
-        /*
-         * Registration succeeded.
-         */
-
-        showMessage(
-            message,
-            result?.message ||
-            "Your account has been created successfully.",
-            "success"
-        );
-
-
-        /*
-         * Short delay so the user sees
-         * the success message.
-         */
-
-        setTimeout(
-            function() {
-
-                window.location.href =
-                    AUTH_FRONTEND_CONFIG.AFTER_REGISTER;
-
-            },
-            900
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "REGISTRATION ERROR:",
-            error
-        );
-
-
-        showMessage(
-            message,
-            error.message ||
-            "Unable to create your account. Please try again.",
-            "error"
-        );
-
-
-        setButtonLoading(
-            button,
-            false
-        );
-
-        return;
-
-    }
-
-
-}
-
-
-/* ============================================================
-   15. LOGIN
+   8. LOGIN
    ============================================================ */
 
 async function handleLogin(
@@ -910,61 +550,71 @@ async function handleLogin(
     event.preventDefault();
 
 
-    const button =
-        $("#loginSubmit");
-
-
-    const message =
-        $("#loginMessage");
-
+    /*
+     * IMPORTANT:
+     *
+     * Nothing becomes "loading" before
+     * the user submits the form.
+     */
 
     clearMessage(
-        message
+        loginMessage
     );
 
 
     const email =
-        $("#loginEmail")?.value
-            .trim()
-            .toLowerCase() || "";
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
 
 
     const password =
-        $("#loginPassword")?.value || "";
+        document.getElementById(
+            "loginPassword"
+        ).value;
 
 
-    if (
-        !email ||
-        !isValidEmail(email)
-    ) {
+    if (!email) {
 
         showMessage(
-            message,
-            "Please enter a valid email address.",
-            "error"
+            loginMessage,
+            "Please enter your email address."
         );
 
         return;
+    }
 
+
+    if (!isValidEmail(email)) {
+
+        showMessage(
+            loginMessage,
+            "Please enter a valid email address."
+        );
+
+        return;
     }
 
 
     if (!password) {
 
         showMessage(
-            message,
-            "Please enter your password.",
-            "error"
+            loginMessage,
+            "Please enter your password."
         );
 
         return;
-
     }
 
 
+    /*
+     * ONLY NOW does loading begin.
+     */
+
     setButtonLoading(
-        button,
-        true
+        loginButton,
+        true,
+        "Signing in..."
     );
 
 
@@ -979,7 +629,10 @@ async function handleLogin(
                         email,
 
                     password:
-                        password
+                        password,
+
+                    device_info:
+                        navigator.userAgent
 
                 }
             );
@@ -992,82 +645,55 @@ async function handleLogin(
 
 
         /*
-         * Extract login data.
-         */
-
-        const resultData =
-            result?.data ||
-            result;
-
-
-        const user =
-            resultData?.user ||
-            null;
-
-
-        const session =
-            resultData?.session ||
-            null;
-
-
-        /*
-         * Store user.
-         */
-
-        if (user) {
-
-            localStorage.setItem(
-                "afc_user",
-                JSON.stringify(user)
-            );
-
-        }
-
-
-        /*
-         * Store authentication token.
+         * Store session if returned.
          */
 
         if (
-            session &&
-            session.token
+            result &&
+            result.data &&
+            result.data.session
         ) {
 
-            localStorage.setItem(
-                "afc_auth_token",
-                session.token
+            storeAuthSession(
+                result.data
             );
 
-        }
+        } else if (
+            result &&
+            result.session
+        ) {
 
-
-        /*
-         * Store complete session.
-         */
-
-        if (session) {
-
-            localStorage.setItem(
-                "afc_session",
-                JSON.stringify(session)
+            storeAuthSession(
+                result
             );
 
         }
 
 
         showMessage(
-            message,
-            result?.message ||
+            loginMessage,
+            result.message ||
             "Login successful.",
             "success"
         );
 
 
+        /*
+         * Give the user a short moment
+         * to see the success message.
+         */
+
         setTimeout(
             function() {
 
+                /*
+                 * We will connect this to the
+                 * real dashboard when the dashboard
+                 * frontend is ready.
+                 */
+
                 window.location.href =
-                    AUTH_FRONTEND_CONFIG.AFTER_LOGIN;
+                    "index.html";
 
             },
             700
@@ -1083,15 +709,14 @@ async function handleLogin(
 
 
         showMessage(
-            message,
+            loginMessage,
             error.message ||
-            "Unable to log in. Please check your details.",
-            "error"
+            "Unable to log in. Please try again."
         );
 
 
         setButtonLoading(
-            button,
+            loginButton,
             false
         );
 
@@ -1100,48 +725,411 @@ async function handleLogin(
 }
 
 
-/* ============================================================
-   16. FORGOT PASSWORD
-   ============================================================ */
-
-const forgotPasswordButton =
-    $("#forgotPasswordButton");
-
-
-if (forgotPasswordButton) {
-
-    forgotPasswordButton.addEventListener(
-        "click",
-        function() {
-
-            alert(
-                "Password recovery will be added in a later authentication phase."
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   17. FORM EVENTS
-   ============================================================ */
-
-const loginForm =
-    $("#loginForm");
-
-
-const registerForm =
-    $("#registerForm");
-
-
 if (loginForm) {
 
     loginForm.addEventListener(
         "submit",
         handleLogin
     );
+}
+
+
+/* ============================================================
+   9. REGISTER
+   ============================================================ */
+
+async function handleRegistration(
+    event
+) {
+
+    event.preventDefault();
+
+
+    /*
+     * Clear previous message.
+     */
+
+    clearMessage(
+        registerMessage
+    );
+
+
+    /*
+     * Collect fields.
+     */
+
+    const firstName =
+        document.getElementById(
+            "firstName"
+        ).value.trim();
+
+
+    const lastName =
+        document.getElementById(
+            "lastName"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "registerEmail"
+        ).value.trim();
+
+
+    const phone =
+        document.getElementById(
+            "phone"
+        ).value.trim();
+
+
+    const dateOfBirth =
+        document.getElementById(
+            "dateOfBirth"
+        ).value;
+
+
+    const institutionId =
+        document.getElementById(
+            "institution"
+        ).value;
+
+
+    const course =
+        document.getElementById(
+            "course"
+        ).value.trim();
+
+
+    const level =
+        document.getElementById(
+            "level"
+        ).value;
+
+
+    const gender =
+        document.getElementById(
+            "gender"
+        ).value;
+
+
+    const password =
+        document.getElementById(
+            "registerPassword"
+        ).value;
+
+
+    const confirmPassword =
+        document.getElementById(
+            "confirmPassword"
+        ).value;
+
+
+    /* ========================================================
+       VALIDATION
+       ======================================================== */
+
+    if (!firstName) {
+
+        showMessage(
+            registerMessage,
+            "Please enter your first name."
+        );
+
+        return;
+    }
+
+
+    if (!lastName) {
+
+        showMessage(
+            registerMessage,
+            "Please enter your last name."
+        );
+
+        return;
+    }
+
+
+    if (!email) {
+
+        showMessage(
+            registerMessage,
+            "Please enter your email address."
+        );
+
+        return;
+    }
+
+
+    if (!isValidEmail(email)) {
+
+        showMessage(
+            registerMessage,
+            "Please enter a valid email address."
+        );
+
+        return;
+    }
+
+
+    if (!dateOfBirth) {
+
+        showMessage(
+            registerMessage,
+            "Please enter your date of birth."
+        );
+
+        return;
+    }
+
+
+    if (!institutionId) {
+
+        showMessage(
+            registerMessage,
+            "Please select your school or institution."
+        );
+
+        return;
+    }
+
+
+    if (!level) {
+
+        showMessage(
+            registerMessage,
+            "Please select your level."
+        );
+
+        return;
+    }
+
+
+    if (!password) {
+
+        showMessage(
+            registerMessage,
+            "Please create a password."
+        );
+
+        return;
+    }
+
+
+    if (password.length < 8) {
+
+        showMessage(
+            registerMessage,
+            "Your password must contain at least 8 characters."
+        );
+
+        return;
+    }
+
+
+    if (password !== confirmPassword) {
+
+        showMessage(
+            registerMessage,
+            "Your passwords do not match."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Get institution name from selected option.
+     */
+
+    const selectedInstitution =
+        institutionSelect.options[
+            institutionSelect.selectedIndex
+        ];
+
+
+    const institutionName =
+        selectedInstitution?.dataset
+            ?.institutionName ||
+        selectedInstitution?.textContent ||
+        "";
+
+
+    /* ========================================================
+       ONLY NOW START LOADING
+       ======================================================== */
+
+    setButtonLoading(
+        registerButton,
+        true,
+        "Creating account..."
+    );
+
+
+    try {
+
+        /*
+         * IMPORTANT:
+         *
+         * The router expects:
+         *
+         * action = register
+         *
+         * NOT:
+         *
+         * registerUser
+         */
+
+        const result =
+            await API.post(
+                "register",
+                {
+
+                    first_name:
+                        firstName,
+
+                    last_name:
+                        lastName,
+
+                    email:
+                        email,
+
+                    phone:
+                        phone,
+
+                    password:
+                        password,
+
+                    confirm_password:
+                        confirmPassword,
+
+                    date_of_birth:
+                        dateOfBirth,
+
+                    institution_id:
+                        institutionId,
+
+                    /*
+                     * The backend currently obtains
+                     * the institution name itself.
+                     *
+                     * We include this value for
+                     * compatibility, but it does
+                     * not replace backend validation.
+                     */
+
+                    institution_name:
+                        institutionName,
+
+                    course:
+                        course,
+
+                    level:
+                        level,
+
+                    gender:
+                        gender,
+
+                    language:
+                        "en",
+
+                    theme:
+                        "system"
+
+                }
+            );
+
+
+        console.log(
+            "REGISTRATION RESULT:",
+            result
+        );
+
+
+        showMessage(
+            registerMessage,
+            result.message ||
+            "Your account has been created successfully.",
+            "success"
+        );
+
+
+        /*
+         * Clear sensitive password fields.
+         */
+
+        document.getElementById(
+            "registerPassword"
+        ).value = "";
+
+
+        document.getElementById(
+            "confirmPassword"
+        ).value = "";
+
+
+        /*
+         * Registration successful.
+         *
+         * Switch back to login after a
+         * short delay.
+         */
+
+        setTimeout(
+            function() {
+
+                showLogin();
+
+
+                const loginEmail =
+                    document.getElementById(
+                        "loginEmail"
+                    );
+
+
+                if (loginEmail) {
+
+                    loginEmail.value =
+                        email;
+
+                    loginEmail.focus();
+
+                }
+
+            },
+            1200
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "REGISTRATION ERROR:",
+            error
+        );
+
+
+        showMessage(
+            registerMessage,
+            error.message ||
+            "Unable to create your account. Please try again."
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * If registration fails,
+         * return the button to its
+         * normal state.
+         */
+
+        setButtonLoading(
+            registerButton,
+            false
+        );
+
+    }
 
 }
 
@@ -1152,55 +1140,124 @@ if (registerForm) {
         "submit",
         handleRegistration
     );
+}
+
+
+/* ============================================================
+   10. SESSION STORAGE
+   ============================================================ */
+
+function storeAuthSession(
+    data
+) {
+
+    try {
+
+        if (!data) {
+            return;
+        }
+
+
+        const user =
+            data.user ||
+            null;
+
+
+        const session =
+            data.session ||
+            null;
+
+
+        if (user) {
+
+            localStorage.setItem(
+                "afc_user",
+                JSON.stringify(
+                    user
+                )
+            );
+
+        }
+
+
+        if (session) {
+
+            if (session.token) {
+
+                localStorage.setItem(
+                    "afc_session_token",
+                    session.token
+                );
+
+            }
+
+
+            if (session.expires_at) {
+
+                localStorage.setItem(
+                    "afc_session_expires_at",
+                    session.expires_at
+                );
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to store authentication session:",
+            error
+        );
+
+    }
 
 }
 
 
 /* ============================================================
-   18. STARTUP
+   11. INITIAL PAGE STATE
    ============================================================ */
+
+function initializeAuthPage() {
+
+    /*
+     * IMPORTANT:
+     *
+     * We deliberately DO NOT:
+     *
+     * - set registration button to loading
+     * - submit any form
+     * - create an account
+     * - show "Creating account..."
+     *
+     * when the page loads.
+     */
+
+
+    showLogin();
+
+
+    /*
+     * Institutions are loaded in the background
+     * so they are ready when Create Account is opened.
+     */
+
+    loadInstitutions();
+
+}
+
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function() {
-
-        /*
-         * Password eye icons.
-         */
-
-        setupPasswordToggles();
+    initializeAuthPage
+);
 
 
-        /*
-         * Load institutions.
-         */
+/* ============================================================
+   12. DEBUG LOG
+   ============================================================ */
 
-        await loadInstitutions();
-
-
-        /*
-         * Refresh Lucide icons after
-         * dynamically creating/changing icons.
-         */
-
-        if (window.lucide) {
-
-            lucide.createIcons();
-
-        }
-
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "STEP 10D AUTHENTICATION FRONTEND READY"
-        );
-
-        console.log(
-            "========================================"
-        );
-
-    }
+console.log(
+    "AFC Isiu Youth Portal — 10D Authentication loaded."
 );
