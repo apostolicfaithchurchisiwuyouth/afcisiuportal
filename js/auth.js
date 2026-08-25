@@ -684,30 +684,73 @@ async function handleLogin(
         );
 
 
-        /* ----------------------------------------------------
-           STORE AUTHENTICATION SESSION
-           ---------------------------------------------------- */
+/* ========================================================
+   SAVE AUTHENTICATION
+   ======================================================== */
 
-        if (
-            result &&
-            result.data &&
-            result.data.session
-        ) {
+const loginData =
+    result && result.data
+        ? result.data
+        : result;
 
-            storeAuthSession(
-                result.data
-            );
 
-        } else if (
-            result &&
-            result.session
-        ) {
+if (
+    loginData &&
+    loginData.user &&
+    loginData.session
+) {
 
-            storeAuthSession(
-                result
-            );
+    try {
 
-        }
+        AUTH.save(
+            loginData
+        );
+
+        console.log(
+            "10D: Authentication saved successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "10D: Unable to save authentication:",
+            error
+        );
+
+        showMessage(
+            loginMessage,
+            "Login succeeded, but we could not save your session. Please try again."
+        );
+
+        setButtonLoading(
+            loginButton,
+            false
+        );
+
+        return;
+
+    }
+
+} else {
+
+    console.error(
+        "10D: Invalid login response:",
+        result
+    );
+
+    showMessage(
+        loginMessage,
+        "Login response was incomplete. Please try again."
+    );
+
+    setButtonLoading(
+        loginButton,
+        false
+    );
+
+    return;
+
+}
 
 
         /* ----------------------------------------------------
@@ -1191,77 +1234,6 @@ if (registerForm) {
 
 }
 
-
-/* ============================================================
-   10. SESSION STORAGE
-   ============================================================ */
-
-function storeAuthSession(
-    data
-) {
-
-    try {
-
-        if (!data) {
-            return;
-        }
-
-
-        const user =
-            data.user ||
-            null;
-
-
-        const session =
-            data.session ||
-            null;
-
-
-        if (user) {
-
-            localStorage.setItem(
-                "afc_user",
-                JSON.stringify(
-                    user
-                )
-            );
-
-        }
-
-
-        if (session) {
-
-            if (session.token) {
-
-                localStorage.setItem(
-                    "afc_session_token",
-                    session.token
-                );
-
-            }
-
-
-            if (session.expires_at) {
-
-                localStorage.setItem(
-                    "afc_session_expires_at",
-                    session.expires_at
-                );
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to store authentication session:",
-            error
-        );
-
-    }
-
-}
 
 
 /* ============================================================
