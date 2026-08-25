@@ -5,15 +5,29 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-    <meta name="theme-color" content="#4a0754">
+    <meta
+        name="theme-color"
+        content="#4a0754"
+    >
 
-    <meta name="description" content="AFC Isiu Youth Portal — Learn, connect, grow and stay informed.">
+    <meta
+        name="description"
+        content="AFC Isiu Youth Portal — Learn, connect, grow and stay informed."
+    >
 
     <title>AFC Isiu Youth Portal</title>
 
-    <link rel="manifest" href="manifest.json">
+
+    <link
+        rel="manifest"
+        href="manifest.json"
+    >
+
 
     <!-- =====================================================
          GOOGLE FONTS
@@ -40,11 +54,30 @@
          PORTAL CSS
     ====================================================== -->
 
-<link rel="stylesheet" href="css/variables.css">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/home.css">
+    <link
+        rel="stylesheet"
+        href="css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/base.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/layout.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/components.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/home.css"
+    >
 
 
     <!-- =====================================================
@@ -79,6 +112,7 @@
                 <span data-lucide="church"></span>
 
             </div>
+
 
             <div class="brand-text">
 
@@ -161,6 +195,7 @@
             <a
                 href="pages/profile.html"
                 class="nav-item member-only"
+                hidden
             >
 
                 <span data-lucide="user-round"></span>
@@ -175,6 +210,7 @@
             <a
                 href="pages/notifications.html"
                 class="nav-item member-only"
+                hidden
             >
 
                 <span data-lucide="bell"></span>
@@ -182,6 +218,7 @@
                 <span>
                     Notifications
                 </span>
+
 
                 <span
                     class="notification-badge"
@@ -196,19 +233,26 @@
         </nav>
 
 
-        <!-- SIDEBAR ACCOUNT AREA -->
+        <!-- =================================================
+             SIDEBAR ACCOUNT AREA
+        ================================================== -->
 
         <div class="sidebar-footer">
 
+
             <!-- GUEST -->
 
-            <div class="sidebar-guest" id="sidebarGuest">
+            <div
+                class="sidebar-guest"
+                id="sidebarGuest"
+            >
 
                 <div class="sidebar-guest-icon">
 
                     <span data-lucide="user-round"></span>
 
                 </div>
+
 
                 <div class="sidebar-guest-copy">
 
@@ -240,13 +284,12 @@
 
                     <div class="avatar">
 
-                        <span
-                            id="sidebarAvatar"
-                        >
+                        <span id="sidebarAvatar">
                             A
                         </span>
 
                     </div>
+
 
                     <div>
 
@@ -284,7 +327,6 @@
     </aside>
 
 
-
     <!-- =====================================================
          MAIN AREA
     ====================================================== -->
@@ -301,10 +343,13 @@
 
             <!-- MOBILE MENU -->
 
-            <button type="button"
+            <button
+                type="button"
                 class="icon-button mobile-menu-button"
                 id="mobileMenuButton"
                 aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="sidebar"
             >
 
                 <span data-lucide="menu"></span>
@@ -325,6 +370,7 @@
                     <span data-lucide="church"></span>
 
                 </span>
+
 
                 <span class="mobile-brand-text">
 
@@ -361,7 +407,9 @@
             <div class="header-actions">
 
 
-                <!-- GUEST ACTIONS -->
+                <!-- =========================================
+                     GUEST ACTIONS
+                ========================================== -->
 
                 <div
                     class="header-auth-actions"
@@ -396,7 +444,9 @@
                 </div>
 
 
-                <!-- MEMBER ACTIONS -->
+                <!-- =========================================
+                     MEMBER ACTIONS
+                ========================================== -->
 
                 <div
                     class="member-header-actions"
@@ -411,6 +461,7 @@
                     >
 
                         <span data-lucide="bell"></span>
+
 
                         <span
                             class="header-notification-dot"
@@ -440,7 +491,6 @@
         </header>
 
 
-
         <!-- =================================================
              PAGE CONTENT
         ================================================== -->
@@ -460,7 +510,9 @@
                 <div class="home-hero-content">
 
 
-                    <!-- GUEST -->
+                    <!-- =========================================
+                         GUEST HERO
+                    ========================================== -->
 
                     <div
                         id="guestHero"
@@ -471,6 +523,7 @@
                             Welcome to AFC Isiu Youth
                         </span>
 
+
                         <h2>
                             Learn.
                             <span>
@@ -478,6 +531,7 @@
                             </span>
                             Connect.
                         </h2>
+
 
                         <p>
                             Your digital space for Bible lessons,
@@ -522,7 +576,9 @@
                     </div>
 
 
-                    <!-- MEMBER -->
+                    <!-- =========================================
+                         MEMBER HERO
+                    ========================================== -->
 
                     <div
                         id="memberHero"
@@ -534,12 +590,14 @@
                             Welcome back
                         </span>
 
+
                         <h2>
                             Hello,
                             <span id="welcomeUserName">
                                 Friend
                             </span>
                         </h2>
+
 
                         <p>
                             Keep growing, learning and staying
@@ -583,11 +641,10 @@
 
                     </div>
 
-
                 </div>
 
 
-                <!-- HERO ICON -->
+                <!-- HERO VISUAL -->
 
                 <div class="home-hero-visual">
 
@@ -604,7 +661,6 @@
                 </div>
 
             </section>
-
 
 
             <!-- =================================================
@@ -646,6 +702,7 @@
 
                         </div>
 
+
                         <div class="quick-card-content">
 
                             <strong>
@@ -658,13 +715,13 @@
 
                         </div>
 
+
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
                         ></span>
 
                     </a>
-
 
 
                     <!-- QUIZ -->
@@ -680,6 +737,7 @@
 
                         </div>
 
+
                         <div class="quick-card-content">
 
                             <strong>
@@ -692,13 +750,13 @@
 
                         </div>
 
+
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
                         ></span>
 
                     </a>
-
 
 
                     <!-- GALLERY -->
@@ -714,6 +772,7 @@
 
                         </div>
 
+
                         <div class="quick-card-content">
 
                             <strong>
@@ -726,6 +785,7 @@
 
                         </div>
 
+
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
@@ -734,12 +794,12 @@
                     </a>
 
 
-
                     <!-- PROFILE -->
 
                     <a
                         href="pages/profile.html"
                         class="quick-card member-only"
+                        hidden
                     >
 
                         <div class="quick-card-icon green">
@@ -747,6 +807,7 @@
                             <span data-lucide="user-round"></span>
 
                         </div>
+
 
                         <div class="quick-card-content">
 
@@ -760,6 +821,7 @@
 
                         </div>
 
+
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
@@ -770,7 +832,6 @@
                 </div>
 
             </section>
-
 
 
             <!-- =================================================
@@ -804,6 +865,7 @@
 
                                 </div>
 
+
                                 <div>
 
                                     <span class="card-label">
@@ -834,6 +896,7 @@
 
                                 </div>
 
+
                                 <p>
                                     Your current lesson will appear here.
                                 </p>
@@ -859,7 +922,6 @@
                     </article>
 
 
-
                     <!-- QUIZ -->
 
                     <article class="dashboard-card">
@@ -873,6 +935,7 @@
                                     <span data-lucide="trophy"></span>
 
                                 </div>
+
 
                                 <div>
 
@@ -904,6 +967,7 @@
 
                                 </div>
 
+
                                 <p>
                                     Your quiz information will appear here.
                                 </p>
@@ -929,7 +993,6 @@
                     </article>
 
                 </section>
-
 
 
                 <!-- =============================================
@@ -976,6 +1039,7 @@
 
                             </div>
 
+
                             <p>
                                 No new notifications.
                             </p>
@@ -986,9 +1050,7 @@
 
                 </section>
 
-
             </div>
-
 
 
             <!-- =================================================
@@ -1028,9 +1090,11 @@
 
                         </div>
 
+
                         <h3>
                             Learn
                         </h3>
+
 
                         <p>
                             Access weekly lessons and grow in your
@@ -1048,9 +1112,11 @@
 
                         </div>
 
+
                         <h3>
                             Challenge Yourself
                         </h3>
+
 
                         <p>
                             Take weekly quizzes and track your
@@ -1068,9 +1134,11 @@
 
                         </div>
 
+
                         <h3>
                             Stay Connected
                         </h3>
+
 
                         <p>
                             Relive programs, activities and special
@@ -1083,13 +1151,11 @@
 
             </section>
 
-
         </section>
 
     </main>
 
 </div>
-
 
 
 <!-- =========================================================
@@ -1112,6 +1178,7 @@
             data-lucide="house"
         ></span>
 
+
         <span class="bottom-nav-label">
             Home
         </span>
@@ -1128,6 +1195,7 @@
             class="bottom-nav-icon"
             data-lucide="book-open"
         ></span>
+
 
         <span class="bottom-nav-label">
             Lessons
@@ -1151,6 +1219,7 @@
 
         </span>
 
+
         <span class="bottom-nav-center-label">
             Quiz
         </span>
@@ -1168,6 +1237,7 @@
             data-lucide="images"
         ></span>
 
+
         <span class="bottom-nav-label">
             Gallery
         </span>
@@ -1178,12 +1248,14 @@
     <a
         href="pages/profile.html"
         class="bottom-nav-item member-only"
+        hidden
     >
 
         <span
             class="bottom-nav-icon"
             data-lucide="user-round"
         ></span>
+
 
         <span class="bottom-nav-label">
             Profile
@@ -1194,7 +1266,6 @@
 </nav>
 
 
-
 <!-- =========================================================
      MOBILE OVERLAY
 ========================================================== -->
@@ -1203,7 +1274,6 @@
     class="mobile-overlay"
     id="mobileOverlay"
 ></div>
-
 
 
 <!-- =========================================================
@@ -1223,15 +1293,23 @@
 <script src="js/home.js"></script>
 
 
+<!-- =========================================================
+     LUCIDE INITIALIZATION
+========================================================== -->
+
 <script>
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        if (window.lucide) {
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons ===
+                "function"
+        ) {
 
-            lucide.createIcons();
+            window.lucide.createIcons();
 
         }
 
@@ -1244,4 +1322,3 @@ document.addEventListener(
 </body>
 
 </html>
-
