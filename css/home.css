@@ -5,155 +5,188 @@
 
 
 /* ============================================================
-   1. HOME PAGE CONTAINER
+   HOME PAGE
    ============================================================ */
 
 .home-page {
-
     width: 100%;
-
-    max-width: 100%;
-
-    min-width: 0;
-
 }
 
 
 /* ============================================================
-   2. HERO
+   HEADER SUPPORT
+   IMPORTANT:
+   Header layout itself is controlled by layout.css.
+   This file only supports the approved header appearance.
    ============================================================ */
 
-.home-hero {
+.top-header {
+    min-height: var(--header-height);
+}
 
-    width: 100%;
 
-    box-sizing: border-box;
+/* ============================================================
+   HEADER ACTIONS
+   ============================================================ */
 
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1.6fr)
-        minmax(180px, 0.7fr);
+.header-actions {
+    display: flex;
 
     align-items: center;
 
-    gap: 30px;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-left: auto;
+}
+
+
+/* ============================================================
+   MOBILE BRAND
+   ============================================================ */
+
+.mobile-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    min-width: 0;
+}
+
+
+.mobile-brand-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #7a1688
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 16px
+        rgba(
+            74,
+            7,
+            84,
+            0.24
+        );
+}
+
+
+.mobile-brand-icon svg {
+    width: 21px;
+    height: 21px;
+
+    stroke-width: 2.1;
+}
+
+
+.mobile-brand-text {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    line-height: 1.05;
+
+    white-space: nowrap;
+
+    min-width: 0;
+}
+
+
+.mobile-brand-text strong {
+    font-family: var(--font-heading);
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+}
+
+
+.mobile-brand-text small {
+    margin-top: 3px;
+
+    font-family: var(--font-body);
+
+    font-size: 0.76rem;
+
+    font-weight: 600;
+
+    opacity: 0.68;
+
+    letter-spacing: 0.01em;
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.home-hero {
 
     padding:
         clamp(
             28px,
             5vw,
-            54px
+            52px
         );
-
-    margin-bottom: 34px;
-
-    border-radius: var(--radius-xl);
-
-    background:
-        linear-gradient(
-            135deg,
-            #faf4fc 0%,
-            #ffffff 52%,
-            #fff8f3 100%
-        );
-
-    border:
-        1px solid var(--border);
-
-    box-shadow: var(--shadow-sm);
-
-    overflow: hidden;
-
-}
-
-
-.home-hero-content {
-
-    min-width: 0;
-
-}
-
-
-.hero-state {
-
-    min-width: 0;
-
-}
-
-
-.section-label {
-
-    display: inline-block;
-
-    margin-bottom: 9px;
-
-    color: var(--brand);
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.86rem;
-
-    font-weight: 700;
-
-    letter-spacing: 0.05em;
 
 }
 
 
 .home-hero h2 {
 
-    margin:
-        0 0 15px;
-
-    color: var(--ink);
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
+    font-family: var(--font-heading);
 
     font-size:
         clamp(
-            2.2rem,
+            2.1rem,
             5vw,
-            3.5rem
+            3.45rem
         );
-
-    font-weight: 700;
 
     line-height: 1.04;
 
-    letter-spacing: -0.045em;
-
-}
-
-
-.home-hero h2 span {
-
-    color: var(--brand);
+    letter-spacing: -0.04em;
 
 }
 
 
 .home-hero p {
 
-    max-width: 680px;
+    max-width: 650px;
 
-    margin:
-        0 0 24px;
-
-    color: var(--ink-soft);
-
-    font-family:
-        "DM Sans",
-        sans-serif;
+    font-family: var(--font-body);
 
     font-size:
         clamp(
             1rem,
-            1.7vw,
+            2vw,
             1.12rem
         );
 
@@ -163,119 +196,42 @@
 
 
 /* ============================================================
-   HERO VISUAL
+   SECTION LABEL
    ============================================================ */
 
-.home-hero-visual {
+.section-label {
 
-    min-height: 190px;
+    font-family: var(--font-body);
 
-    display: flex;
+    font-size: 0.84rem;
 
-    align-items: center;
+    font-weight: 700;
 
-    justify-content: center;
-
+    letter-spacing: 0.06em;
 }
 
 
-.hero-icon-orbit {
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
 
-    width: 170px;
+.section-heading h2 {
 
-    height: 170px;
+    font-family: var(--font-heading);
 
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-        radial-gradient(
-            circle,
-            #ffffff 0%,
-            #f5eafa 64%,
-            #ead8ef 100%
+    font-size:
+        clamp(
+            1.4rem,
+            3vw,
+            1.75rem
         );
-
-    box-shadow:
-        0 20px 45px
-        rgba(
-            74,
-            7,
-            84,
-            0.13
-        );
-
-}
-
-
-.hero-icon {
-
-    width: 92px;
-
-    height: 92px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            var(--brand),
-            #7a1688
-        );
-
-    color: #fff;
-
-    box-shadow:
-        0 12px 28px
-        rgba(
-            74,
-            7,
-            84,
-            0.25
-        );
-
-}
-
-
-.hero-icon svg {
-
-    width: 42px;
-
-    height: 42px;
-
-    stroke-width: 1.8;
 
 }
 
 
 /* ============================================================
-   3. HERO BUTTONS
+   HERO BUTTONS
    ============================================================ */
-
-.hero-actions,
-.member-hero-actions {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    align-items: center;
-
-    gap: 10px;
-
-}
-
 
 .primary-action-button,
 .secondary-action-button {
@@ -285,80 +241,9 @@
     padding:
         0 18px;
 
-    box-sizing: border-box;
-
-    border-radius: 12px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 9px;
-
-    font-family:
-        "DM Sans",
-        sans-serif;
+    font-family: var(--font-body);
 
     font-size: 0.98rem;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-    cursor: pointer;
-
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        background var(--transition);
-
-}
-
-
-.primary-action-button {
-
-    border: 0;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--brand),
-            #71157f
-        );
-
-    color: #fff;
-
-    box-shadow:
-        0 8px 18px
-        rgba(
-            74,
-            7,
-            84,
-            0.18
-        );
-
-}
-
-
-.secondary-action-button {
-
-    border:
-        1px solid var(--border-dark);
-
-    background: #fff;
-
-    color: var(--ink);
-
-}
-
-
-.primary-action-button:hover,
-.secondary-action-button:hover {
-
-    transform:
-        translateY(-1px);
 
 }
 
@@ -366,713 +251,60 @@
 .primary-action-button svg,
 .secondary-action-button svg {
 
-    width: 18px;
-
-    height: 18px;
-
-}
-
-
-/* ============================================================
-   4. SECTION BLOCK
-   ============================================================ */
-
-.section-block {
-
-    width: 100%;
-
-    min-width: 0;
-
-    margin-bottom: 38px;
-
-}
-
-
-.section-heading {
-
-    width: 100%;
-
-    margin-bottom: 17px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-
-    gap: 15px;
-
-}
-
-
-.section-heading > div {
-
-    min-width: 0;
-
-}
-
-
-.section-heading .section-label {
-
-    margin-bottom: 4px;
-
-    font-size: 0.78rem;
-
-}
-
-
-.section-heading h2 {
-
-    margin: 0;
-
-    color: var(--ink);
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size:
-        clamp(
-            1.45rem,
-            3vw,
-            1.85rem
-        );
-
-    line-height: 1.15;
-
-    letter-spacing: -0.025em;
-
-}
-
-
-.section-link {
-
-    color: var(--brand);
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.84rem;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-    white-space: nowrap;
+    width: 19px;
+    height: 19px;
 
 }
 
 
 /* ============================================================
-   5. QUICK ACCESS GRID
+   QUICK CARDS
    ============================================================ */
-
-.quick-grid {
-
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 14px;
-
-}
-
 
 .quick-card {
 
-    min-width: 0;
-
-    min-height: 98px;
-
-    box-sizing: border-box;
+    min-height: 96px;
 
     padding:
-        17px 18px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius-md);
-
-    background: var(--surface);
-
-    color: inherit;
-
-    text-decoration: none;
-
-    box-shadow: var(--shadow-sm);
-
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        border-color var(--transition);
-
-}
-
-
-.quick-card:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow: var(--shadow-md);
-
-    border-color:
-        var(--border-dark);
-
-}
-
-
-.quick-card-icon {
-
-    width: 48px;
-
-    height: 48px;
-
-    min-width: 48px;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.quick-card-icon svg {
-
-    width: 22px;
-
-    height: 22px;
-
-}
-
-
-.quick-card-icon.purple {
-
-    background: var(--brand-light);
-
-    color: var(--brand);
-
-}
-
-
-.quick-card-icon.orange {
-
-    background: var(--accent-light);
-
-    color: var(--accent);
-
-}
-
-
-.quick-card-icon.blue {
-
-    background: var(--blue-light);
-
-    color: var(--blue);
-
-}
-
-
-.quick-card-icon.green {
-
-    background: var(--green-light);
-
-    color: var(--green);
-
-}
-
-
-.quick-card-content {
-
-    min-width: 0;
-
-    flex: 1;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
+        18px 19px;
 
 }
 
 
 .quick-card-content strong {
 
-    color: var(--ink);
+    font-family: var(--font-heading);
 
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size: 1.02rem;
-
-    line-height: 1.2;
+    font-size: 1.04rem;
 
 }
 
 
 .quick-card-content span {
 
-    color: var(--ink-soft);
+    font-family: var(--font-body);
 
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.9rem;
+    font-size: 0.91rem;
 
     line-height: 1.45;
 
 }
 
 
-.quick-card-arrow {
-
-    width: 20px;
-
-    height: 20px;
-
-    min-width: 20px;
-
-    color: var(--ink-muted);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.quick-card-arrow svg {
-
-    width: 19px;
-
-    height: 19px;
-
-}
-
-
 /* ============================================================
-   6. DASHBOARD GRID
+   FEATURE CARDS
    ============================================================ */
-
-.dashboard-grid {
-
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 18px;
-
-    margin-bottom: 38px;
-
-}
-
-
-.dashboard-card {
-
-    min-width: 0;
-
-    padding: 20px;
-
-    box-sizing: border-box;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius-lg);
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-sm);
-
-}
-
-
-.dashboard-card-header {
-
-    margin-bottom: 16px;
-
-}
-
-
-.dashboard-card-title {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-}
-
-
-.small-icon {
-
-    width: 40px;
-
-    height: 40px;
-
-    min-width: 40px;
-
-    border-radius: 12px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.small-icon svg {
-
-    width: 19px;
-
-    height: 19px;
-
-}
-
-
-.small-icon.purple {
-
-    background: var(--brand-light);
-
-    color: var(--brand);
-
-}
-
-
-.small-icon.orange {
-
-    background: var(--accent-light);
-
-    color: var(--accent);
-
-}
-
-
-.card-label {
-
-    display: block;
-
-    margin-bottom: 3px;
-
-    color: var(--ink-muted);
-
-    font-size: 0.72rem;
-
-    font-weight: 700;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.04em;
-
-}
-
-
-.dashboard-card h3 {
-
-    margin: 0;
-
-    color: var(--ink);
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    font-size: 1.15rem;
-
-}
-
-
-.dashboard-card-body {
-
-    min-height: 125px;
-
-    color: var(--ink-soft);
-
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.94rem;
-
-}
-
-
-.empty-state {
-
-    min-height: 115px;
-
-    padding: 15px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-}
-
-
-.empty-state-icon {
-
-    width: 42px;
-
-    height: 42px;
-
-    margin-bottom: 9px;
-
-    border-radius: 50%;
-
-    background: var(--background);
-
-    color: var(--ink-muted);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.empty-state-icon svg {
-
-    width: 20px;
-
-    height: 20px;
-
-}
-
-
-.empty-state p {
-
-    max-width: 280px;
-
-    margin: 0;
-
-    color: var(--ink-muted);
-
-    font-size: 0.88rem;
-
-    line-height: 1.45;
-
-}
-
-
-.text-link {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 10px;
-
-    color: var(--brand);
-
-    font-size: 0.84rem;
-
-    font-weight: 700;
-
-    text-decoration: none;
-
-}
-
-
-.text-link svg {
-
-    width: 16px;
-
-    height: 16px;
-
-}
-
-
-/* ============================================================
-   7. NOTIFICATION PREVIEW
-   ============================================================ */
-
-.notification-preview {
-
-    width: 100%;
-
-    min-height: 110px;
-
-    box-sizing: border-box;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius-md);
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-sm);
-
-}
-
-
-.notification-preview .empty-state {
-
-    min-height: 110px;
-
-}
-
-
-/* ============================================================
-   8. GUEST INFORMATION
-   ============================================================ */
-
-.guest-information {
-
-    width: 100%;
-
-    margin-bottom: 20px;
-
-}
-
-
-.feature-grid {
-
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            3,
-            minmax(0, 1fr)
-        );
-
-    gap: 16px;
-
-}
-
 
 .feature-card {
 
-    min-width: 0;
-
     padding: 23px;
-
-    box-sizing: border-box;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: var(--radius-lg);
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-sm);
-
-}
-
-
-.feature-icon {
-
-    width: 46px;
-
-    height: 46px;
-
-    margin-bottom: 15px;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.feature-icon svg {
-
-    width: 22px;
-
-    height: 22px;
-
-}
-
-
-.feature-icon.purple {
-
-    background: var(--brand-light);
-
-    color: var(--brand);
-
-}
-
-
-.feature-icon.orange {
-
-    background: var(--accent-light);
-
-    color: var(--accent);
-
-}
-
-
-.feature-icon.blue {
-
-    background: var(--blue-light);
-
-    color: var(--blue);
 
 }
 
 
 .feature-card h3 {
 
-    margin:
-        0 0 8px;
-
-    color: var(--ink);
-
-    font-family:
-        "Bricolage Grotesque",
-        sans-serif;
+    font-family: var(--font-heading);
 
     font-size: 1.15rem;
 
@@ -1081,35 +313,40 @@
 
 .feature-card p {
 
-    margin: 0;
+    font-family: var(--font-body);
 
-    color: var(--ink-soft);
+    font-size: 0.95rem;
 
-    font-family:
-        "DM Sans",
-        sans-serif;
-
-    font-size: 0.94rem;
-
-    line-height: 1.6;
+    line-height: 1.58;
 
 }
 
 
 /* ============================================================
-   9. HOME CONTENT PREVIEW
+   DASHBOARD
    ============================================================ */
 
-.home-content-preview {
+.dashboard-card-body {
 
-    min-width: 0;
+    font-family: var(--font-body);
+
+    font-size: 0.95rem;
+
+}
+
+
+.dashboard-card h3 {
+
+    font-family: var(--font-heading);
+
+    font-size: 1.1rem;
 
 }
 
 
 .home-content-preview h4 {
 
-    margin: 0 0 7px;
+    font-family: var(--font-heading);
 
     font-size: 1.02rem;
 
@@ -1118,386 +355,128 @@
 
 .home-content-preview p {
 
-    margin: 0;
-
-    color: var(--ink-soft);
+    font-family: var(--font-body);
 
     font-size: 0.9rem;
 
-    line-height: 1.55;
+    line-height: 1.5;
 
 }
 
 
 /* ============================================================
-   10. MOBILE CONTENT
+   BOTTOM NAVIGATION
    ============================================================ */
 
-@media (max-width: 900px) {
-
-    .home-hero {
-
-        grid-template-columns:
-            minmax(0, 1fr)
-            150px;
-
-        gap: 20px;
-
-        padding: 28px;
-
-    }
+.bottom-navigation {
+    font-family: var(--font-body);
+}
 
 
-    .home-hero h2 {
+.bottom-nav-label,
+.bottom-nav-center-label {
 
-        font-size:
-            clamp(
-                2rem,
-                7vw,
-                2.8rem
-            );
+    font-family: var(--font-body);
 
-    }
+    font-weight: 700;
+}
 
 
-    .quick-grid {
+/* ============================================================
+   CENTER QUIZ BUTTON
+   ============================================================ */
 
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+.bottom-nav-main {
 
-    }
+    background:
+        linear-gradient(
+            145deg,
+            #4a0754,
+            #7a1688
+        );
+}
 
 
-    .feature-grid {
+.bottom-nav-main-icon {
 
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+    width: 24px;
 
-    }
+    height: 24px;
 
 }
 
 
 /* ============================================================
-   11. MOBILE
-============================================================ */
+   BOTTOM AVATAR
+   ============================================================ */
 
-@media (max-width: 700px) {
+.bottom-nav-avatar {
 
-    .home-hero {
-
-        grid-template-columns:
-            minmax(0, 1fr);
-
-        padding: 26px 20px;
-
-        gap: 18px;
-
-        margin-bottom: 30px;
-
-    }
-
-
-    .home-hero h2 {
-
-        font-size:
-            clamp(
-                2rem,
-                9vw,
-                2.75rem
-            );
-
-        line-height: 1.06;
-
-    }
-
-
-    .home-hero p {
-
-        font-size: 1rem;
-
-        line-height: 1.6;
-
-    }
-
-
-    .home-hero-visual {
-
-        display: none;
-
-    }
-
-
-    .section-block {
-
-        margin-bottom: 32px;
-
-    }
-
-
-    .section-heading {
-
-        margin-bottom: 14px;
-
-    }
-
-
-    .section-heading h2 {
-
-        font-size: 1.5rem;
-
-    }
-
-
-    .quick-grid {
-
-        grid-template-columns:
-            1fr;
-
-        gap: 12px;
-
-    }
-
-
-    .quick-card {
-
-        min-height: 88px;
-
-        padding: 15px;
-
-    }
-
-
-    .quick-card-content strong {
-
-        font-size: 1.02rem;
-
-    }
-
-
-    .quick-card-content span {
-
-        font-size: 0.9rem;
-
-    }
-
-
-    .dashboard-grid {
-
-        grid-template-columns:
-            1fr;
-
-        gap: 14px;
-
-    }
-
-
-    .feature-grid {
-
-        grid-template-columns:
-            1fr;
-
-        gap: 12px;
-
-    }
-
-
-    .feature-card {
-
-        padding: 20px;
-
-    }
-
-
-    .feature-card h3 {
-
-        font-size: 1.14rem;
-
-    }
-
-
-    .feature-card p {
-
-        font-size: 0.94rem;
-
-    }
-
-
-    .primary-action-button,
-    .secondary-action-button {
-
-        min-height: 49px;
-
-        padding:
-            0 16px;
-
-        font-size: 0.95rem;
-
-    }
+    font-family: var(--font-heading);
 
 }
 
 
 /* ============================================================
-   12. SMALL PHONES
-============================================================ */
+   MEMBER PERSONALIZATION
+   ============================================================ */
+
+#memberHero h2 span {
+    font-family: var(--font-heading);
+}
+
+
+#welcomeUserName {
+    color: var(--brand);
+}
+
+
+/* ============================================================
+   SMALL PHONES
+   ============================================================ */
 
 @media (max-width: 480px) {
 
     .home-hero {
-
         padding:
-            24px 17px;
-
-        border-radius: 20px;
-
+            28px 18px;
     }
 
 
     .home-hero h2 {
-
         font-size: 2.05rem;
-
     }
 
 
     .home-hero p {
+        font-size: 1rem;
 
-        font-size: 0.99rem;
-
-    }
-
-
-    .hero-actions,
-    .member-hero-actions {
-
-        width: 100%;
-
-        flex-direction: column;
-
-        align-items: stretch;
-
+        line-height: 1.58;
     }
 
 
     .primary-action-button,
     .secondary-action-button {
 
-        width: 100%;
-
-    }
-
-
-    .quick-card {
-
-        min-height: 86px;
-
-        padding:
-            14px;
-
-    }
-
-
-    .quick-card-icon {
-
-        width: 44px;
-
-        height: 44px;
-
-        min-width: 44px;
-
-    }
-
-
-    .quick-card-content strong {
-
-        font-size: 1rem;
-
-    }
-
-
-    .quick-card-content span {
-
-        font-size: 0.87rem;
-
-    }
-
-
-    .dashboard-card {
-
-        padding: 17px;
-
-    }
-
-
-    .feature-card {
-
-        padding: 19px;
-
-    }
-
-}
-
-
-/* ============================================================
-   13. VERY SMALL PHONES
-============================================================ */
-
-@media (max-width: 360px) {
-
-    .home-hero {
-
-        padding:
-            21px 14px;
-
-    }
-
-
-    .home-hero h2 {
-
-        font-size: 1.9rem;
-
-    }
-
-
-    .home-hero p {
+        min-height: 48px;
 
         font-size: 0.94rem;
 
     }
 
 
-    .section-heading h2 {
-
-        font-size: 1.38rem;
-
+    .quick-card {
+        padding: 16px;
     }
 
 
     .quick-card-content strong {
-
-        font-size: 0.96rem;
-
+        font-size: 1rem;
     }
 
 
     .quick-card-content span {
-
-        font-size: 0.83rem;
-
-    }
-
-
-    .bottom-nav-item {
-
-        font-size: 0.68rem;
-
+        font-size: 0.88rem;
     }
 
 }
