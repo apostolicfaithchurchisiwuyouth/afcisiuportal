@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <meta
@@ -14,377 +13,350 @@
         content="#4a0754"
     >
 
-    <meta
-        name="description"
-        content="AFC Isiu Youth Portal"
-    >
-
     <title>AFC Isiu Youth Portal — Login</title>
 
-
-    <!-- =====================================================
-         ICONS
-         ===================================================== -->
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-
-    <!-- =====================================================
-         STYLES
-         ===================================================== -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet"
-        href="css/auth.css"
     >
 
+    <!-- Authentication CSS -->
+    <link
+        rel="stylesheet"
+        href="auth.css"
+    >
 </head>
-
 
 <body>
 
+    <main class="auth-page">
 
-<!-- =========================================================
-     PAGE
-     ========================================================= -->
+        <!-- ================================================
+             AUTH BRANDING
+        ================================================= -->
 
-<div class="auth-page">
+        <section class="auth-brand">
 
-
-    <!-- =====================================================
-         LEFT / BRAND AREA
-         ===================================================== -->
-
-    <section class="auth-brand">
-
-        <div class="brand-content">
-
-            <div class="brand-logo">
-                <span>AFC</span>
+            <div class="brand-mark">
+                <span class="brand-mark-inner">
+                    AFC
+                </span>
             </div>
 
-            <p class="brand-kicker">
-                AFC ISIU YOUTH
-            </p>
+            <div class="brand-content">
 
-            <h1>
-                Grow.
-                <br>
-                Connect.
-                <br>
-                Become.
-            </h1>
-
-            <p class="brand-description">
-                Your digital space for Bible study,
-                lessons, quizzes, reflections,
-                fellowship and youth development.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         RIGHT / AUTH AREA
-         ===================================================== -->
-
-    <main class="auth-panel">
-
-
-        <!-- =================================================
-             MOBILE BRAND
-             ================================================= -->
-
-        <div class="mobile-brand">
-
-            <div class="brand-logo small">
-                <span>AFC</span>
-            </div>
-
-            <div>
-
-                <strong>
-                    AFC Isiu Youth
-                </strong>
-
-                <span>
-                    Youth Portal
+                <span class="brand-kicker">
+                    AFC ISIU YOUTH
                 </span>
 
+                <h1>
+                    Welcome to your
+                    <span>growth space.</span>
+                </h1>
+
+                <p>
+                    Learn, connect, grow and stay engaged
+                    with everything happening in the youth community.
+                </p>
+
             </div>
 
-        </div>
+            <div class="brand-decoration decoration-one"></div>
+            <div class="brand-decoration decoration-two"></div>
+
+        </section>
 
 
-        <!-- =================================================
-             AUTH CARD
-             ================================================= -->
+        <!-- ================================================
+             AUTH PANEL
+        ================================================= -->
 
-        <div class="auth-card">
+        <section class="auth-panel">
 
+            <div class="auth-card">
 
-            <!-- =============================================
-                 LOGIN
-                 ============================================= -->
+                <!-- ========================================
+                     LOGIN VIEW
+                ========================================= -->
 
-            <section
-                class="auth-view active"
-                id="loginView"
-            >
-
-                <div class="auth-heading">
-
-                    <span class="eyebrow">
-                        WELCOME BACK
-                    </span>
-
-                    <h2>
-                        Welcome back
-                    </h2>
-
-                    <p>
-                        Log in to continue to your youth portal.
-                    </p>
-
-                </div>
-
-
-                <form
-                    id="loginForm"
-                    novalidate
+                <div
+                    id="loginView"
+                    class="auth-view active"
                 >
 
+                    <div class="auth-heading">
 
-                    <!-- EMAIL -->
+                        <span class="eyebrow">
+                            WELCOME BACK
+                        </span>
 
-                    <div class="field-group">
+                        <h2>
+                            Sign in
+                        </h2>
 
-                        <label for="loginEmail">
-                            Email address
-                        </label>
-
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="mail"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="email"
-                                id="loginEmail"
-                                name="email"
-                                autocomplete="email"
-                                placeholder="you@example.com"
-                                required
-                            >
-
-                        </div>
+                        <p>
+                            Continue your journey with AFC Isiu Youth.
+                        </p>
 
                     </div>
 
 
-                    <!-- PASSWORD -->
-
-                    <div class="field-group">
-
-                        <div class="field-label-row">
-
-                            <label for="loginPassword">
-                                Password
-                            </label>
-
-                            <button
-                                type="button"
-                                class="forgot-button"
-                                id="forgotPasswordButton"
-                            >
-                                Forgot password?
-                            </button>
-
-                        </div>
-
-
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="lock-keyhole"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="password"
-                                id="loginPassword"
-                                name="password"
-                                autocomplete="current-password"
-                                placeholder="Enter your password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                data-target="loginPassword"
-                                aria-label="Show password"
-                            >
-
-                                <i
-                                    data-lucide="eye"
-                                ></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- MESSAGE -->
-
-                    <div
-                        class="form-message"
-                        id="loginMessage"
-                        role="alert"
-                        aria-live="polite"
-                    ></div>
-
-
-                    <!-- SUBMIT -->
-
-                    <button
-                        type="submit"
-                        class="auth-submit"
-                        id="loginSubmit"
+                    <form
+                        id="loginForm"
+                        novalidate
                     >
 
-                        <span class="button-text">
-                            Log in
-                        </span>
-
-                        <span
-                            class="button-loading"
-                            hidden
-                        >
-
-                            <span class="spinner"></span>
-
-                            Logging in...
-
-                        </span>
-
-                    </button>
-
-
-                </form>
-
-
-                <!-- REGISTER LINK -->
-
-                <div class="switch-auth">
-
-                    <span>
-                        Don't have an account?
-                    </span>
-
-                    <button
-                        type="button"
-                        id="showRegisterButton"
-                    >
-                        Create an account
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 REGISTER
-                 ================================================= -->
-
-            <section
-                class="auth-view"
-                id="registerView"
-            >
-
-                <div class="auth-heading">
-
-                    <span class="eyebrow">
-                        JOIN THE PORTAL
-                    </span>
-
-                    <h2>
-                        Create your account
-                    </h2>
-
-                    <p>
-                        Set up your profile to access the youth portal.
-                    </p>
-
-                </div>
-
-
-                <form
-                    id="registerForm"
-                    novalidate
-                >
-
-
-                    <!-- =========================================
-                         NAME
-                         ========================================= -->
-
-                    <div class="form-grid two-columns">
-
+                        <!-- EMAIL -->
 
                         <div class="field-group">
 
-                            <label for="firstName">
-                                First name
+                            <label for="loginEmail">
+                                Email address
                             </label>
 
                             <div class="input-wrap">
 
-                                <i
-                                    data-lucide="user"
-                                    class="input-icon"
-                                ></i>
+                                <span class="input-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="5"
+                                            width="18"
+                                            height="14"
+                                            rx="2"
+                                        ></rect>
+
+                                        <path
+                                            d="m3 7 9 6 9-6"
+                                        ></path>
+                                    </svg>
+                                </span>
+
+                                <input
+                                    type="email"
+                                    id="loginEmail"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="field-group">
+
+                            <div class="field-label-row">
+
+                                <label for="loginPassword">
+                                    Password
+                                </label>
+
+                            </div>
+
+                            <div class="input-wrap">
+
+                                <span class="input-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <rect
+                                            x="4"
+                                            y="10"
+                                            width="16"
+                                            height="10"
+                                            rx="2"
+                                        ></rect>
+
+                                        <path
+                                            d="M8 10V7a4 4 0 0 1 8 0v3"
+                                        ></path>
+                                    </svg>
+                                </span>
+
+                                <input
+                                    type="password"
+                                    id="loginPassword"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-password-target="loginPassword"
+                                    aria-label="Show password"
+                                    title="Show password"
+                                >
+                                    <svg
+                                        class="eye-icon eye-open"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                                        ></path>
+
+                                        <circle
+                                            cx="12"
+                                            cy="12"
+                                            r="2.5"
+                                        ></circle>
+                                    </svg>
+
+                                    <svg
+                                        class="eye-icon eye-closed hidden"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M3 3l18 18"
+                                        ></path>
+
+                                        <path
+                                            d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-3.1 3.7"
+                                        ></path>
+
+                                        <path
+                                            d="M6.5 6.5C4 8.1 2.5 12 2.5 12s3.5 6 9.5 6c1.2 0 2.3-.2 3.3-.6"
+                                        ></path>
+                                    </svg>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- LOGIN MESSAGE -->
+
+                        <div
+                            id="loginMessage"
+                            class="form-message"
+                            role="alert"
+                            aria-live="polite"
+                        ></div>
+
+
+                        <!-- LOGIN BUTTON -->
+
+                        <button
+                            type="submit"
+                            id="loginButton"
+                            class="primary-button"
+                        >
+                            <span class="button-text">
+                                Login
+                            </span>
+
+                            <span class="button-loader">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+
+                    </form>
+
+
+                    <div class="auth-switch">
+
+                        <span>
+                            Don't have an account?
+                        </span>
+
+                        <button
+                            type="button"
+                            id="showRegisterButton"
+                            class="text-button"
+                        >
+                            Create account
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ========================================
+                     REGISTER VIEW
+                ========================================= -->
+
+                <div
+                    id="registerView"
+                    class="auth-view"
+                >
+
+                    <div class="auth-heading">
+
+                        <span class="eyebrow">
+                            JOIN THE COMMUNITY
+                        </span>
+
+                        <h2>
+                            Create account
+                        </h2>
+
+                        <p>
+                            Set up your profile and start your journey.
+                        </p>
+
+                    </div>
+
+
+                    <form
+                        id="registerForm"
+                        novalidate
+                    >
+
+                        <!-- NAME ROW -->
+
+                        <div class="form-grid two-columns">
+
+                            <div class="field-group">
+
+                                <label for="firstName">
+                                    First name
+                                </label>
 
                                 <input
                                     type="text"
                                     id="firstName"
                                     name="first_name"
-                                    autocomplete="given-name"
                                     placeholder="First name"
+                                    autocomplete="given-name"
                                     required
                                 >
 
                             </div>
 
-                        </div>
 
+                            <div class="field-group">
 
-                        <div class="field-group">
-
-                            <label for="lastName">
-                                Last name
-                            </label>
-
-                            <div class="input-wrap">
-
-                                <i
-                                    data-lucide="user"
-                                    class="input-icon"
-                                ></i>
+                                <label for="lastName">
+                                    Last name
+                                </label>
 
                                 <input
                                     type="text"
                                     id="lastName"
                                     name="last_name"
-                                    autocomplete="family-name"
                                     placeholder="Last name"
+                                    autocomplete="family-name"
                                     required
                                 >
 
@@ -392,119 +364,106 @@
 
                         </div>
 
-                    </div>
+
+                        <!-- EMAIL + PHONE -->
+
+                        <div class="form-grid two-columns">
+
+                            <div class="field-group">
+
+                                <label for="registerEmail">
+                                    Email address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="registerEmail"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
 
 
-                    <!-- =========================================
-                         EMAIL
-                         ========================================= -->
+                            <div class="field-group">
 
-                    <div class="field-group">
+                                <label for="phone">
+                                    Phone number
+                                </label>
 
-                        <label for="registerEmail">
-                            Email address
-                        </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="080..."
+                                    autocomplete="tel"
+                                >
 
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="mail"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="email"
-                                id="registerEmail"
-                                name="email"
-                                autocomplete="email"
-                                placeholder="you@example.com"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =========================================
-                         PHONE
-                         ========================================= -->
-
-                    <div class="field-group">
-
-                        <label for="phone">
-                            Phone number
-                        </label>
-
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="phone"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                autocomplete="tel"
-                                placeholder="08012345678"
-                            >
+                            </div>
 
                         </div>
 
-                    </div>
+
+                        <!-- DATE OF BIRTH + GENDER -->
+
+                        <div class="form-grid two-columns">
+
+                            <div class="field-group">
+
+                                <label for="dateOfBirth">
+                                    Date of birth
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="dateOfBirth"
+                                    name="date_of_birth"
+                                    required
+                                >
+
+                            </div>
 
 
-                    <!-- =========================================
-                         DATE OF BIRTH
-                         ========================================= -->
+                            <div class="field-group">
 
-                    <div class="field-group">
+                                <label for="gender">
+                                    Gender
+                                </label>
 
-                        <label for="dateOfBirth">
-                            Date of birth
-                        </label>
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                >
+                                    <option value="">
+                                        Select gender
+                                    </option>
 
-                        <div class="input-wrap">
+                                    <option value="Male">
+                                        Male
+                                    </option>
 
-                            <i
-                                data-lucide="cake"
-                                class="input-icon"
-                            ></i>
+                                    <option value="Female">
+                                        Female
+                                    </option>
+                                </select>
 
-                            <input
-                                type="date"
-                                id="dateOfBirth"
-                                name="date_of_birth"
-                                autocomplete="bday"
-                                required
-                            >
+                            </div>
 
                         </div>
 
-                    </div>
 
+                        <!-- INSTITUTION -->
 
-                    <!-- =========================================
-                         INSTITUTION
-                         ========================================= -->
+                        <div class="field-group">
 
-                    <div class="field-group">
-
-                        <label for="institutionId">
-                            School / Institution
-                        </label>
-
-                        <div class="input-wrap select-wrap">
-
-                            <i
-                                data-lucide="school"
-                                class="input-icon"
-                            ></i>
+                            <label for="institution">
+                                School / Institution
+                            </label>
 
                             <select
-                                id="institutionId"
+                                id="institution"
                                 name="institution_id"
                                 required
                             >
@@ -515,454 +474,285 @@
 
                             </select>
 
-                            <i
-                                data-lucide="chevron-down"
-                                class="select-arrow"
-                            ></i>
+                            <small class="field-help">
+                                Select your current school or institution.
+                            </small>
 
                         </div>
 
-                        <small class="field-help">
-                            Select your school or institution.
-                        </small>
 
-                    </div>
+                        <!-- COURSE + LEVEL -->
 
+                        <div class="form-grid two-columns">
 
-                    <!-- =========================================
-                         COURSE
-                         ========================================= -->
+                            <div class="field-group">
 
-                    <div class="field-group">
+                                <label for="course">
+                                    Course / Programme
+                                </label>
 
-                        <label for="course">
-                            Course / Programme
-                        </label>
+                                <input
+                                    type="text"
+                                    id="course"
+                                    name="course"
+                                    placeholder="e.g. Computer Science"
+                                >
 
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="book-open"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="text"
-                                id="course"
-                                name="course"
-                                placeholder="e.g. Computer Science"
-                            >
-
-                        </div>
-
-                    </div>
+                            </div>
 
 
-                    <!-- =========================================
-                         LEVEL
-                         ========================================= -->
+                            <div class="field-group">
 
-                    <div class="field-group">
+                                <label for="level">
+                                    Level
+                                </label>
 
-                        <label for="level">
-                            Level / Class
-                        </label>
+                                <select
+                                    id="level"
+                                    name="level"
+                                    required
+                                >
 
-                        <div class="input-wrap select-wrap">
+                                    <option value="">
+                                        Select level
+                                    </option>
 
-                            <i
-                                data-lucide="layers-3"
-                                class="input-icon"
-                            ></i>
+                                    <option value="100">
+                                        100 Level
+                                    </option>
 
-                            <select
-                                id="level"
-                                name="level"
-                                required
-                            >
+                                    <option value="200">
+                                        200 Level
+                                    </option>
 
-                                <option value="">
-                                    Select your level
-                                </option>
+                                    <option value="300">
+                                        300 Level
+                                    </option>
 
-                                <option value="JSS 1">
-                                    JSS 1
-                                </option>
+                                    <option value="400">
+                                        400 Level
+                                    </option>
 
-                                <option value="JSS 2">
-                                    JSS 2
-                                </option>
+                                    <option value="500">
+                                        500 Level
+                                    </option>
 
-                                <option value="JSS 3">
-                                    JSS 3
-                                </option>
+                                    <option value="Graduate">
+                                        Graduate
+                                    </option>
 
-                                <option value="SSS 1">
-                                    SSS 1
-                                </option>
+                                    <option value="Other">
+                                        Other
+                                    </option>
 
-                                <option value="SSS 2">
-                                    SSS 2
-                                </option>
+                                </select>
 
-                                <option value="SSS 3">
-                                    SSS 3
-                                </option>
-
-                                <option value="100">
-                                    100 Level
-                                </option>
-
-                                <option value="200">
-                                    200 Level
-                                </option>
-
-                                <option value="300">
-                                    300 Level
-                                </option>
-
-                                <option value="400">
-                                    400 Level
-                                </option>
-
-                                <option value="500">
-                                    500 Level
-                                </option>
-
-                                <option value="Graduate">
-                                    Graduate
-                                </option>
-
-                                <option value="Other">
-                                    Other
-                                </option>
-
-                            </select>
-
-                            <i
-                                data-lucide="chevron-down"
-                                class="select-arrow"
-                            ></i>
+                            </div>
 
                         </div>
 
-                    </div>
+
+                        <!-- PASSWORD -->
+
+                        <div class="form-grid two-columns">
+
+                            <div class="field-group">
+
+                                <label for="registerPassword">
+                                    Password
+                                </label>
+
+                                <div class="input-wrap">
+
+                                    <input
+                                        type="password"
+                                        id="registerPassword"
+                                        name="password"
+                                        placeholder="At least 8 characters"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-password-target="registerPassword"
+                                        aria-label="Show password"
+                                        title="Show password"
+                                    >
+
+                                        <svg
+                                            class="eye-icon eye-open"
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                                            ></path>
+
+                                            <circle
+                                                cx="12"
+                                                cy="12"
+                                                r="2.5"
+                                            ></circle>
+                                        </svg>
+
+                                        <svg
+                                            class="eye-icon eye-closed hidden"
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M3 3l18 18"
+                                            ></path>
+
+                                            <path
+                                                d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-3.1 3.7"
+                                            ></path>
+
+                                            <path
+                                                d="M6.5 6.5C4 8.1 2.5 12 2.5 12s3.5 6 9.5 6c1.2 0 2.3-.2 3.3-.6"
+                                            ></path>
+                                        </svg>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
 
 
-                    <!-- =========================================
-                         GENDER
-                         ========================================= -->
+                            <div class="field-group">
 
-                    <div class="field-group">
+                                <label for="confirmPassword">
+                                    Confirm password
+                                </label>
 
-                        <label for="gender">
-                            Gender
-                        </label>
+                                <div class="input-wrap">
 
-                        <div class="input-wrap select-wrap">
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        name="confirm_password"
+                                        placeholder="Repeat password"
+                                        autocomplete="new-password"
+                                        required
+                                    >
 
-                            <i
-                                data-lucide="users"
-                                class="input-icon"
-                            ></i>
+                                    <button
+                                        type="button"
+                                        class="password-toggle"
+                                        data-password-target="confirmPassword"
+                                        aria-label="Show password"
+                                        title="Show password"
+                                    >
 
-                            <select
-                                id="gender"
-                                name="gender"
-                            >
+                                        <svg
+                                            class="eye-icon eye-open"
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                                            ></path>
 
-                                <option value="">
-                                    Select gender
-                                </option>
+                                            <circle
+                                                cx="12"
+                                                cy="12"
+                                                r="2.5"
+                                            ></circle>
+                                        </svg>
 
-                                <option value="Male">
-                                    Male
-                                </option>
+                                        <svg
+                                            class="eye-icon eye-closed hidden"
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M3 3l18 18"
+                                            ></path>
 
-                                <option value="Female">
-                                    Female
-                                </option>
+                                            <path
+                                                d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-3.1 3.7"
+                                            ></path>
 
-                            </select>
+                                            <path
+                                                d="M6.5 6.5C4 8.1 2.5 12 2.5 12s3.5 6 9.5 6c1.2 0 2.3-.2 3.3-.6"
+                                            ></path>
+                                        </svg>
 
-                            <i
-                                data-lucide="chevron-down"
-                                class="select-arrow"
-                            ></i>
+                                    </button>
 
-                        </div>
+                                </div>
 
-                    </div>
-
-
-                    <!-- =========================================
-                         PASSWORD
-                         ========================================= -->
-
-                    <div class="field-group">
-
-                        <label for="registerPassword">
-                            Password
-                        </label>
-
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="lock-keyhole"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="password"
-                                id="registerPassword"
-                                name="password"
-                                autocomplete="new-password"
-                                placeholder="At least 8 characters"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                data-target="registerPassword"
-                                aria-label="Show password"
-                            >
-
-                                <i
-                                    data-lucide="eye"
-                                ></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =========================================
-                         CONFIRM PASSWORD
-                         ========================================= -->
-
-                    <div class="field-group">
-
-                        <label for="confirmPassword">
-                            Confirm password
-                        </label>
-
-                        <div class="input-wrap">
-
-                            <i
-                                data-lucide="shield-check"
-                                class="input-icon"
-                            ></i>
-
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                name="confirm_password"
-                                autocomplete="new-password"
-                                placeholder="Enter password again"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                data-target="confirmPassword"
-                                aria-label="Show password"
-                            >
-
-                                <i
-                                    data-lucide="eye"
-                                ></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =========================================
-                         LANGUAGE
-                         ========================================= -->
-
-                    <div class="field-group">
-
-                        <label for="language">
-                            Language
-                        </label>
-
-                        <div class="input-wrap select-wrap">
-
-                            <i
-                                data-lucide="languages"
-                                class="input-icon"
-                            ></i>
-
-                            <select
-                                id="language"
-                                name="language"
-                            >
-
-                                <option value="en">
-                                    English
-                                </option>
-
-                            </select>
-
-                            <i
-                                data-lucide="chevron-down"
-                                class="select-arrow"
-                            ></i>
+                            </div>
 
                         </div>
 
-                    </div>
+
+                        <!-- REGISTER MESSAGE -->
+
+                        <div
+                            id="registerMessage"
+                            class="form-message"
+                            role="alert"
+                            aria-live="polite"
+                        ></div>
 
 
-                    <!-- =========================================
-                         THEME
-                         ========================================= -->
+                        <!-- CREATE ACCOUNT BUTTON -->
 
-                    <div class="field-group">
-
-                        <label for="theme">
-                            Theme
-                        </label>
-
-                        <div class="input-wrap select-wrap">
-
-                            <i
-                                data-lucide="palette"
-                                class="input-icon"
-                            ></i>
-
-                            <select
-                                id="theme"
-                                name="theme"
-                            >
-
-                                <option value="system">
-                                    System default
-                                </option>
-
-                                <option value="light">
-                                    Light
-                                </option>
-
-                                <option value="dark">
-                                    Dark
-                                </option>
-
-                            </select>
-
-                            <i
-                                data-lucide="chevron-down"
-                                class="select-arrow"
-                            ></i>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =========================================
-                         MESSAGE
-                         ========================================= -->
-
-                    <div
-                        class="form-message"
-                        id="registerMessage"
-                        role="alert"
-                        aria-live="polite"
-                    ></div>
-
-
-                    <!-- =========================================
-                         SUBMIT
-                         ========================================= -->
-
-                    <button
-                        type="submit"
-                        class="auth-submit"
-                        id="registerSubmit"
-                    >
-
-                        <span class="button-text">
-                            Create account
-                        </span>
-
-                        <span
-                            class="button-loading"
-                            hidden
+                        <button
+                            type="submit"
+                            id="registerButton"
+                            class="primary-button"
                         >
 
-                            <span class="spinner"></span>
+                            <span class="button-text">
+                                Create account
+                            </span>
 
-                            Creating account...
+                            <span class="button-loader">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
 
+                        </button>
+
+                    </form>
+
+
+                    <div class="auth-switch">
+
+                        <span>
+                            Already have an account?
                         </span>
 
-                    </button>
+                        <button
+                            type="button"
+                            id="showLoginButton"
+                            class="text-button"
+                        >
+                            Login
+                        </button>
 
-
-                </form>
-
-
-                <!-- LOGIN LINK -->
-
-                <div class="switch-auth">
-
-                    <span>
-                        Already have an account?
-                    </span>
-
-                    <button
-                        type="button"
-                        id="showLoginButton"
-                    >
-                        Log in
-                    </button>
+                    </div>
 
                 </div>
 
-            </section>
+            </div>
 
-
-        </div>
+        </section>
 
     </main>
 
-</div>
 
+    <!-- API CONNECTION -->
+    <script src="api.js"></script>
 
-<!-- =========================================================
-     API LAYER
-     ========================================================= -->
-
-<script src="js/api.js"></script>
-
-
-<!-- =========================================================
-     AUTHENTICATION LOGIC
-     ========================================================= -->
-
-<script src="js/auth.js"></script>
-
-
-<!-- =========================================================
-     ICON INITIALIZATION
-     ========================================================= -->
-
-<script>
-
-    if (window.lucide) {
-        lucide.createIcons();
-    }
-
-</script>
-
+    <!-- AUTHENTICATION LOGIC -->
+    <script src="auth.js"></script>
 
 </body>
 </html>
