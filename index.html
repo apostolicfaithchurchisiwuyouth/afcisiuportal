@@ -22,7 +22,6 @@
 
     <title>AFC Isiu Youth Portal</title>
 
-
     <link
         rel="manifest"
         href="manifest.json"
@@ -81,6 +80,649 @@
 
 
     <!-- =====================================================
+         HEADER OVERRIDES
+         These specifically control the unified home header.
+    ====================================================== -->
+
+    <style>
+
+        /* ==================================================
+           TOP HEADER
+        ================================================== */
+
+        .top-header {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            min-height: 72px;
+
+        }
+
+
+        /*
+         * There is intentionally NO centered
+         * AFC Isiu Youth / Home title anymore.
+         */
+
+        .header-title {
+
+            display: none !important;
+
+        }
+
+
+        /*
+         * Push the right controls completely
+         * to the right side.
+         */
+
+        .header-actions {
+
+            margin-left: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+        }
+
+
+        /* ==================================================
+           MOBILE BRAND
+        ================================================== */
+
+        .mobile-brand {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            text-decoration: none;
+
+            min-width: 0;
+
+        }
+
+
+        .mobile-brand-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            min-width: 38px;
+
+            border-radius: 50%;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4a0754,
+                    #7b1fa2
+                );
+
+            color: #ffffff;
+
+            box-shadow:
+                0 5px 16px rgba(
+                    74,
+                    7,
+                    84,
+                    0.20
+                );
+
+        }
+
+
+        .mobile-brand-icon svg {
+
+            width: 19px;
+
+            height: 19px;
+
+        }
+
+
+        .mobile-brand-text {
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            line-height: 1;
+
+            min-width: 0;
+
+        }
+
+
+        .mobile-brand-text strong {
+
+            font-family:
+                "Bricolage Grotesque",
+                sans-serif;
+
+            font-size: 0.92rem;
+
+            font-weight: 700;
+
+            color: #4a0754;
+
+            white-space: nowrap;
+
+        }
+
+
+        .mobile-brand-text small {
+
+            margin-top: 4px;
+
+            font-family:
+                "DM Sans",
+                sans-serif;
+
+            font-size: 0.64rem;
+
+            font-weight: 600;
+
+            color: #7a6b7d;
+
+            letter-spacing: 0.01em;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* ==================================================
+           HEADER AUTH AREA
+        ================================================== */
+
+        .header-auth-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+
+        .member-header-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+        }
+
+
+        .member-header-actions[hidden],
+        .header-auth-actions[hidden] {
+
+            display: none !important;
+
+        }
+
+
+        /*
+         * Notification button
+         */
+
+        .header-notification-link {
+
+            position: relative;
+
+            width: 40px;
+
+            height: 40px;
+
+            border-radius: 50%;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #4a0754;
+
+            background: #ffffff;
+
+            border: 1px solid rgba(
+                74,
+                7,
+                84,
+                0.10
+            );
+
+            text-decoration: none;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .header-notification-link:hover {
+
+            transform:
+                translateY(-1px);
+
+            background:
+                #faf5fb;
+
+            box-shadow:
+                0 5px 14px rgba(
+                    74,
+                    7,
+                    84,
+                    0.10
+                );
+
+        }
+
+
+        .header-notification-link svg {
+
+            width: 19px;
+
+            height: 19px;
+
+        }
+
+
+        /*
+         * Guest account circle
+         */
+
+        .guest-header-avatar {
+
+            width: 40px;
+
+            height: 40px;
+
+            min-width: 40px;
+
+            border-radius: 50%;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f1e6f4,
+                    #e5d2eb
+                );
+
+            color: #4a0754;
+
+            border: 1px solid rgba(
+                74,
+                7,
+                84,
+                0.12
+            );
+
+            text-decoration: none;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .guest-header-avatar:hover {
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 5px 14px rgba(
+                    74,
+                    7,
+                    84,
+                    0.12
+                );
+
+        }
+
+
+        .guest-header-avatar svg {
+
+            width: 19px;
+
+            height: 19px;
+
+        }
+
+
+        /*
+         * Logged-in profile circle
+         */
+
+        .header-avatar {
+
+            width: 40px;
+
+            height: 40px;
+
+            min-width: 40px;
+
+            border-radius: 50%;
+
+            overflow: hidden;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4a0754,
+                    #7b1fa2
+                );
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-family:
+                "Bricolage Grotesque",
+                sans-serif;
+
+            font-size: 0.9rem;
+
+            font-weight: 700;
+
+            box-shadow:
+                0 5px 15px rgba(
+                    74,
+                    7,
+                    84,
+                    0.18
+                );
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .header-avatar:hover {
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 7px 18px rgba(
+                    74,
+                    7,
+                    84,
+                    0.24
+                );
+
+        }
+
+
+        .header-avatar-image {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
+
+        }
+
+
+        /*
+         * Notification dot
+         */
+
+        .header-notification-dot {
+
+            position: absolute;
+
+            top: 7px;
+
+            right: 7px;
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #ef4444;
+
+            border: 2px solid #ffffff;
+
+        }
+
+
+        /* ==================================================
+           DESKTOP
+        ================================================== */
+
+        @media (min-width: 769px) {
+
+            .mobile-menu-button,
+            .mobile-brand {
+
+                display: none;
+
+            }
+
+        }
+
+
+        /* ==================================================
+           MOBILE
+        ================================================== */
+
+        @media (max-width: 768px) {
+
+            .top-header {
+
+                min-height: 64px;
+
+                padding:
+                    8px 14px;
+
+                gap: 8px;
+
+            }
+
+
+            .mobile-menu-button {
+
+                flex:
+                    0 0 auto;
+
+                width: 38px;
+
+                height: 38px;
+
+                display: inline-flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+            }
+
+
+            .mobile-brand {
+
+                flex:
+                    1 1 auto;
+
+                min-width: 0;
+
+            }
+
+
+            .header-actions {
+
+                flex:
+                    0 0 auto;
+
+                gap: 7px;
+
+            }
+
+
+            .header-notification-link,
+            .guest-header-avatar,
+            .header-avatar {
+
+                width: 37px;
+
+                height: 37px;
+
+                min-width: 37px;
+
+            }
+
+
+            .mobile-brand-icon {
+
+                width: 34px;
+
+                height: 34px;
+
+                min-width: 34px;
+
+            }
+
+
+            .mobile-brand-icon svg {
+
+                width: 17px;
+
+                height: 17px;
+
+            }
+
+
+            .mobile-brand-text strong {
+
+                font-size: 0.82rem;
+
+            }
+
+
+            .mobile-brand-text small {
+
+                font-size: 0.58rem;
+
+                margin-top: 3px;
+
+            }
+
+        }
+
+
+        /* ==================================================
+           VERY SMALL PHONES
+        ================================================== */
+
+        @media (max-width: 380px) {
+
+            .top-header {
+
+                padding-left: 10px;
+
+                padding-right: 10px;
+
+                gap: 6px;
+
+            }
+
+
+            .mobile-brand {
+
+                gap: 6px;
+
+            }
+
+
+            .mobile-brand-text strong {
+
+                font-size: 0.76rem;
+
+            }
+
+
+            .mobile-brand-text small {
+
+                font-size: 0.54rem;
+
+            }
+
+
+            .header-notification-link,
+            .guest-header-avatar,
+            .header-avatar {
+
+                width: 34px;
+
+                height: 34px;
+
+                min-width: 34px;
+
+            }
+
+
+            .mobile-menu-button {
+
+                width: 34px;
+
+                height: 34px;
+
+            }
+
+        }
+
+    </style>
+
+
+    <!-- =====================================================
          ICONS
     ====================================================== -->
 
@@ -103,8 +745,6 @@
         id="sidebar"
     >
 
-        <!-- BRAND -->
-
         <div class="sidebar-brand">
 
             <div class="brand-mark">
@@ -112,7 +752,6 @@
                 <span data-lucide="church"></span>
 
             </div>
-
 
             <div class="brand-text">
 
@@ -129,12 +768,12 @@
         </div>
 
 
-        <!-- NAVIGATION -->
-
         <nav
             class="sidebar-navigation"
             aria-label="Main navigation"
         >
+
+            <!-- PUBLIC -->
 
             <a
                 href="index.html"
@@ -150,6 +789,8 @@
             </a>
 
 
+            <!-- PUBLIC: GUESTS CAN READ LESSONS -->
+
             <a
                 href="pages/lessons.html"
                 class="nav-item"
@@ -164,9 +805,12 @@
             </a>
 
 
+            <!-- MEMBER FEATURE -->
+
             <a
                 href="pages/quiz.html"
                 class="nav-item"
+                data-auth-required="true"
             >
 
                 <span data-lucide="clipboard-check"></span>
@@ -177,6 +821,8 @@
 
             </a>
 
+
+            <!-- PUBLIC -->
 
             <a
                 href="pages/gallery.html"
@@ -192,10 +838,11 @@
             </a>
 
 
+            <!-- MEMBER -->
+
             <a
                 href="pages/profile.html"
                 class="nav-item member-only"
-                hidden
             >
 
                 <span data-lucide="user-round"></span>
@@ -207,10 +854,11 @@
             </a>
 
 
+            <!-- MEMBER -->
+
             <a
                 href="pages/notifications.html"
                 class="nav-item member-only"
-                hidden
             >
 
                 <span data-lucide="bell"></span>
@@ -218,7 +866,6 @@
                 <span>
                     Notifications
                 </span>
-
 
                 <span
                     class="notification-badge"
@@ -234,7 +881,7 @@
 
 
         <!-- =================================================
-             SIDEBAR ACCOUNT AREA
+             SIDEBAR ACCOUNT
         ================================================== -->
 
         <div class="sidebar-footer">
@@ -252,7 +899,6 @@
                     <span data-lucide="user-round"></span>
 
                 </div>
-
 
                 <div class="sidebar-guest-copy">
 
@@ -289,7 +935,6 @@
                         </span>
 
                     </div>
-
 
                     <div>
 
@@ -349,7 +994,6 @@
                 id="mobileMenuButton"
                 aria-label="Open navigation menu"
                 aria-expanded="false"
-                aria-controls="sidebar"
             >
 
                 <span data-lucide="menu"></span>
@@ -371,7 +1015,6 @@
 
                 </span>
 
-
                 <span class="mobile-brand-text">
 
                     <strong>
@@ -387,66 +1030,65 @@
             </a>
 
 
-            <!-- PAGE TITLE -->
-
-            <div class="header-title">
-
-                <span class="header-eyebrow">
-                    AFC Isiu Youth
-                </span>
-
-                <h1 id="pageTitle">
-                    Home
-                </h1>
-
-            </div>
+            <!--
+                IMPORTANT:
+                The old center header title has been removed.
+            -->
 
 
-            <!-- HEADER ACTIONS -->
+            <!-- =================================================
+                 HEADER ACTIONS — RIGHT
+            ================================================== -->
 
             <div class="header-actions">
 
 
-                <!-- =========================================
+                <!-- =================================================
                      GUEST ACTIONS
-                ========================================== -->
+                ================================================== -->
 
                 <div
                     class="header-auth-actions"
                     id="guestHeaderActions"
                 >
 
+                    <!-- Notification remains visible to guests -->
+
                     <a
                         href="login.html"
-                        class="header-login-button"
+                        class="header-notification-link"
+                        aria-label="Notifications"
                     >
 
-                        <span data-lucide="log-in"></span>
-
-                        <span>
-                            Login
-                        </span>
+                        <span
+                            data-lucide="bell"
+                        ></span>
 
                     </a>
 
 
+                    <!-- Guest account circle -->
+
                     <a
-                        href="login.html#register"
-                        class="header-register-button"
+                        href="login.html"
+                        class="guest-header-avatar"
+                        id="guestHeaderAvatar"
+                        aria-label="Login"
+                        title="Login"
                     >
 
-                        <span>
-                            Create Account
-                        </span>
+                        <span
+                            data-lucide="user-round"
+                        ></span>
 
                     </a>
 
                 </div>
 
 
-                <!-- =========================================
+                <!-- =================================================
                      MEMBER ACTIONS
-                ========================================== -->
+                ================================================== -->
 
                 <div
                     class="member-header-actions"
@@ -454,14 +1096,17 @@
                     hidden
                 >
 
+                    <!-- Notification -->
+
                     <a
                         href="pages/notifications.html"
-                        class="header-icon-button"
+                        class="header-notification-link"
                         aria-label="Notifications"
                     >
 
-                        <span data-lucide="bell"></span>
-
+                        <span
+                            data-lucide="bell"
+                        ></span>
 
                         <span
                             class="header-notification-dot"
@@ -472,13 +1117,17 @@
                     </a>
 
 
+                    <!-- Profile -->
+
                     <a
                         href="pages/profile.html"
                         class="header-avatar"
                         aria-label="My profile"
                     >
 
-                        <span id="headerAvatarLetter">
+                        <span
+                            id="headerAvatarLetter"
+                        >
                             A
                         </span>
 
@@ -499,7 +1148,7 @@
 
 
             <!-- =================================================
-                 HERO / WELCOME
+                 HERO
             ================================================== -->
 
             <section
@@ -510,9 +1159,7 @@
                 <div class="home-hero-content">
 
 
-                    <!-- =========================================
-                         GUEST HERO
-                    ========================================== -->
+                    <!-- GUEST -->
 
                     <div
                         id="guestHero"
@@ -523,7 +1170,6 @@
                             Welcome to AFC Isiu Youth
                         </span>
 
-
                         <h2>
                             Learn.
                             <span>
@@ -531,7 +1177,6 @@
                             </span>
                             Connect.
                         </h2>
-
 
                         <p>
                             Your digital space for Bible lessons,
@@ -576,9 +1221,7 @@
                     </div>
 
 
-                    <!-- =========================================
-                         MEMBER HERO
-                    ========================================== -->
+                    <!-- MEMBER -->
 
                     <div
                         id="memberHero"
@@ -590,14 +1233,12 @@
                             Welcome back
                         </span>
 
-
                         <h2>
                             Hello,
                             <span id="welcomeUserName">
                                 Friend
                             </span>
                         </h2>
-
 
                         <p>
                             Keep growing, learning and staying
@@ -644,7 +1285,7 @@
                 </div>
 
 
-                <!-- HERO VISUAL -->
+                <!-- HERO ICON -->
 
                 <div class="home-hero-visual">
 
@@ -689,7 +1330,7 @@
                 <div class="quick-grid">
 
 
-                    <!-- LESSONS -->
+                    <!-- LESSONS — PUBLIC -->
 
                     <a
                         href="pages/lessons.html"
@@ -701,7 +1342,6 @@
                             <span data-lucide="book-open"></span>
 
                         </div>
-
 
                         <div class="quick-card-content">
 
@@ -715,7 +1355,6 @@
 
                         </div>
 
-
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
@@ -724,11 +1363,13 @@
                     </a>
 
 
-                    <!-- QUIZ -->
+                    <!-- QUIZ — MEMBER -->
 
                     <a
                         href="pages/quiz.html"
                         class="quick-card"
+                        data-auth-required="true"
+                        data-member-href="pages/quiz.html"
                     >
 
                         <div class="quick-card-icon orange">
@@ -736,7 +1377,6 @@
                             <span data-lucide="clipboard-check"></span>
 
                         </div>
-
 
                         <div class="quick-card-content">
 
@@ -750,7 +1390,6 @@
 
                         </div>
 
-
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
@@ -759,7 +1398,7 @@
                     </a>
 
 
-                    <!-- GALLERY -->
+                    <!-- GALLERY — PUBLIC -->
 
                     <a
                         href="pages/gallery.html"
@@ -771,7 +1410,6 @@
                             <span data-lucide="images"></span>
 
                         </div>
-
 
                         <div class="quick-card-content">
 
@@ -785,7 +1423,6 @@
 
                         </div>
 
-
                         <span
                             class="quick-card-arrow"
                             data-lucide="chevron-right"
@@ -794,12 +1431,11 @@
                     </a>
 
 
-                    <!-- PROFILE -->
+                    <!-- PROFILE — MEMBER -->
 
                     <a
                         href="pages/profile.html"
                         class="quick-card member-only"
-                        hidden
                     >
 
                         <div class="quick-card-icon green">
@@ -807,7 +1443,6 @@
                             <span data-lucide="user-round"></span>
 
                         </div>
-
 
                         <div class="quick-card-content">
 
@@ -820,7 +1455,6 @@
                             </span>
 
                         </div>
-
 
                         <span
                             class="quick-card-arrow"
@@ -844,10 +1478,6 @@
             >
 
 
-                <!-- =============================================
-                     MEMBER OVERVIEW
-                ============================================== -->
-
                 <section class="dashboard-grid">
 
 
@@ -864,7 +1494,6 @@
                                     <span data-lucide="book-open"></span>
 
                                 </div>
-
 
                                 <div>
 
@@ -895,7 +1524,6 @@
                                     <span data-lucide="book-open"></span>
 
                                 </div>
-
 
                                 <p>
                                     Your current lesson will appear here.
@@ -936,7 +1564,6 @@
 
                                 </div>
 
-
                                 <div>
 
                                     <span class="card-label">
@@ -967,7 +1594,6 @@
 
                                 </div>
 
-
                                 <p>
                                     Your quiz information will appear here.
                                 </p>
@@ -995,9 +1621,9 @@
                 </section>
 
 
-                <!-- =============================================
-                     NOTIFICATIONS
-                ============================================== -->
+                <!-- =================================================
+                     MEMBER NOTIFICATIONS
+                ================================================== -->
 
                 <section class="section-block">
 
@@ -1038,7 +1664,6 @@
                                 <span data-lucide="bell"></span>
 
                             </div>
-
 
                             <p>
                                 No new notifications.
@@ -1090,11 +1715,9 @@
 
                         </div>
 
-
                         <h3>
                             Learn
                         </h3>
-
 
                         <p>
                             Access weekly lessons and grow in your
@@ -1112,15 +1735,13 @@
 
                         </div>
 
-
                         <h3>
                             Challenge Yourself
                         </h3>
 
-
                         <p>
                             Take weekly quizzes and track your
-                            learning progress.
+                            learning progress after creating an account.
                         </p>
 
                     </div>
@@ -1134,11 +1755,9 @@
 
                         </div>
 
-
                         <h3>
                             Stay Connected
                         </h3>
-
 
                         <p>
                             Relive programs, activities and special
@@ -1168,6 +1787,8 @@
 >
 
 
+    <!-- PUBLIC -->
+
     <a
         href="index.html"
         class="bottom-nav-item active"
@@ -1178,13 +1799,14 @@
             data-lucide="house"
         ></span>
 
-
         <span class="bottom-nav-label">
             Home
         </span>
 
     </a>
 
+
+    <!-- PUBLIC: LESSONS -->
 
     <a
         href="pages/lessons.html"
@@ -1196,7 +1818,6 @@
             data-lucide="book-open"
         ></span>
 
-
         <span class="bottom-nav-label">
             Lessons
         </span>
@@ -1204,9 +1825,13 @@
     </a>
 
 
+    <!-- MEMBER: QUIZ -->
+
     <a
         href="pages/quiz.html"
         class="bottom-nav-item bottom-nav-center"
+        data-auth-required="true"
+        data-member-href="pages/quiz.html"
         aria-label="Quiz"
     >
 
@@ -1219,13 +1844,14 @@
 
         </span>
 
-
         <span class="bottom-nav-center-label">
             Quiz
         </span>
 
     </a>
 
+
+    <!-- PUBLIC -->
 
     <a
         href="pages/gallery.html"
@@ -1237,7 +1863,6 @@
             data-lucide="images"
         ></span>
 
-
         <span class="bottom-nav-label">
             Gallery
         </span>
@@ -1245,17 +1870,17 @@
     </a>
 
 
+    <!-- MEMBER -->
+
     <a
         href="pages/profile.html"
         class="bottom-nav-item member-only"
-        hidden
     >
 
         <span
             class="bottom-nav-icon"
             data-lucide="user-round"
         ></span>
-
 
         <span class="bottom-nav-label">
             Profile
@@ -1293,10 +1918,6 @@
 <script src="js/home.js"></script>
 
 
-<!-- =========================================================
-     LUCIDE INITIALIZATION
-========================================================== -->
-
 <script>
 
 document.addEventListener(
@@ -1305,11 +1926,10 @@ document.addEventListener(
 
         if (
             window.lucide &&
-            typeof window.lucide.createIcons ===
-                "function"
+            typeof lucide.createIcons === "function"
         ) {
 
-            window.lucide.createIcons();
+            lucide.createIcons();
 
         }
 
