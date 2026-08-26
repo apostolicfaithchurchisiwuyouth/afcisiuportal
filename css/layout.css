@@ -1,32 +1,27 @@
 /* ============================================================
-   AFC ISIU YOUTH PORTAL V2
-   MAIN LAYOUT
+   AFC ISIU YOUTH PORTAL
+   GLOBAL LAYOUT
    ============================================================ */
 
 
 /* ============================================================
-   APP SHELL
+   APPLICATION SHELL
    ============================================================ */
 
 .app-shell {
     min-height: 100vh;
-
-    display: flex;
 }
 
 
 /* ============================================================
-   SIDEBAR
+   DESKTOP SIDEBAR
    ============================================================ */
 
 .sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-
     position: fixed;
+    inset: 0 auto 0 0;
 
-    top: 0;
-    left: 0;
+    width: var(--sidebar-width);
 
     background: var(--surface);
 
@@ -35,7 +30,7 @@
     display: flex;
     flex-direction: column;
 
-    z-index: 1200;
+    z-index: var(--z-sidebar);
 }
 
 
@@ -44,11 +39,10 @@
    ============================================================ */
 
 .main-area {
-    width: calc(100% - var(--sidebar-width));
+    min-width: 0;
+    min-height: 100vh;
 
     margin-left: var(--sidebar-width);
-
-    min-height: 100vh;
 }
 
 
@@ -57,210 +51,25 @@
    ============================================================ */
 
 .top-header {
+    position: sticky;
+    top: 0;
+
     height: var(--header-height);
 
     padding: 0 28px;
 
     display: flex;
     align-items: center;
-
-    gap: 14px;
+    justify-content: space-between;
 
     background: rgba(255, 255, 255, 0.96);
 
     border-bottom: 1px solid var(--border);
 
-    position: sticky;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
-    top: 0;
-
-    z-index: 50;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-
-/* ============================================================
-   HEADER LEFT
-   ============================================================ */
-
-.header-left {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    min-width: 0;
-}
-
-
-/* ============================================================
-   HEADER ACTIONS
-   ============================================================ */
-
-.header-actions {
-    margin-left: auto;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: flex-end;
-
-    gap: 10px;
-
-    flex-shrink: 0;
-}
-
-
-/* ============================================================
-   OLD PAGE TITLE
-   Hidden because the approved header uses the brand instead.
-   ============================================================ */
-
-.header-title {
-    display: none;
-}
-
-.header-eyebrow {
-    display: none;
-}
-
-.header-title h1 {
-    display: none;
-}
-
-
-/* ============================================================
-   MOBILE MENU BUTTON
-   ============================================================ */
-
-.mobile-menu-button {
-    display: none;
-
-    flex: 0 0 40px;
-
-    width: 40px;
-    height: 40px;
-
-    padding: 0;
-
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-
-    position: relative;
-
-    z-index: 1300;
-}
-
-
-/* ============================================================
-   MOBILE BRAND
-   ============================================================ */
-
-.mobile-brand {
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    text-decoration: none;
-
-    color: inherit;
-
-    min-width: 0;
-}
-
-
-/* ============================================================
-   CIRCULAR CHURCH ICON
-   ============================================================ */
-
-.mobile-brand-icon {
-    width: 42px;
-    height: 42px;
-
-    min-width: 42px;
-
-    flex: 0 0 42px;
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #4a0754,
-            #7a1688
-        );
-
-    color: #fff;
-
-    box-shadow:
-        0 5px 16px rgba(
-            74,
-            7,
-            84,
-            0.24
-        );
-}
-
-.mobile-brand-icon svg {
-    width: 21px;
-    height: 21px;
-
-    stroke-width: 2.1;
-}
-
-
-/* ============================================================
-   AFC ISIU / YOUTH PORTAL
-   ============================================================ */
-
-.mobile-brand-text {
-    min-width: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    line-height: 1.05;
-
-    white-space: nowrap;
-}
-
-.mobile-brand-text strong {
-    font-family: var(--font-heading);
-
-    font-size: 1rem;
-
-    font-weight: 700;
-
-    letter-spacing: -0.02em;
-}
-
-.mobile-brand-text small {
-    margin-top: 3px;
-
-    font-family: var(--font-body);
-
-    font-size: 0.76rem;
-
-    font-weight: 600;
-
-    opacity: 0.68;
-
-    letter-spacing: 0.01em;
+    z-index: var(--z-header);
 }
 
 
@@ -270,114 +79,107 @@
 
 .page-content {
     width: 100%;
-
-    max-width: 1450px;
+    max-width: var(--content-max-width);
 
     margin: 0 auto;
 
-    padding:
-        30px;
+    padding: 30px;
 }
 
 
 /* ============================================================
-   BOTTOM NAVIGATION
+   DESKTOP-ONLY / MOBILE-ONLY ELEMENTS
    ============================================================ */
 
+.mobile-menu-button,
+.mobile-overlay,
 .bottom-navigation {
     display: none;
 }
 
 
 /* ============================================================
-   TABLET / MOBILE SIDEBAR
+   TABLET / MOBILE
    ============================================================ */
 
 @media (max-width: 900px) {
 
+    /* --------------------------------------------------------
+       SIDEBAR
+       -------------------------------------------------------- */
+
     .sidebar {
         transform: translateX(-105%);
 
-        visibility: hidden;
-
         transition:
-            transform 0.25s ease,
-            visibility 0.25s ease;
+            transform var(--transition-slow);
 
         box-shadow:
-            10px 0 30px rgba(42, 20, 48, 0.12);
+            18px 0 45px rgba(42, 20, 48, 0.14);
     }
+
 
     .sidebar.open {
         transform: translateX(0);
-
-        visibility: visible;
     }
 
 
-    .main-area {
-        width: 100%;
+    /* --------------------------------------------------------
+       MAIN AREA
+       -------------------------------------------------------- */
 
+    .main-area {
         margin-left: 0;
     }
 
 
+    /* --------------------------------------------------------
+       HAMBURGER
+       -------------------------------------------------------- */
+
     .mobile-menu-button {
-        display: flex;
+        display: inline-flex;
     }
 
+
+    /* --------------------------------------------------------
+       MOBILE OVERLAY
+       -------------------------------------------------------- */
 
     .mobile-overlay {
         display: block;
+
+        position: fixed;
+        inset: 0;
+
+        background:
+            rgba(15, 8, 20, 0.48);
+
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+
+        transition:
+            opacity var(--transition-slow),
+            visibility var(--transition-slow);
+
+        z-index: var(--z-overlay);
     }
 
+
+    .mobile-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+
+    /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
 
     .top-header {
-        padding:
-            10px 14px;
-
-        min-height: var(--header-height);
-    }
-
-
-    .header-left {
-        flex: 1;
-
-        min-width: 0;
-    }
-
-
-    .mobile-brand {
-        min-width: 0;
-
-        overflow: hidden;
-    }
-
-
-    .mobile-brand-text {
-        overflow: hidden;
-    }
-
-
-    .mobile-brand-text strong,
-    .mobile-brand-text small {
-        overflow: hidden;
-
-        text-overflow: ellipsis;
-    }
-
-
-    .header-actions {
-        flex-shrink: 0;
-    }
-
-
-    .page-content {
-        padding:
-            26px 20px
-            calc(
-                var(--bottom-nav-height) + 30px
-            );
+        padding: 0 16px;
     }
 
 }
@@ -391,37 +193,27 @@
 
     :root {
         --header-height: 64px;
-        --bottom-nav-height: 76px;
-    }
-
-
-    .top-header {
-        padding: 8px 14px;
-    }
-
-
-    .page-content {
-        padding:
-            24px 16px
-            calc(
-                var(--bottom-nav-height) + 34px
-            );
+        --bottom-nav-height: 74px;
     }
 
 
     /* --------------------------------------------------------
-       BOTTOM NAV
+       CONTENT
+       -------------------------------------------------------- */
+
+    .page-content {
+        padding:
+            18px
+            15px
+            calc(var(--bottom-nav-height) + 28px);
+    }
+
+
+    /* --------------------------------------------------------
+       BOTTOM NAVIGATION
        -------------------------------------------------------- */
 
     .bottom-navigation {
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(5, 1fr);
-
-        align-items: stretch;
-
         position: fixed;
 
         left: 0;
@@ -430,13 +222,13 @@
 
         height: var(--bottom-nav-height);
 
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+
         padding:
             7px
             8px
-            calc(
-                7px +
-                env(safe-area-inset-bottom)
-            );
+            max(7px, env(safe-area-inset-bottom));
 
         background:
             rgba(255, 255, 255, 0.98);
@@ -445,284 +237,9 @@
             1px solid var(--border);
 
         box-shadow:
-            0 -8px 25px
-            rgba(
-                42,
-                20,
-                48,
-                0.08
-            );
+            0 -8px 25px rgba(42, 20, 48, 0.09);
 
-        z-index: 2000;
-    }
-
-
-    .bottom-nav-item {
-
-        min-width: 0;
-
-        min-height: 60px;
-
-        padding: 4px 4px 3px;
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: center;
-
-        justify-content: center;
-
-        position: relative;
-
-        color: var(--ink-muted);
-
-        gap: 5px;
-
-        font-family: var(--font-body);
-
-        font-size: 0.78rem;
-
-        font-weight: 600;
-
-        text-decoration: none;
-
-        -webkit-tap-highlight-color: transparent;
-    }
-
-
-    .bottom-nav-icon {
-
-        width: 23px;
-        height: 23px;
-
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-    }
-
-
-    .bottom-nav-icon svg {
-
-        width: 22px;
-        height: 22px;
-
-        stroke-width: 2;
-    }
-
-
-    .bottom-nav-item.active {
-
-        color: var(--brand);
-    }
-
-
-    .bottom-nav-item.active
-    .bottom-nav-icon svg {
-
-        stroke-width: 2.4;
-    }
-
-
-    /* --------------------------------------------------------
-       CENTER QUIZ
-       -------------------------------------------------------- */
-
-    .bottom-nav-center {
-
-        justify-content: flex-end;
-
-        padding-bottom: 3px;
-
-        gap: 4px;
-    }
-
-
-    .bottom-nav-main {
-
-        position: absolute;
-
-        left: 50%;
-
-        top: -22px;
-
-        transform:
-            translateX(-50%);
-
-        width: 58px;
-
-        height: 58px;
-
-        border-radius: 50%;
-
-        background:
-            linear-gradient(
-                145deg,
-                #4a0754,
-                #7a1688
-            );
-
-        color: #fff;
-
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        border:
-            5px solid
-            var(--background);
-
-        box-shadow:
-            0 8px 20px
-            rgba(
-                74,
-                7,
-                84,
-                0.25
-            );
-
-        z-index: 2;
-    }
-
-
-    .bottom-nav-main-icon {
-
-        width: 24px;
-        height: 24px;
-
-        display: block;
-
-        stroke-width: 2.2;
-
-        margin: 0;
-    }
-
-
-    .bottom-nav-center-label {
-
-        margin-top: 38px;
-
-        font-family: var(--font-body);
-
-        font-size: 0.78rem;
-
-        line-height: 1;
-
-        color: var(--brand);
-
-        font-weight: 700;
-    }
-
-
-    /* --------------------------------------------------------
-       BOTTOM AVATAR
-       -------------------------------------------------------- */
-
-    .bottom-nav-avatar {
-
-        width: 27px;
-        height: 27px;
-
-        min-width: 27px;
-
-        border-radius: 50%;
-
-        background:
-            linear-gradient(
-                145deg,
-                #4a0754,
-                #8b2c99
-            );
-
-        color: #fff;
-
-        font-family: var(--font-heading);
-
-        font-size: 0.74rem;
-
-        font-weight: 700;
-
-        overflow: hidden;
-    }
-
-
-    .bottom-avatar-image {
-
-        width: 100%;
-        height: 100%;
-
-        object-fit: cover;
-
-        display: block;
-
-        border-radius: 50%;
-    }
-
-}
-
-
-/* ============================================================
-   SMALL PHONES
-   ============================================================ */
-
-@media (max-width: 480px) {
-
-    .mobile-brand-icon {
-
-        width: 40px;
-        height: 40px;
-
-        min-width: 40px;
-    }
-
-
-    .mobile-brand-text strong {
-        font-size: 0.98rem;
-    }
-
-
-    .mobile-brand-text small {
-        font-size: 0.74rem;
-    }
-
-
-    .header-icon-button,
-    .header-avatar {
-
-        width: 40px;
-        height: 40px;
-
-        min-width: 40px;
-    }
-
-
-    .header-actions {
-        gap: 7px;
-    }
-
-
-    .bottom-navigation {
-        height: 74px;
-    }
-
-
-    .bottom-nav-item {
-        font-size: 0.74rem;
-    }
-
-
-    .bottom-nav-center-label {
-        font-size: 0.74rem;
-    }
-
-
-    .bottom-nav-main {
-        width: 56px;
-        height: 56px;
-
-        top: -21px;
+        z-index: var(--z-bottom-nav);
     }
 
 }
@@ -732,92 +249,23 @@
    VERY SMALL PHONES
    ============================================================ */
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
 
-    .mobile-brand {
-        gap: 6px;
+    .top-header {
+        padding-left: 11px;
+        padding-right: 11px;
     }
 
 
-    .mobile-brand-icon {
-
-        width: 37px;
-        height: 37px;
-
-        min-width: 37px;
+    .page-content {
+        padding-left: 11px;
+        padding-right: 11px;
     }
 
 
-    .mobile-brand-icon svg {
-        width: 18px;
-        height: 18px;
-    }
-
-
-    .mobile-brand-text strong {
-        font-size: 0.9rem;
-    }
-
-
-    .mobile-brand-text small {
-        font-size: 0.68rem;
-    }
-
-
-    .header-icon-button,
-    .header-avatar {
-
-        width: 38px;
-        height: 38px;
-
-        min-width: 38px;
-    }
-
-
-    .bottom-nav-item {
-        font-size: 0.68rem;
-    }
-
-
-    .bottom-nav-center-label {
-        font-size: 0.68rem;
-    }
-
-
-    .bottom-nav-main {
-        width: 52px;
-        height: 52px;
-
-        top: -19px;
-    }
-
-
-    .bottom-nav-main-icon {
-        width: 21px;
-        height: 21px;
-    }
-
-}
-
-
-/* ============================================================
-   BODY LOCK WHEN MOBILE MENU IS OPEN
-   ============================================================ */
-
-body.mobile-menu-open {
-    overflow: hidden;
-}
-
-
-/* ============================================================
-   ACCESSIBILITY
-   ============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .sidebar,
-    .mobile-overlay {
-        transition: none;
+    .bottom-navigation {
+        padding-left: 3px;
+        padding-right: 3px;
     }
 
 }
