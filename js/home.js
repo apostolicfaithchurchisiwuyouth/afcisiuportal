@@ -1176,109 +1176,208 @@
 
     async function performLogout() {
 
-        closeMobileMenu();
+    /*
+     * Prevent multiple logout requests.
+     */
 
+    if (performLogout.isRunning) {
+        return;
+    }
+
+    performLogout.isRunning = true;
+
+
+    /*
+     * Close mobile navigation first.
+     */
+
+    closeMobileMenu();
+
+
+    /*
+     * Find every logout button on the page.
+     */
+
+    const logoutButtons =
+        document.querySelectorAll(
+            "#sidebarLogoutButton, #heroLogoutButton, [data-logout]"
+        );
+
+
+    /*
+     * Save the original content so it can be
+     * restored if something goes wrong.
+     */
+
+    const originalContents = [];
+
+
+    logoutButtons.forEach(
+        function (button) {
+
+            originalContents.push({
+                button: button,
+                html: button.innerHTML
+            });
+
+
+            button.disabled = true;
+
+            button.setAttribute(
+                "aria-busy",
+                "true"
+            );
+
+
+            button.classList.add(
+                "is-loading"
+            );
+
+
+            button.innerHTML = `
+                <span class="button-spinner"
+                      aria-hidden="true"></span>
+                <span>Logging out...</span>
+            `;
+
+        }
+    );
+
+
+    /*
+     * Give the browser a moment to paint the
+     * loading state before starting the logout.
+     */
+
+    await new Promise(
+        function (resolve) {
+
+            requestAnimationFrame(
+                function () {
+
+                    requestAnimationFrame(
+                        resolve
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    try {
+
+        /*
+         * Use the central authentication system.
+         */
 
         if (
             window.AUTH &&
             typeof window.AUTH.logout === "function"
         ) {
 
-            try {
+            await window.AUTH.logout();
 
-                await window.AUTH.logout();
-
-                updatePersonalizedHome();
-
-                window.location.replace(
-                    "index.html"
-                );
-
-                return;
-
-            } catch (error) {
-
-                console.error(
-                    "AFC Portal: logout failed.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /*
-         * Emergency fallback.
-         */
-
-        if (
+        } else if (
             window.AUTH &&
             typeof window.AUTH.clear === "function"
         ) {
+
+            /*
+             * Emergency fallback.
+             */
 
             window.AUTH.clear();
 
         }
 
 
+        /*
+         * Update the current page before redirecting.
+         */
+
         updatePersonalizedHome();
+
+
+        /*
+         * Short delay so the user actually sees
+         * the interaction instead of getting an
+         * instant page replacement.
+         */
+
+        await new Promise(
+            function (resolve) {
+
+                setTimeout(
+                    resolve,
+                    350
+                );
+
+            }
+        );
 
 
         window.location.replace(
             "index.html"
         );
 
+
+    } catch (error) {
+
+        console.error(
+            "AFC Portal: logout failed.",
+            error
+        );
+
+
+        /*
+         * Restore the buttons if logout fails.
+         */
+
+        originalContents.forEach(
+            function (item) {
+
+                item.button.innerHTML =
+                    item.html;
+
+
+                item.button.disabled =
+                    false;
+
+
+                item.button.removeAttribute(
+                    "aria-busy"
+                );
+
+
+                item.button.classList.remove(
+                    "is-loading"
+                );
+
+            }
+        );
+
+
+        /*
+         * Allow another attempt.
+         */
+
+        performLogout.isRunning =
+            false;
+
+
+        /*
+         * Give the user a visible error.
+         */
+
+        console.warn(
+            "Logout could not be completed."
+        );
+
     }
 
-
-    /* ========================================================
-       LOGOUT BUTTONS
-    ======================================================== */
-
-    function setupLogoutButtons() {
-
-        const sidebarLogout =
-            $("sidebarLogoutButton");
-
-
-        const heroLogout =
-            $("heroLogoutButton");
-
-
-        if (sidebarLogout) {
-
-            sidebarLogout.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    performLogout();
-
-                }
-            );
-
-        }
-
-
-        if (heroLogout) {
-
-            heroLogout.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    performLogout();
-
-                }
-            );
-
-        }
-
-    }
-
+}
 
     /* ========================================================
        AUTH EVENTS
