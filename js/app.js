@@ -1,33 +1,46 @@
 /**
  * ============================================================
- * AFC ISIU YOUTH PORTAL
+ * AFC ISIU YOUTH PORTAL V2
  * APP FOUNDATION
+ * ============================================================
+ *
+ * RESPONSIBILITIES:
+ * ------------------------------------------------------------
+ * 1. Initialize global icons
+ * 2. Highlight current navigation item
+ * 3. Provide global icon refresh helper
+ *
+ * IMPORTANT:
+ * ------------------------------------------------------------
+ * Mobile menu is NOT handled here.
+ *
+ * The homepage owns the mobile menu through home.js.
+ * This prevents duplicate hamburger event listeners.
  * ============================================================
  */
 
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    initializeMobileMenu();
-
-    initializeNavigation();
-
-    loadUserInformation();
-
-    /*
-     * Lucide icons are initialized after the page
-     * has loaded.
-     */
-    initializeIcons();
-
-});
+"use strict";
 
 
-/**
- * ------------------------------------------------------------
- * INITIALIZE LUCIDE ICONS
- * ------------------------------------------------------------
- */
+/* ============================================================
+   GLOBAL STARTUP
+============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        initializeNavigation();
+
+        initializeIcons();
+
+    }
+);
+
+
+/* ============================================================
+   LUCIDE ICONS
+============================================================ */
 
 function initializeIcons() {
 
@@ -36,95 +49,56 @@ function initializeIcons() {
         typeof lucide.createIcons === "function"
     ) {
 
-        lucide.createIcons();
+        try {
 
-    }
+            lucide.createIcons();
 
-}
+        } catch (error) {
 
-
-/**
- * ------------------------------------------------------------
- * MOBILE MENU
- * ------------------------------------------------------------
- */
-
-function initializeMobileMenu() {
-
-    const menuButton =
-        document.getElementById(
-            "mobileMenuButton"
-        );
-
-    const sidebar =
-        document.getElementById(
-            "sidebar"
-        );
-
-    const overlay =
-        document.getElementById(
-            "mobileOverlay"
-        );
-
-
-    if (
-        !menuButton ||
-        !sidebar ||
-        !overlay
-    ) {
-        return;
-    }
-
-
-    menuButton.addEventListener(
-        "click",
-        function () {
-
-            sidebar.classList.toggle("open");
-
-            overlay.classList.toggle("active");
-
-        }
-    );
-
-
-    overlay.addEventListener(
-        "click",
-        function () {
-
-            sidebar.classList.remove("open");
-
-            overlay.classList.remove("active");
-
-        }
-    );
-
-
-    document
-        .querySelectorAll(".sidebar .nav-item")
-        .forEach(function (item) {
-
-            item.addEventListener(
-                "click",
-                function () {
-
-                    sidebar.classList.remove("open");
-
-                    overlay.classList.remove("active");
-
-                }
+            console.warn(
+                "AFC Portal: unable to initialize icons.",
+                error
             );
 
-        });
+        }
+
+    }
 
 }
 
 
-/**
- * ------------------------------------------------------------
- * NAVIGATION
- * ------------------------------------------------------------
- */
+/* ============================================================
+   REFRESH ICONS
+============================================================ */
+
+function refreshIcons() {
+
+    if (
+        typeof lucide !== "undefined" &&
+        typeof lucide.createIcons === "function"
+    ) {
+
+        try {
+
+            lucide.createIcons();
+
+        } catch (error) {
+
+            console.warn(
+                "AFC Portal: unable to refresh icons.",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
 
 function initializeNavigation() {
 
@@ -135,18 +109,23 @@ function initializeNavigation() {
             .toLowerCase();
 
 
-    document
-        .querySelectorAll(
+    const navigationItems =
+        document.querySelectorAll(
             ".sidebar .nav-item, .bottom-nav-item"
-        )
-        .forEach(function (item) {
+        );
+
+
+    navigationItems.forEach(
+        function (item) {
 
             const href =
                 item.getAttribute("href");
 
+
             if (!href) {
                 return;
             }
+
 
             const itemPage =
                 href
@@ -155,10 +134,15 @@ function initializeNavigation() {
                     .toLowerCase();
 
 
+            const isHome =
+                currentPage === "" ||
+                currentPage === "index.html";
+
+
             if (
                 itemPage === currentPage ||
                 (
-                    currentPage === "" &&
+                    isHome &&
                     itemPage === "index.html"
                 )
             ) {
@@ -171,107 +155,24 @@ function initializeNavigation() {
 
             }
 
-        });
-
-}
-
-
-/**
- * ------------------------------------------------------------
- * USER INFORMATION
- * ------------------------------------------------------------
- */
-
-function loadUserInformation() {
-
-    let user = null;
-
-
-    try {
-
-        const storedUser =
-            localStorage.getItem(
-                "afc_current_user"
-            );
-
-
-        if (storedUser) {
-
-            user =
-                JSON.parse(
-                    storedUser
-                );
-
         }
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to read stored user.",
-            error
-        );
-
-    }
-
-
-    if (!user) {
-        return;
-    }
-
-
-    const name =
-        user.name ||
-        user.full_name ||
-        user.first_name ||
-        "Friend";
-
-
-    const welcomeName =
-        document.getElementById(
-            "welcomeUserName"
-        );
-
-    if (welcomeName) {
-
-        welcomeName.textContent =
-            name;
-
-    }
-
-
-    const sidebarName =
-        document.getElementById(
-            "sidebarUserName"
-        );
-
-    if (sidebarName) {
-
-        sidebarName.textContent =
-            name;
-
-    }
+    );
 
 }
 
 
-/**
- * ------------------------------------------------------------
- * REFRESH ICONS
- * ------------------------------------------------------------
- *
- * Useful later when dynamic HTML is inserted.
- * ------------------------------------------------------------
- */
+/* ============================================================
+   GLOBAL EXPORT
+============================================================ */
 
-function refreshIcons() {
+window.refreshIcons =
+    refreshIcons;
 
-    if (
-        typeof lucide !== "undefined" &&
-        typeof lucide.createIcons === "function"
-    ) {
 
-        lucide.createIcons();
+/* ============================================================
+   STARTUP LOG
+============================================================ */
 
-    }
-
-}
+console.log(
+    "AFC Isiu Youth Portal — app.js loaded."
+);
