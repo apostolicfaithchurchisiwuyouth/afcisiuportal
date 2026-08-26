@@ -1174,7 +1174,7 @@
        LOGOUT
     ======================================================== */
 
-    async function performLogout() {
+   async function performLogout() {
 
     /*
      * Prevent multiple logout requests.
@@ -1378,6 +1378,54 @@
     }
 
 }
+
+    /* ========================================================
+       LOGOUT BUTTONS
+    ======================================================== */
+
+    function setupLogoutButtons() {
+
+        const sidebarLogout =
+            $("sidebarLogoutButton");
+
+
+        const heroLogout =
+            $("heroLogoutButton");
+
+
+        if (sidebarLogout) {
+
+            sidebarLogout.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    performLogout();
+
+                }
+            );
+
+        }
+
+
+        if (heroLogout) {
+
+            heroLogout.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    performLogout();
+
+                }
+            );
+
+        }
+
+    }
+
 
     /* ========================================================
        AUTH EVENTS
