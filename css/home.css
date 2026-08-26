@@ -1384,3 +1384,46 @@
     }
 
 }
+
+
+/* ============================================================
+   BUTTON LOADING STATE
+============================================================ */
+
+button.is-loading,
+a.is-loading {
+    pointer-events: none;
+    cursor: wait;
+}
+
+
+button.is-loading {
+    opacity: 0.82;
+}
+
+
+.button-spinner {
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+
+    border-radius: 50%;
+
+    display: inline-block;
+
+    flex: 0 0 auto;
+
+    animation:
+        afc-button-spin 0.7s linear infinite;
+}
+
+
+@keyframes afc-button-spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
