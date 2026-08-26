@@ -1,41 +1,17 @@
 /* ============================================================
-   AFC ISIU YOUTH PORTAL V2
-   GLOBAL VARIABLES
+   AFC ISIU YOUTH PORTAL
+   DESIGN SYSTEM VARIABLES
    ============================================================ */
 
 :root {
 
     /* --------------------------------------------------------
-       FONTS
-    -------------------------------------------------------- */
-
-    --font-heading:
-        "Bricolage Grotesque",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    --font-body:
-        "DM Sans",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-
-    /* --------------------------------------------------------
-       BRAND COLORS
-    -------------------------------------------------------- */
+       BRAND
+       -------------------------------------------------------- */
 
     --brand: #4a0754;
     --brand-dark: #35033d;
     --brand-light: #f5eafa;
-
-    --brand-purple: #7a1688;
-    --brand-purple-light: #f7ecfa;
 
     --accent: #ea580c;
     --accent-light: #fff1e8;
@@ -46,28 +22,24 @@
     --green: #0a9f6e;
     --green-light: #ecfdf5;
 
-    --yellow: #d97706;
-    --yellow-light: #fffbeb;
-
-    --red: #dc2626;
-    --red-light: #fef2f2;
-
 
     /* --------------------------------------------------------
        TEXT
-    -------------------------------------------------------- */
+       -------------------------------------------------------- */
 
     --ink: #17121a;
     --ink-soft: #5d5661;
     --ink-muted: #8c8590;
+    --ink-faint: #b8b2ba;
 
 
     /* --------------------------------------------------------
        SURFACES
-    -------------------------------------------------------- */
+       -------------------------------------------------------- */
 
     --background: #f8f7fa;
     --surface: #ffffff;
+    --surface-soft: #fcfbfd;
 
     --border: #ebe7ed;
     --border-dark: #ddd6e0;
@@ -75,7 +47,10 @@
 
     /* --------------------------------------------------------
        SHADOWS
-    -------------------------------------------------------- */
+       -------------------------------------------------------- */
+
+    --shadow-xs:
+        0 1px 3px rgba(42, 20, 48, 0.04);
 
     --shadow-sm:
         0 2px 8px rgba(42, 20, 48, 0.05);
@@ -89,58 +64,47 @@
 
     /* --------------------------------------------------------
        RADIUS
-    -------------------------------------------------------- */
+       -------------------------------------------------------- */
 
     --radius-sm: 10px;
     --radius-md: 16px;
     --radius-lg: 22px;
     --radius-xl: 28px;
+    --radius-full: 999px;
 
 
     /* --------------------------------------------------------
        LAYOUT
-    -------------------------------------------------------- */
+       -------------------------------------------------------- */
 
     --sidebar-width: 250px;
-
     --header-height: 72px;
-
     --bottom-nav-height: 74px;
+
+    --content-max-width: 1450px;
 
 
     /* --------------------------------------------------------
-       TRANSITION
-    -------------------------------------------------------- */
+       MOTION
+       -------------------------------------------------------- */
 
+    --transition-fast: 140ms ease;
     --transition: 180ms ease;
+    --transition-slow: 260ms ease;
 
-}
 
+    /* --------------------------------------------------------
+       Z-INDEX SYSTEM
 
-/* ============================================================
-   GLOBAL FONT APPLICATION
-   ============================================================ */
+       Keeping these centralized prevents the hamburger,
+       overlay, sidebar and header from fighting each other.
+       -------------------------------------------------------- */
 
-html,
-body {
-    font-family: var(--font-body);
-}
+    --z-base: 1;
+    --z-header: 500;
+    --z-bottom-nav: 1000;
+    --z-overlay: 1100;
+    --z-sidebar: 1200;
+    --z-modal: 2000;
 
-body,
-button,
-input,
-textarea,
-select {
-    font-family: var(--font-body);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.brand-text strong,
-.mobile-brand-text strong {
-    font-family: var(--font-heading);
 }
