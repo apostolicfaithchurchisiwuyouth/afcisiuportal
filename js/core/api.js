@@ -1,6 +1,7 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   API CLIENT
+   FILE: api.js
+   PURPOSE: Google Apps Script API client
    ============================================================ */
 
 (function () {
@@ -9,66 +10,48 @@
 
 
     /* ========================================================
-       API CONFIGURATION
-       ======================================================== */
+       CONFIGURATION
+    ======================================================== */
 
-    const API_CONFIG = {
-
-        /*
-         * IMPORTANT:
-         *
-         * We will put your deployed Apps Script
-         * Web App URL here.
-         *
-         * DO NOT put it anywhere else in the project.
-         */
-
-        BASE_URL:
-            "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"
-
-    };
-
-
-    window.API_CONFIG =
-        API_CONFIG;
+    const API_URL =
+        "https://script.google.com/macros/s/AKfycbyt9ATaXy8u-5kQ9OZFzblzhkMk9W1qo8TjaXSl3wE/dev";
 
 
     /* ========================================================
        API REQUEST
-       ======================================================== */
+    ======================================================== */
 
-    async function request(
+    async function apiRequest(
         action,
-        body = {},
-        params = {}
+        options
     ) {
 
-        const payload = {
-
-            action,
-
-            ...body
-
-        };
+        options =
+            options || {};
 
 
-        /*
-         * Add the current session token
-         * automatically when available.
-         */
+        const method =
+            options.method || "GET";
 
-        if (AppState.token) {
 
-            payload.token =
-                AppState.token;
+        const body =
+            options.body || null;
 
-        }
 
+        const params =
+            options.params || {};
+
+
+        const token =
+            AppState.token;
+
+
+        /* ----------------------------------------------------
+           BUILD URL
+        ---------------------------------------------------- */
 
         const url =
-            new URL(
-                API_CONFIG.BASE_URL
-            );
+            new URL(API_URL);
 
 
         url.searchParams.set(
@@ -77,102 +60,103 @@
         );
 
 
-        Object.keys(params)
-            .forEach(function (key) {
+        Object.keys(params).forEach(function (key) {
 
-                if (
-                    params[key] !== undefined &&
-                    params[key] !== null
-                ) {
+            if (
+                params[key] !== undefined &&
+                params[key] !== null
+            ) {
 
-                    url.searchParams.set(
-                        key,
-                        params[key]
-                    );
-
-                }
-
-            });
-
-
-        let response;
-
-
-        try {
-
-            response =
-                await fetch(
-                    url.toString(),
-                    {
-
-                        method: "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "text/plain;charset=utf-8"
-
-                        },
-
-                        body:
-                            JSON.stringify(
-                                payload
-                            )
-
-                    }
+                url.searchParams.set(
+                    key,
+                    params[key]
                 );
 
-        } catch (error) {
+            }
 
-            throw new Error(
-                "Unable to connect to the portal server."
+        });
+
+
+        /* ----------------------------------------------------
+           TOKEN
+        ---------------------------------------------------- */
+
+        if (
+            token &&
+            method === "GET"
+        ) {
+
+            url.searchParams.set(
+                "token",
+                token
             );
 
         }
+
+
+        /* ----------------------------------------------------
+           REQUEST OPTIONS
+        ---------------------------------------------------- */
+
+        const requestOptions = {
+
+            method: method,
+
+            redirect: "follow"
+
+        };
+
+
+        if (method !== "GET") {
+
+            requestOptions.headers = {
+
+                "Content-Type":
+                    "text/plain;charset=utf-8"
+
+            };
+
+
+            requestOptions.body =
+                JSON.stringify(
+
+                    Object.assign(
+                        {},
+                        body || {},
+                        token
+                            ? { token: token }
+                            : {},
+                        { action: action }
+                    )
+
+                );
+
+        }
+
+
+        /* ----------------------------------------------------
+           SEND REQUEST
+        ---------------------------------------------------- */
+
+        const response =
+            await fetch(
+                url.toString(),
+                requestOptions
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                "The portal server returned an error."
+                "API request failed: " +
+                response.status
             );
 
         }
 
 
-        let result;
-
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch (error) {
-
-            throw new Error(
-                "The server returned an invalid response."
-            );
-
-        }
-
-
-        /*
-         * We will align this exactly with
-         * 03_Response.gs once you send it.
-         */
-
-        if (
-            result &&
-            result.success === false
-        ) {
-
-            throw new Error(
-                result.message ||
-                "The request could not be completed."
-            );
-
-        }
+        const result =
+            await response.json();
 
 
         return result;
@@ -181,178 +165,67 @@
 
 
     /* ========================================================
-       PUBLIC API
-       ======================================================== */
+       GET
+    ======================================================== */
 
-    window.API = {
+    window.apiGet = function (
+        action,
+        params
+    ) {
 
+        return apiRequest(
+            action,
+            {
 
-        health() {
+                method: "GET",
 
-            return request(
-                "health"
-            );
+                params:
+                    params || {}
 
-        },
+            }
+        );
 
+    };
 
-        getInstitutions() {
 
-            return request(
-                "getinstitutions"
-            );
+    /* ========================================================
+       POST
+    ======================================================== */
 
-        },
+    window.apiPost = function (
+        action,
+        body
+    ) {
 
+        return apiRequest(
+            action,
+            {
 
-        register(data) {
+                method: "POST",
 
-            return request(
-                "register",
-                data
-            );
+                body:
+                    body || {}
 
-        },
+            }
+        );
 
+    };
 
-        login(
-            email,
-            password
-        ) {
 
-            return request(
-                "login",
-                {
+    /* ========================================================
+       EXPORT
+    ======================================================== */
 
-                    email,
+    window.PortalAPI = {
 
-                    password
+        request:
+            apiRequest,
 
-                }
-            );
+        get:
+            apiGet,
 
-        },
-
-
-        logout() {
-
-            return request(
-                "logout"
-            );
-
-        },
-
-
-        getProfile() {
-
-            return request(
-                "getprofile"
-            );
-
-        },
-
-
-        updateProfile(data) {
-
-            return request(
-                "updateprofile",
-                data
-            );
-
-        },
-
-
-        getLessons(params = {}) {
-
-            return request(
-                "getlessons",
-                {},
-                params
-            );
-
-        },
-
-
-        getLesson(params = {}) {
-
-            return request(
-                "getlesson",
-                {},
-                params
-            );
-
-        },
-
-
-        getQuiz(params = {}) {
-
-            return request(
-                "getquiz",
-                {},
-                params
-            );
-
-        },
-
-
-        startQuiz(data = {}) {
-
-            return request(
-                "startquiz",
-                data
-            );
-
-        },
-
-
-        submitQuiz(data = {}) {
-
-            return request(
-                "submitquiz",
-                data
-            );
-
-        },
-
-
-        getNotifications() {
-
-            return request(
-                "getnotifications"
-            );
-
-        },
-
-
-        markNotificationRead(
-            data
-        ) {
-
-            return request(
-                "marknotificationread",
-                data
-            );
-
-        },
-
-
-        getSettings() {
-
-            return request(
-                "getsettings"
-            );
-
-        },
-
-
-        updateSettings(data) {
-
-            return request(
-                "updatesettings",
-                data
-            );
-
-        }
+        post:
+            apiPost
 
     };
 
