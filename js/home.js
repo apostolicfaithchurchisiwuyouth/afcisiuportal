@@ -1,21 +1,7 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   PHASE 4A.1 — HOME PAGE CONTROLLER
-
-   PURPOSE:
-   ------------------------------------------------------------
-   Controls the existing index.html home page.
-
-   This version is aligned with the actual IDs and structure
-   currently present in index.html.
-
-   IMPORTANT:
-   ------------------------------------------------------------
-   This file does NOT invent a new lesson structure.
-
-   The lesson preview on the home page is populated through
-   the existing lessons module/API integration.
-
+   HOME PAGE CONTROLLER
+   PHASE 4A.1 — CORRECTED
    ============================================================ */
 
 (function () {
@@ -24,7 +10,7 @@
 
 
     /* ========================================================
-       1. DOM HELPERS
+       DOM HELPERS
     ======================================================== */
 
     function $(id) {
@@ -36,9 +22,7 @@
 
     function show(element) {
 
-        if (!element) {
-            return;
-        }
+        if (!element) return;
 
         element.hidden = false;
 
@@ -47,9 +31,7 @@
 
     function hide(element) {
 
-        if (!element) {
-            return;
-        }
+        if (!element) return;
 
         element.hidden = true;
 
@@ -57,7 +39,7 @@
 
 
     /* ========================================================
-       2. ICONS
+       ICONS
     ======================================================== */
 
     function refreshHomeIcons() {
@@ -86,7 +68,7 @@
 
 
     /* ========================================================
-       3. AUTHENTICATION
+       AUTHENTICATION
     ======================================================== */
 
     function getUser() {
@@ -144,7 +126,7 @@
 
 
     /* ========================================================
-       4. USER NAME
+       USER NAME
     ======================================================== */
 
     function getFirstName(user) {
@@ -158,16 +140,13 @@
 
         const firstName =
             String(
-                user.first_name ||
-                user.firstName ||
-                ""
+                user.first_name || ""
             ).trim();
 
 
         if (firstName) {
 
-            return firstName
-                .split(/\s+/)[0];
+            return firstName.split(/\s+/)[0];
 
         }
 
@@ -176,7 +155,6 @@
             String(
                 user.name ||
                 user.full_name ||
-                user.fullName ||
                 user.displayName ||
                 ""
             ).trim();
@@ -184,8 +162,7 @@
 
         if (fullName) {
 
-            return fullName
-                .split(/\s+/)[0];
+            return fullName.split(/\s+/)[0];
 
         }
 
@@ -196,7 +173,7 @@
 
 
     /* ========================================================
-       5. USER AVATAR
+       AVATAR
     ======================================================== */
 
     function getAvatarUrl(user) {
@@ -240,15 +217,16 @@
         }
 
 
-        const possibleAvatar =
+        /*
+         * Fallbacks in case the user object itself
+         * contains an avatar URL.
+         */
 
+        const possibleAvatar =
             user.avatar ||
             user.avatar_url ||
-            user.avatarUrl ||
-            user.photo ||
-            user.photo_url ||
-            user.photoUrl ||
             user.profile_picture ||
+            user.photo_url ||
             "";
 
 
@@ -260,144 +238,23 @@
 
 
     /* ========================================================
-       HOME LESSON PREVIEW
-    ======================================================== */
+       HEADER AVATAR
+       ======================================================== */
 
-    function escapeHomeHtml(value) {
+    function renderHeaderAvatar(user) {
 
-        return String(
-            value || ""
-        )
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-    }
-
-
-    function getHomeResponseData(response) {
-
-        if (!response) {
-
-            return null;
-
-        }
-
-
-        if (
-            response.data !== undefined
-        ) {
-
-            return response.data;
-
-        }
-
-
-        return response;
-    }
-
-
-    function formatHomeLessonDate(value) {
-
-        if (!value) {
-
-            return "";
-
-        }
-
-
-        const date =
-            new Date(value);
-
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-
-            return String(value);
-
-        }
-
-
-        return date.toLocaleDateString(
-            "en-NG",
-            {
-                day:
-                    "numeric",
-
-                month:
-                    "short",
-
-                year:
-                    "numeric"
-            }
-        );
-    }
-
-
-    function sortHomeLessons(lessonList) {
-
-        return [
-            ...lessonList
-        ]
-
-        .sort(
-            function (a, b) {
-
-                const aDate =
-                    new Date(
-                        a.lesson_date ||
-                        a.published_at ||
-                        0
-                    );
-
-
-                const bDate =
-                    new Date(
-                        b.lesson_date ||
-                        b.published_at ||
-                        0
-                    );
-
-
-                return (
-                    bDate -
-                    aDate
-                );
-
-            }
-        );
-
-    }
-
-
-    async function loadCurrentLessonPreview() {
+        /*
+         * IMPORTANT:
+         *
+         * index.html uses:
+         *
+         * #headerAvatarContent
+         *
+         * NOT #headerAvatarLetter
+         */
 
         const container =
-            $("currentLesson");
+            $("headerAvatarContent");
 
 
         if (!container) {
@@ -406,265 +263,28 @@
 
         }
 
-
-        /*
-         * Show loading state.
-         */
-
-        container.innerHTML = `
-            <div class="lesson-preview-loading">
-
-                <span>
-                    Loading current lesson...
-                </span>
-
-            </div>
-        `;
-
-
-        try {
-
-            if (
-                !window.API ||
-                typeof window.API.get !==
-                    "function"
-            ) {
-
-                throw new Error(
-                    "The API connection is not available."
-                );
-
-            }
-
-
-            const response =
-                await window.API.get(
-                    "getLessons"
-                );
-
-
-            const data =
-                getHomeResponseData(
-                    response
-                );
-
-
-            if (
-                !Array.isArray(data) ||
-                data.length === 0
-            ) {
-
-                container.innerHTML = `
-                    <div class="empty-state">
-
-                        <div class="empty-state-icon">
-
-                            <span
-                                data-lucide="book-open"
-                            ></span>
-
-                        </div>
-
-                        <p>
-                            No lesson is available yet.
-                        </p>
-
-                    </div>
-                `;
-
-
-                refreshHomeIcons();
-
-                return;
-
-            }
-
-
-            const sortedLessons =
-                sortHomeLessons(
-                    data
-                );
-
-
-            const lesson =
-                sortedLessons[0];
-
-
-            const weekText =
-                lesson.week_number
-                    ? `Week ${escapeHomeHtml(
-                        lesson.week_number
-                    )}`
-                    : "Current Lesson";
-
-
-            const lessonType =
-                lesson.lesson_type ||
-                "Youth Lesson";
-
-
-            const description =
-                lesson.description ||
-                "Start reading this week's lesson.";
-
-
-            const date =
-                lesson.lesson_date
-                    ? formatHomeLessonDate(
-                        lesson.lesson_date
-                    )
-                    : "";
-
-
-            container.innerHTML = `
-                <div class="home-lesson-preview">
-
-                    <div
-                        class="
-                            home-lesson-preview-meta
-                        "
-                    >
-
-                        <span
-                            class="
-                                home-lesson-preview-week
-                            "
-                        >
-                            ${weekText}
-                        </span>
-
-
-                        <span
-                            class="
-                                home-lesson-preview-type
-                            "
-                        >
-                            ${escapeHomeHtml(
-                                lessonType
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <h4>
-                        ${escapeHomeHtml(
-                            lesson.title ||
-                            "Untitled Lesson"
-                        )}
-                    </h4>
-
-
-                    <p>
-                        ${escapeHomeHtml(
-                            description
-                        )}
-                    </p>
-
-
-                    ${
-                        date
-                            ? `
-                                <small
-                                    class="
-                                        home-lesson-preview-date
-                                    "
-                                >
-                                    ${escapeHomeHtml(
-                                        date
-                                    )}
-                                </small>
-                            `
-                            : ""
-                    }
-
-                </div>
-            `;
-
-
-            refreshHomeIcons();
-
-
-        } catch (error) {
-
-            console.error(
-                "AFC Portal: unable to load lesson preview.",
-                error
-            );
-
-
-            container.innerHTML = `
-                <div class="empty-state">
-
-                    <div class="empty-state-icon">
-
-                        <span
-                            data-lucide="book-open"
-                        ></span>
-
-                    </div>
-
-                    <p>
-                        Unable to load the current lesson.
-                    </p>
-
-                </div>
-            `;
-
-
-            refreshHomeIcons();
-
-        }
-
-    }
-
-
-    /* ========================================================
-       6. CREATE AVATAR CONTENT
-    ======================================================== */
-
-    function getUserInitial(user) {
 
         const firstName =
             getFirstName(user);
 
 
-        return (
+        const letter =
             firstName
                 .charAt(0)
-                .toUpperCase() ||
-            "A"
-        );
-
-    }
+                .toUpperCase() || "A";
 
 
-    function createAvatarImage(
-        container,
-        avatarUrl,
-        initial,
-        className,
-        altText
-    ) {
-
-        if (!container) {
-
-            return;
-
-        }
+        const avatarUrl =
+            getAvatarUrl(user);
 
 
         container.innerHTML = "";
 
 
-        /*
-         * No image available.
-         */
-
         if (!avatarUrl) {
 
             container.textContent =
-                initial;
+                letter;
 
             return;
 
@@ -676,11 +296,12 @@
 
 
         image.className =
-            className;
+            "header-avatar-image";
 
 
         image.alt =
-            altText;
+            firstName +
+            "'s profile picture";
 
 
         image.src =
@@ -693,7 +314,7 @@
                 container.innerHTML = "";
 
                 container.textContent =
-                    initial;
+                    letter;
 
             };
 
@@ -706,68 +327,11 @@
 
 
     /* ========================================================
-       7. HEADER ACCOUNT AVATAR
+       GUEST HEADER AVATAR
     ======================================================== */
-
-    function renderHeaderAvatar(user) {
-
-        /*
-         * IMPORTANT:
-         * This matches index.html:
-         *
-         * id="headerAvatarContent"
-         */
-
-        const container =
-            $("headerAvatarContent");
-
-
-        if (!container) {
-
-            return;
-
-        }
-
-
-        const firstName =
-            getFirstName(user);
-
-
-        const initial =
-            getUserInitial(user);
-
-
-        const avatarUrl =
-            getAvatarUrl(user);
-
-
-        createAvatarImage(
-
-            container,
-
-            avatarUrl,
-
-            initial,
-
-            "header-avatar-image",
-
-            firstName +
-            "'s profile picture"
-
-        );
-
-    }
-
 
     function renderGuestHeaderAvatar() {
 
-        /*
-         * IMPORTANT:
-         * This matches index.html:
-         *
-         * id="headerAvatarContent"
-         */
-
         const container =
             $("headerAvatarContent");
 
@@ -779,10 +343,22 @@
         }
 
 
-        container.innerHTML =
-            `
-            <span data-lucide="user-round"></span>
-            `;
+        container.innerHTML = "";
+
+
+        const icon =
+            document.createElement("span");
+
+
+        icon.setAttribute(
+            "data-lucide",
+            "user-round"
+        );
+
+
+        container.appendChild(
+            icon
+        );
 
 
         refreshHomeIcons();
@@ -791,8 +367,8 @@
 
 
     /* ========================================================
-       8. SIDEBAR AVATAR
-    ======================================================== */
+       SIDEBAR AVATAR
+       ======================================================== */
 
     function renderSidebarAvatar(user) {
 
@@ -811,34 +387,66 @@
             getFirstName(user);
 
 
-        const initial =
-            getUserInitial(user);
+        const letter =
+            firstName
+                .charAt(0)
+                .toUpperCase() || "A";
 
 
         const avatarUrl =
             getAvatarUrl(user);
 
 
-        createAvatarImage(
+        container.innerHTML = "";
 
-            container,
 
-            avatarUrl,
+        if (!avatarUrl) {
 
-            initial,
+            container.textContent =
+                letter;
 
-            "sidebar-avatar-image",
+            return;
 
+        }
+
+
+        const image =
+            document.createElement("img");
+
+
+        image.className =
+            "bottom-avatar-image";
+
+
+        image.alt =
             firstName +
-            "'s profile picture"
+            "'s profile picture";
 
+
+        image.src =
+            avatarUrl;
+
+
+        image.onerror =
+            function () {
+
+                container.innerHTML = "";
+
+                container.textContent =
+                    letter;
+
+            };
+
+
+        container.appendChild(
+            image
         );
 
     }
 
 
     /* ========================================================
-       9. BOTTOM AVATAR
+       BOTTOM AVATAR
     ======================================================== */
 
     function renderBottomAvatar(user) {
@@ -858,34 +466,66 @@
             getFirstName(user);
 
 
-        const initial =
-            getUserInitial(user);
+        const letter =
+            firstName
+                .charAt(0)
+                .toUpperCase() || "A";
 
 
         const avatarUrl =
             getAvatarUrl(user);
 
 
-        createAvatarImage(
+        container.innerHTML = "";
 
-            container,
 
-            avatarUrl,
+        if (!avatarUrl) {
 
-            initial,
+            container.textContent =
+                letter;
 
-            "bottom-avatar-image",
+            return;
 
+        }
+
+
+        const image =
+            document.createElement("img");
+
+
+        image.className =
+            "bottom-avatar-image";
+
+
+        image.alt =
             firstName +
-            "'s profile picture"
+            "'s profile picture";
 
+
+        image.src =
+            avatarUrl;
+
+
+        image.onerror =
+            function () {
+
+                container.innerHTML = "";
+
+                container.textContent =
+                    letter;
+
+            };
+
+
+        container.appendChild(
+            image
         );
 
     }
 
 
     /* ========================================================
-       10. MOBILE MENU
+       MOBILE MENU
     ======================================================== */
 
     function openMobileMenu() {
@@ -941,7 +581,26 @@
                 "Close navigation menu"
             );
 
+
+            const icon =
+                button.querySelector(
+                    "[data-lucide]"
+                );
+
+
+            if (icon) {
+
+                icon.setAttribute(
+                    "data-lucide",
+                    "x"
+                );
+
+            }
+
         }
+
+
+        refreshHomeIcons();
 
     }
 
@@ -996,7 +655,26 @@
                 "Open navigation menu"
             );
 
+
+            const icon =
+                button.querySelector(
+                    "[data-lucide]"
+                );
+
+
+            if (icon) {
+
+                icon.setAttribute(
+                    "data-lucide",
+                    "menu"
+                );
+
+            }
+
         }
+
+
+        refreshHomeIcons();
 
     }
 
@@ -1032,7 +710,7 @@
 
 
     /* ========================================================
-       11. NAVIGATION
+       NAVIGATION
     ======================================================== */
 
     function setupNavigation() {
@@ -1056,9 +734,7 @@
         if (menuButton) {
 
             menuButton.addEventListener(
-
                 "click",
-
                 function (event) {
 
                     event.preventDefault();
@@ -1068,16 +744,12 @@
                     toggleMobileMenu();
 
                 }
-
             );
 
 
             menuButton.setAttribute(
-
                 "aria-expanded",
-
                 "false"
-
             );
 
         }
@@ -1090,15 +762,12 @@
         if (overlay) {
 
             overlay.addEventListener(
-
                 "click",
-
                 function () {
 
                     closeMobileMenu();
 
                 }
-
             );
 
         }
@@ -1111,9 +780,7 @@
         if (sidebar) {
 
             sidebar.addEventListener(
-
                 "click",
-
                 function (event) {
 
                     const link =
@@ -1138,7 +805,6 @@
                     }
 
                 }
-
             );
 
         }
@@ -1149,9 +815,7 @@
         ---------------------------------------------------- */
 
         document.addEventListener(
-
             "keydown",
-
             function (event) {
 
                 if (
@@ -1163,7 +827,6 @@
                 }
 
             }
-
         );
 
 
@@ -1172,9 +835,7 @@
         ---------------------------------------------------- */
 
         window.addEventListener(
-
             "resize",
-
             function () {
 
                 if (
@@ -1186,14 +847,13 @@
                 }
 
             }
-
         );
 
     }
 
 
     /* ========================================================
-       12. HEADER ACCOUNT
+       HEADER ACCOUNT
     ======================================================== */
 
     function updateHeaderAccount(
@@ -1219,11 +879,8 @@
 
 
             accountButton.setAttribute(
-
                 "aria-label",
-
                 "Open your profile"
-
             );
 
 
@@ -1248,11 +905,8 @@
 
 
             accountButton.setAttribute(
-
                 "aria-label",
-
                 "Login"
-
             );
 
 
@@ -1270,11 +924,43 @@
 
         }
 
+
+        /*
+         * Keep avatar perfectly circular.
+         */
+
+        accountButton.style.width =
+            "42px";
+
+        accountButton.style.height =
+            "42px";
+
+        accountButton.style.minWidth =
+            "42px";
+
+        accountButton.style.maxWidth =
+            "42px";
+
+        accountButton.style.minHeight =
+            "42px";
+
+        accountButton.style.maxHeight =
+            "42px";
+
+        accountButton.style.flex =
+            "0 0 42px";
+
+        accountButton.style.borderRadius =
+            "50%";
+
+        accountButton.style.overflow =
+            "hidden";
+
     }
 
 
     /* ========================================================
-       13. NOTIFICATIONS
+       NOTIFICATION HEADER
     ======================================================== */
 
     function updateNotificationHeader(
@@ -1283,9 +969,12 @@
 
         /*
          * IMPORTANT:
-         * Matches index.html:
          *
-         * id="headerNotificationButton"
+         * index.html uses:
+         *
+         * #headerNotificationButton
+         *
+         * NOT .header-notification-button
          */
 
         const notificationButton =
@@ -1299,38 +988,32 @@
         }
 
 
-        notificationButton.hidden =
-            !loggedIn;
+        if (loggedIn) {
+
+            notificationButton.hidden =
+                false;
+
+            notificationButton.style.display =
+                "inline-flex";
+
+            notificationButton.href =
+                "pages/notifications.html";
+
+        } else {
+
+            notificationButton.hidden =
+                true;
+
+            notificationButton.style.display =
+                "none";
+
+        }
 
     }
 
 
     /* ========================================================
-       14. MEMBER-ONLY ELEMENTS
-    ======================================================== */
-
-    function updateMemberOnlyElements(
-        loggedIn
-    ) {
-
-        document
-            .querySelectorAll(
-                ".member-only"
-            )
-            .forEach(
-                function (element) {
-
-                    element.hidden =
-                        !loggedIn;
-
-                }
-            );
-
-    }
-
-
-    /* ========================================================
-       15. BOTTOM PROFILE
+       BOTTOM PROFILE
     ======================================================== */
 
     function updateBottomProfile(
@@ -1353,6 +1036,9 @@
                 guestProfile.hidden =
                     true;
 
+                guestProfile.style.display =
+                    "none";
+
             }
 
 
@@ -1360,6 +1046,9 @@
 
                 memberProfile.hidden =
                     false;
+
+                memberProfile.style.display =
+                    "flex";
 
             }
 
@@ -1375,6 +1064,9 @@
                 memberProfile.hidden =
                     true;
 
+                memberProfile.style.display =
+                    "none";
+
             }
 
 
@@ -1382,6 +1074,9 @@
 
                 guestProfile.hidden =
                     false;
+
+                guestProfile.style.display =
+                    "flex";
 
             }
 
@@ -1391,7 +1086,55 @@
 
 
     /* ========================================================
-       16. PERSONALIZED HOME
+       MEMBER-ONLY ELEMENTS
+    ======================================================== */
+
+    function updateMemberOnlyElements(
+        loggedIn
+    ) {
+
+        document
+            .querySelectorAll(
+                ".member-only"
+            )
+            .forEach(
+                function (element) {
+
+                    /*
+                     * The HTML starts these elements with
+                     * hidden.
+                     *
+                     * We must explicitly change the hidden
+                     * property. Adding a CSS class alone is
+                     * not enough.
+                     */
+
+                    element.hidden =
+                        !loggedIn;
+
+
+                    if (loggedIn) {
+
+                        element.classList.add(
+                            "member-visible"
+                        );
+
+                    } else {
+
+                        element.classList.remove(
+                            "member-visible"
+                        );
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       PERSONALIZED HOME
     ======================================================== */
 
     function updatePersonalizedHome() {
@@ -1404,14 +1147,8 @@
             getUser();
 
 
-        /*
-         * A member is active only when authentication
-         * and user information are both available.
-         */
-
         const memberActive =
-            loggedIn &&
-            !!user;
+            loggedIn && !!user;
 
 
         const guestHero =
@@ -1447,7 +1184,7 @@
 
 
         /* ----------------------------------------------------
-           MEMBER STATE
+           MEMBER
         ---------------------------------------------------- */
 
         if (memberActive) {
@@ -1512,7 +1249,7 @@
 
 
         /* ----------------------------------------------------
-           GUEST STATE
+           GUEST
         ---------------------------------------------------- */
 
         else {
@@ -1557,10 +1294,6 @@
         }
 
 
-        /*
-         * Shared UI updates.
-         */
-
         updateMemberOnlyElements(
             memberActive
         );
@@ -1589,19 +1322,494 @@
 
 
     /* ========================================================
-       17. LOGOUT
+       HOME LESSON PREVIEW
+    ======================================================== */
+
+    function escapeHomeHtml(
+        value
+    ) {
+
+        return String(
+            value || ""
+        )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+    function getHomeResponseData(
+        response
+    ) {
+
+        if (!response) {
+
+            return null;
+
+        }
+
+
+        if (
+            response.data !== undefined
+        ) {
+
+            return response.data;
+
+        }
+
+
+        return response;
+
+    }
+
+
+    function formatHomeLessonDate(
+        value
+    ) {
+
+        if (!value) {
+
+            return "";
+
+        }
+
+
+        const date =
+            new Date(
+                value
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return String(
+                value
+            );
+
+        }
+
+
+        return date.toLocaleDateString(
+            "en-NG",
+            {
+                day:
+                    "numeric",
+
+                month:
+                    "short",
+
+                year:
+                    "numeric"
+            }
+        );
+
+    }
+
+
+    function sortHomeLessons(
+        lessonList
+    ) {
+
+        return [
+            ...lessonList
+        ]
+
+        .sort(
+            function (a, b) {
+
+                const aDate =
+                    new Date(
+                        a.lesson_date ||
+                        a.published_at ||
+                        0
+                    );
+
+
+                const bDate =
+                    new Date(
+                        b.lesson_date ||
+                        b.published_at ||
+                        0
+                    );
+
+
+                return (
+                    bDate -
+                    aDate
+                );
+
+            }
+        );
+
+    }
+
+
+    async function loadCurrentLessonPreview() {
+
+        const container =
+            $("currentLesson");
+
+
+        /*
+         * If the homepage does not contain the
+         * lesson preview, there is nothing to do.
+         */
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        /*
+         * Loading state.
+         */
+
+        container.innerHTML = `
+            <div class="lesson-preview-loading">
+
+                <div class="empty-state-icon">
+
+                    <span
+                        data-lucide="loader-circle"
+                    ></span>
+
+                </div>
+
+                <p>
+                    Loading current lesson...
+                </p>
+
+            </div>
+        `;
+
+
+        refreshHomeIcons();
+
+
+        try {
+
+            /*
+             * Make sure the central API layer exists.
+             */
+
+            if (
+                !window.API ||
+                typeof window.API.get !==
+                    "function"
+            ) {
+
+                throw new Error(
+                    "The API connection is not available."
+                );
+
+            }
+
+
+            /*
+             * Ask the existing backend for lessons.
+             *
+             * This uses the same getLessons action
+             * already used by lessons.js.
+             */
+
+            const response =
+                await window.API.get(
+                    "getLessons"
+                );
+
+
+            const data =
+                getHomeResponseData(
+                    response
+                );
+
+
+            /*
+             * No lessons.
+             */
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+
+                        <div
+                            class="empty-state-icon"
+                        >
+                            <span
+                                data-lucide="book-open"
+                            ></span>
+                        </div>
+
+                        <p>
+                            No lesson is available yet.
+                        </p>
+
+                    </div>
+                `;
+
+
+                refreshHomeIcons();
+
+                return;
+
+            }
+
+
+            /*
+             * Sort exactly like the Lessons module:
+             * newest lesson first.
+             */
+
+            const sortedLessons =
+                sortHomeLessons(
+                    data
+                );
+
+
+            const lesson =
+                sortedLessons[0];
+
+
+            /*
+             * Lesson information.
+             */
+
+            const lessonTitle =
+                lesson.title ||
+                "Untitled Lesson";
+
+
+            const lessonDescription =
+                lesson.description ||
+                "Start reading this week's lesson.";
+
+
+            const lessonType =
+                lesson.lesson_type ||
+                "Youth Lesson";
+
+
+            const lessonDate =
+                lesson.lesson_date
+                    ? formatHomeLessonDate(
+                        lesson.lesson_date
+                    )
+                    : "";
+
+
+            const weekText =
+                lesson.week_number
+                    ? `Week ${escapeHomeHtml(
+                        lesson.week_number
+                    )}`
+                    : "Current Lesson";
+
+
+            /*
+             * Create the homepage preview.
+             *
+             * The actual full lesson remains on
+             * pages/lessons.html.
+             */
+
+            container.innerHTML = `
+                <div
+                    class="home-lesson-preview"
+                >
+
+                    <div
+                        class="
+                            home-lesson-preview-meta
+                        "
+                    >
+
+                        <span
+                            class="
+                                home-lesson-preview-week
+                            "
+                        >
+                            ${weekText}
+                        </span>
+
+
+                        <span
+                            class="
+                                home-lesson-preview-type
+                            "
+                        >
+                            ${escapeHomeHtml(
+                                lessonType
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <h4>
+                        ${escapeHomeHtml(
+                            lessonTitle
+                        )}
+                    </h4>
+
+
+                    <p>
+                        ${escapeHomeHtml(
+                            lessonDescription
+                        )}
+                    </p>
+
+
+                    ${
+                        lessonDate
+                            ? `
+                                <small
+                                    class="
+                                        home-lesson-preview-date
+                                    "
+                                >
+                                    ${escapeHomeHtml(
+                                        lessonDate
+                                    )}
+                                </small>
+                            `
+                            : ""
+                    }
+
+
+                    <div
+                        class="
+                            home-lesson-preview-actions
+                        "
+                    >
+
+                        <a
+                            href="pages/lessons.html"
+                            class="
+                                text-link
+                                home-lesson-preview-link
+                            "
+                        >
+                            Read Lesson
+
+                            <span
+                                data-lucide="arrow-right"
+                            ></span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            refreshHomeIcons();
+
+
+        } catch (error) {
+
+            console.error(
+                "AFC Portal: unable to load lesson preview.",
+                error
+            );
+
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div
+                        class="empty-state-icon"
+                    >
+                        <span
+                            data-lucide="book-open"
+                        ></span>
+                    </div>
+
+                    <p>
+                        Unable to load the current lesson.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="lessons-retry"
+                        id="retryHomeLessonButton"
+                    >
+                        Try Again
+                    </button>
+
+                </div>
+            `;
+
+
+            const retryButton =
+                $("retryHomeLessonButton");
+
+
+            if (retryButton) {
+
+                retryButton.addEventListener(
+                    "click",
+                    function () {
+
+                        loadCurrentLessonPreview();
+
+                    }
+                );
+
+            }
+
+
+            refreshHomeIcons();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       LOGOUT
     ======================================================== */
 
     async function performLogout() {
 
-
         /*
-         * Prevent multiple simultaneous requests.
+         * Prevent multiple logout requests.
          */
 
-        if (
-            performLogout.isRunning
-        ) {
+        if (performLogout.isRunning) {
 
             return;
 
@@ -1612,25 +1820,31 @@
             true;
 
 
+        /*
+         * Close mobile navigation first.
+         */
+
         closeMobileMenu();
 
 
+        /*
+         * Find every logout button on the page.
+         */
+
         const logoutButtons =
             document.querySelectorAll(
-
-                "#sidebarLogoutButton, " +
-                "#heroLogoutButton, " +
-                "[data-logout]"
-
+                "#sidebarLogoutButton, #heroLogoutButton, [data-logout]"
             );
 
 
-        const originalContents =
-            [];
+        /*
+         * Save original button content.
+         */
+
+        const originalContents = [];
 
 
         logoutButtons.forEach(
-
             function (button) {
 
                 originalContents.push({
@@ -1649,11 +1863,8 @@
 
 
                 button.setAttribute(
-
                     "aria-busy",
-
                     "true"
-
                 );
 
 
@@ -1662,33 +1873,30 @@
                 );
 
 
-                button.innerHTML =
-                    `
+                button.innerHTML = `
                     <span
                         class="button-spinner"
-                        aria-hidden="true">
-                    </span>
+                        aria-hidden="true"
+                    ></span>
 
                     <span>
                         Logging out...
                     </span>
-                    `;
+                `;
 
             }
-
         );
 
 
         /*
-         * Allow loading state to render.
+         * Give the browser a moment to paint
+         * the loading state.
          */
 
         await new Promise(
-
             function (resolve) {
 
                 requestAnimationFrame(
-
                     function () {
 
                         requestAnimationFrame(
@@ -1696,84 +1904,70 @@
                         );
 
                     }
-
                 );
 
             }
-
         );
 
 
         try {
 
-
-            /* -----------------------------------------------
-               PRIMARY LOGOUT
-            ----------------------------------------------- */
+            /*
+             * Use the central authentication system.
+             */
 
             if (
-
                 window.AUTH &&
-
                 typeof window.AUTH.logout ===
                     "function"
-
             ) {
 
                 await window.AUTH.logout();
 
-            }
-
-
-            /* -----------------------------------------------
-               FALLBACK LOGOUT
-            ----------------------------------------------- */
-
-            else if (
-
+            } else if (
                 window.AUTH &&
-
                 typeof window.AUTH.clear ===
                     "function"
-
             ) {
 
-                await window.AUTH.clear();
+                /*
+                 * Emergency fallback.
+                 */
+
+                window.AUTH.clear();
 
             }
 
 
             /*
-             * Update UI immediately.
+             * Update homepage state before redirect.
              */
 
             updatePersonalizedHome();
 
 
             /*
-             * Small visual delay.
+             * Refresh lesson preview.
              */
 
-            await new Promise(
-
-                function (resolve) {
-
-                    setTimeout(
-
-                        resolve,
-
-                        350
-
-                    );
-
-                }
-
-            );
+            loadCurrentLessonPreview();
 
 
             /*
-             * Return to home.
+             * Small delay for visual feedback.
              */
+
+            await new Promise(
+                function (resolve) {
+
+                    setTimeout(
+                        resolve,
+                        350
+                    );
+
+                }
+            );
+
 
             window.location.replace(
                 "index.html"
@@ -1782,13 +1976,9 @@
 
         } catch (error) {
 
-
             console.error(
-
                 "AFC Portal: logout failed.",
-
                 error
-
             );
 
 
@@ -1797,7 +1987,6 @@
              */
 
             originalContents.forEach(
-
                 function (item) {
 
                     item.button.innerHTML =
@@ -1818,7 +2007,6 @@
                     );
 
                 }
-
             );
 
 
@@ -1826,8 +2014,8 @@
                 false;
 
 
-            alert(
-                "Logout could not be completed. Please try again."
+            console.warn(
+                "Logout could not be completed."
             );
 
         }
@@ -1835,12 +2023,8 @@
     }
 
 
-    performLogout.isRunning =
-        false;
-
-
     /* ========================================================
-       18. LOGOUT BUTTONS
+       LOGOUT BUTTONS
     ======================================================== */
 
     function setupLogoutButtons() {
@@ -1856,9 +2040,7 @@
         if (sidebarLogout) {
 
             sidebarLogout.addEventListener(
-
                 "click",
-
                 function (event) {
 
                     event.preventDefault();
@@ -1866,7 +2048,6 @@
                     performLogout();
 
                 }
-
             );
 
         }
@@ -1875,9 +2056,7 @@
         if (heroLogout) {
 
             heroLogout.addEventListener(
-
                 "click",
-
                 function (event) {
 
                     event.preventDefault();
@@ -1885,7 +2064,6 @@
                     performLogout();
 
                 }
-
             );
 
         }
@@ -1894,7 +2072,7 @@
 
 
     /* ========================================================
-       19. AUTH EVENTS
+       AUTH EVENTS
     ======================================================== */
 
     function setupAuthListeners() {
@@ -1925,109 +2103,110 @@
 
 
         events.forEach(
-
             function (eventName) {
 
                 window.addEventListener(
-
                     eventName,
-
                     function () {
 
                         setTimeout(
+                            function () {
 
-                            updatePersonalizedHome,
+                                updatePersonalizedHome();
 
+                                loadCurrentLessonPreview();
+
+                            },
                             50
-
                         );
 
                     }
-
                 );
 
             }
-
         );
 
 
         /*
-         * Synchronize authentication changes
-         * across browser tabs.
+         * Listen for authentication changes
+         * made in another browser tab.
          */
 
         window.addEventListener(
-
             "storage",
-
             function (event) {
 
-                const watchedKeys = [
-
-                    "afc_isiu_auth_user",
-
-                    "afc_isiu_auth_session"
-
-                ];
-
-
                 if (
-
-                    watchedKeys.includes(
-                        event.key
-                    )
-
+                    event.key ===
+                        "afc_isiu_auth_user" ||
+                    event.key ===
+                        "afc_isiu_auth_session"
                 ) {
 
                     updatePersonalizedHome();
 
+                    loadCurrentLessonPreview();
+
                 }
 
             }
-
         );
 
     }
 
 
     /* ========================================================
-       20. INITIALIZE
+       INITIALIZE
     ======================================================== */
 
-function initializeHome() {
+    function initializeHome() {
 
-    setupNavigation();
+        console.log(
+            "AFC Portal: initializing homepage..."
+        );
 
-    setupLogoutButtons();
 
-    setupAuthListeners();
+        setupNavigation();
 
-    updatePersonalizedHome();
 
-    loadCurrentLessonPreview();
+        setupLogoutButtons();
 
-    refreshHomeIcons();
 
-}
+        setupAuthListeners();
+
+
+        updatePersonalizedHome();
+
+
+        /*
+         * Load the current lesson into the
+         * #currentLesson area on index.html.
+         */
+
+        loadCurrentLessonPreview();
+
+
+        refreshHomeIcons();
+
+
+        console.log(
+            "AFC Portal: homepage initialized."
+        );
+
+    }
 
 
     /* ========================================================
-       21. DOM READY
+       DOM READY
     ======================================================== */
 
     if (
-
-        document.readyState ===
-            "loading"
-
+        document.readyState === "loading"
     ) {
 
         document.addEventListener(
-
             "DOMContentLoaded",
-
             initializeHome
-
         );
 
     } else {
@@ -2038,7 +2217,7 @@ function initializeHome() {
 
 
     /* ========================================================
-       22. PUBLIC METHODS
+       PUBLIC METHODS
     ======================================================== */
 
     window.openMobileMenu =
@@ -2055,12 +2234,10 @@ function initializeHome() {
 
     window.updatePersonalizedHome =
         updatePersonalizedHome;
- 
-   window.loadCurrentLessonPreview =
-    loadCurrentLessonPreview;
 
-    window.performPortalLogout =
-        performLogout;
+
+    window.loadCurrentLessonPreview =
+        loadCurrentLessonPreview;
 
 
 })();
