@@ -10,28 +10,50 @@
 
 
     /* ========================================================
-       STATE
+       INTERNAL STATE
        ======================================================== */
 
-    let loginInProgress =
-        false;
+    let loginInProgress = false;
 
+    let registrationInProgress = false;
 
-    let registrationInProgress =
-        false;
-
-
-    let institutionsCache =
-        [];
+    let institutionsCache = [];
 
 
     /* ========================================================
-       HELPERS
+       DOM HELPER
        ======================================================== */
 
-    function escapeHtml(
-        value
-    ) {
+    function $(id) {
+
+        return document.getElementById(id);
+
+    }
+
+
+    /* ========================================================
+       LUCIDE ICON REFRESH
+       ======================================================== */
+
+    function refreshIcons() {
+
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons === "function"
+        ) {
+
+            window.lucide.createIcons();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       HTML ESCAPE
+       ======================================================== */
+
+    function escapeHtml(value) {
 
         return String(
             value === undefined ||
@@ -39,46 +61,33 @@
                 ? ""
                 : value
         )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
 
     }
 
 
-    function isValidEmail(
-        email
-    ) {
+    /* ========================================================
+       EMAIL VALIDATION
+       ======================================================== */
 
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            .test(
-                String(email || "")
-                    .trim()
-            );
+    function isValidEmail(email) {
+
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+            String(email || "").trim()
+        );
 
     }
 
 
-    function getResponseData(
-        response
-    ) {
+    /* ========================================================
+       API RESPONSE HELPERS
+       ======================================================== */
+
+    function getResponseData(response) {
 
         if (!response) {
 
@@ -88,8 +97,7 @@
 
 
         if (
-            response.data !==
-            undefined
+            response.data !== undefined
         ) {
 
             return response.data;
@@ -102,9 +110,7 @@
     }
 
 
-    function getResponseMessage(
-        response
-    ) {
+    function getResponseMessage(response) {
 
         if (!response) {
 
@@ -113,14 +119,24 @@
         }
 
 
-        return (
-            response.message ||
-            (
-                response.data &&
-                response.data.message
-            ) ||
-            ""
-        );
+        if (response.message) {
+
+            return response.message;
+
+        }
+
+
+        if (
+            response.data &&
+            response.data.message
+        ) {
+
+            return response.data.message;
+
+        }
+
+
+        return "";
 
     }
 
@@ -136,7 +152,9 @@
     ) {
 
         if (!element) {
+
             return;
+
         }
 
 
@@ -150,9 +168,7 @@
 
         if (message) {
 
-            element.classList.add(
-                type
-            );
+            element.classList.add(type);
 
         }
 
@@ -170,15 +186,15 @@
     ) {
 
         if (!button) {
+
             return;
+
         }
 
 
         if (loading) {
 
-            if (
-                !button.dataset.originalHtml
-            ) {
+            if (!button.dataset.originalHtml) {
 
                 button.dataset.originalHtml =
                     button.innerHTML;
@@ -186,9 +202,7 @@
             }
 
 
-            button.disabled =
-                true;
-
+            button.disabled = true;
 
             button.setAttribute(
                 "aria-busy",
@@ -205,8 +219,10 @@
 
                 <span>
                     ${
-                        loadingText ||
-                        "Please wait..."
+                        escapeHtml(
+                            loadingText ||
+                            "Please wait..."
+                        )
                     }
                 </span>
 
@@ -214,9 +230,7 @@
 
         } else {
 
-            button.disabled =
-                false;
-
+            button.disabled = false;
 
             button.removeAttribute(
                 "aria-busy"
@@ -235,15 +249,7 @@
         }
 
 
-        if (
-            window.lucide &&
-            typeof window.lucide.createIcons ===
-                "function"
-        ) {
-
-            window.lucide.createIcons();
-
-        }
+        refreshIcons();
 
     }
 
@@ -272,8 +278,7 @@
             function () {
 
                 const showing =
-                    input.type ===
-                    "text";
+                    input.type === "text";
 
 
                 input.type =
@@ -296,15 +301,7 @@
                         : '<i data-lucide="eye-off"></i>';
 
 
-                if (
-                    window.lucide &&
-                    typeof window.lucide.createIcons ===
-                        "function"
-                ) {
-
-                    window.lucide.createIcons();
-
-                }
+                refreshIcons();
 
             }
         );
@@ -313,7 +310,7 @@
 
 
     /* ========================================================
-       AUTH MODAL BASE
+       AUTH MODAL
        ======================================================== */
 
     function openAuthModal(
@@ -322,8 +319,7 @@
 
         if (
             !window.AFC ||
-            typeof AFC.modal !==
-                "function"
+            typeof window.AFC.modal !== "function"
         ) {
 
             console.error(
@@ -335,12 +331,24 @@
         }
 
 
+        /*
+         * Do not allow an authenticated user
+         * to open the login screen.
+         */
+
         if (
-            mode ===
-            "register"
+            window.AFC.state &&
+            window.AFC.state.authenticated
         ) {
 
-            AFC.modal({
+            return;
+
+        }
+
+
+        if (mode === "register") {
+
+            window.AFC.modal({
 
                 title:
                     "Create your account",
@@ -357,7 +365,7 @@
 
         } else {
 
-            AFC.modal({
+            window.AFC.modal({
 
                 title:
                     "Welcome back",
@@ -396,19 +404,25 @@
 
                     </div>
 
+                    <div>
 
-                    <p>
+                        <h3>
+                            Welcome back
+                        </h3>
 
-                        Sign in to continue to
-                        your youth portal.
+                        <p>
+                            Sign in to continue to
+                            your youth portal.
+                        </p>
 
-                    </p>
+                    </div>
 
                 </div>
 
 
                 <form
                     id="portal-login-form"
+                    class="auth-form"
                     novalidate
                 >
 
@@ -418,15 +432,16 @@
                         <label
                             for="portal-login-email"
                         >
-
                             Email address
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="mail"></i>
+                            <i
+                                data-lucide="mail"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -443,21 +458,21 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-login-password"
                         >
-
                             Password
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="lock"></i>
+                            <i
+                                data-lucide="lock"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -477,7 +492,9 @@
                                 aria-label="Show password"
                             >
 
-                                <i data-lucide="eye"></i>
+                                <i
+                                    data-lucide="eye"
+                                ></i>
 
                             </button>
 
@@ -486,13 +503,12 @@
                     </div>
 
 
-
                     <div
                         id="portal-login-message"
                         class="form-message"
                         role="alert"
+                        aria-live="polite"
                     ></div>
-
 
 
                     <button
@@ -513,7 +529,6 @@
                 </form>
 
 
-
                 <div class="auth-switch">
 
                     <span>
@@ -526,9 +541,7 @@
                         id="open-register-from-login"
                         class="auth-link-button"
                     >
-
                         Create Account
-
                     </button>
 
                 </div>
@@ -541,7 +554,7 @@
 
 
     /* ========================================================
-       REGISTER FORM
+       REGISTRATION FORM
        ======================================================== */
 
     function buildRegistrationForm() {
@@ -558,19 +571,26 @@
 
                     </div>
 
+                    <div>
 
-                    <p>
+                        <h3>
+                            Create your account
+                        </h3>
 
-                        Create your youth portal
-                        account.
+                        <p>
+                            Create your youth portal
+                            account to access your
+                            personalized experience.
+                        </p>
 
-                    </p>
+                    </div>
 
                 </div>
 
 
                 <form
                     id="portal-register-form"
+                    class="auth-form"
                     novalidate
                 >
 
@@ -583,9 +603,7 @@
                             <label
                                 for="portal-first-name"
                             >
-
                                 First name
-
                             </label>
 
 
@@ -601,15 +619,12 @@
                         </div>
 
 
-
                         <div class="auth-field">
 
                             <label
                                 for="portal-last-name"
                             >
-
                                 Last name
-
                             </label>
 
 
@@ -628,21 +643,21 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-register-email"
                         >
-
                             Email address
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="mail"></i>
+                            <i
+                                data-lucide="mail"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -659,21 +674,21 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-phone"
                         >
-
                             Phone number
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="phone"></i>
+                            <i
+                                data-lucide="phone"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -689,15 +704,12 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-date-of-birth"
                         >
-
                             Date of birth
-
                         </label>
 
 
@@ -711,15 +723,12 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-institution"
                         >
-
                             School / Institution
-
                         </label>
 
 
@@ -738,7 +747,6 @@
                     </div>
 
 
-
                     <div class="auth-grid">
 
 
@@ -747,9 +755,7 @@
                             <label
                                 for="portal-course"
                             >
-
                                 Course
-
                             </label>
 
 
@@ -763,15 +769,12 @@
                         </div>
 
 
-
                         <div class="auth-field">
 
                             <label
                                 for="portal-level"
                             >
-
                                 Level
-
                             </label>
 
 
@@ -821,15 +824,12 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-gender"
                         >
-
                             Gender
-
                         </label>
 
 
@@ -855,21 +855,21 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-register-password"
                         >
-
                             Password
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="lock"></i>
+                            <i
+                                data-lucide="lock"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -898,21 +898,21 @@
                     </div>
 
 
-
                     <div class="auth-field">
 
                         <label
                             for="portal-confirm-password"
                         >
-
                             Confirm password
-
                         </label>
 
 
                         <div class="auth-input-wrap">
 
-                            <i data-lucide="shield-check"></i>
+                            <i
+                                data-lucide="shield-check"
+                                class="auth-input-icon"
+                            ></i>
 
 
                             <input
@@ -941,13 +941,12 @@
                     </div>
 
 
-
                     <div
                         id="portal-register-message"
                         class="form-message"
                         role="alert"
+                        aria-live="polite"
                     ></div>
-
 
 
                     <button
@@ -968,7 +967,6 @@
                 </form>
 
 
-
                 <div class="auth-switch">
 
                     <span>
@@ -981,9 +979,7 @@
                         id="open-login-from-register"
                         class="auth-link-button"
                     >
-
                         Login
-
                     </button>
 
                 </div>
@@ -996,37 +992,30 @@
 
 
     /* ========================================================
-       LOGIN BINDING
+       LOGIN FORM BINDING
        ======================================================== */
 
     function bindLoginForm() {
 
         const form =
-            document.getElementById(
-                "portal-login-form"
-            );
+            $("portal-login-form");
 
 
         const password =
-            document.getElementById(
-                "portal-login-password"
-            );
+            $("portal-login-password");
 
 
         const passwordToggle =
-            document.getElementById(
-                "portal-login-password-toggle"
-            );
+            $("portal-login-password-toggle");
 
 
         const switchButton =
-            document.getElementById(
-                "open-register-from-login"
-            );
+            $("open-register-from-login");
 
 
         if (
-            passwordToggle
+            passwordToggle &&
+            password
         ) {
 
             bindPasswordToggle(
@@ -1037,9 +1026,7 @@
         }
 
 
-        if (
-            switchButton
-        ) {
+        if (switchButton) {
 
             switchButton.addEventListener(
                 "click",
@@ -1074,16 +1061,12 @@
        LOGIN
        ======================================================== */
 
-    async function handleLogin(
-        event
-    ) {
+    async function handleLogin(event) {
 
         event.preventDefault();
 
 
-        if (
-            loginInProgress
-        ) {
+        if (loginInProgress) {
 
             return;
 
@@ -1091,27 +1074,19 @@
 
 
         const emailInput =
-            document.getElementById(
-                "portal-login-email"
-            );
+            $("portal-login-email");
 
 
         const passwordInput =
-            document.getElementById(
-                "portal-login-password"
-            );
+            $("portal-login-password");
 
 
         const message =
-            document.getElementById(
-                "portal-login-message"
-            );
+            $("portal-login-message");
 
 
         const button =
-            document.getElementById(
-                "portal-login-submit"
-            );
+            $("portal-login-submit");
 
 
         const email =
@@ -1132,6 +1107,10 @@
         );
 
 
+        /* ----------------------------------------------------
+           VALIDATION
+           ---------------------------------------------------- */
+
         if (!email) {
 
             setMessage(
@@ -1139,21 +1118,29 @@
                 "Please enter your email address."
             );
 
+            if (emailInput) {
+
+                emailInput.focus();
+
+            }
+
             return;
 
         }
 
 
-        if (
-            !isValidEmail(
-                email
-            )
-        ) {
+        if (!isValidEmail(email)) {
 
             setMessage(
                 message,
                 "Please enter a valid email address."
             );
+
+            if (emailInput) {
+
+                emailInput.focus();
+
+            }
 
             return;
 
@@ -1167,13 +1154,18 @@
                 "Please enter your password."
             );
 
+            if (passwordInput) {
+
+                passwordInput.focus();
+
+            }
+
             return;
 
         }
 
 
-        loginInProgress =
-            true;
+        loginInProgress = true;
 
 
         setButtonLoading(
@@ -1185,10 +1177,13 @@
 
         try {
 
+            /* ------------------------------------------------
+               CHECK API
+               ------------------------------------------------ */
+
             if (
                 !window.API ||
-                typeof API.post !==
-                    "function"
+                typeof window.API.post !== "function"
             ) {
 
                 throw new Error(
@@ -1199,9 +1194,8 @@
 
 
             if (
-                typeof API.isConfigured ===
-                    "function" &&
-                !API.isConfigured()
+                typeof window.API.isConfigured === "function" &&
+                !window.API.isConfigured()
             ) {
 
                 throw new Error(
@@ -1211,8 +1205,12 @@
             }
 
 
+            /* ------------------------------------------------
+               SEND LOGIN REQUEST
+               ------------------------------------------------ */
+
             const result =
-                await API.post(
+                await window.API.post(
                     "login",
                     {
 
@@ -1236,10 +1234,12 @@
 
 
             const data =
-                getResponseData(
-                    result
-                );
+                getResponseData(result);
 
+
+            /* ------------------------------------------------
+               VALIDATE SERVER RESPONSE
+               ------------------------------------------------ */
 
             if (
                 !data ||
@@ -1255,65 +1255,57 @@
 
 
                 throw new Error(
-                    getResponseMessage(
-                        result
-                    ) ||
+                    getResponseMessage(result) ||
                     "The server returned an incomplete login response."
                 );
 
             }
 
 
-            /*
-             * --------------------------------------------------
-             * KEEP SESSION IN MEMORY ONLY
-             * --------------------------------------------------
-             */
+            /* ------------------------------------------------
+               SAVE SESSION IN MEMORY
+               ------------------------------------------------ */
 
             if (
                 window.AFC &&
                 window.AFC.state
             ) {
 
-                AFC.state.authenticated =
+                window.AFC.state.authenticated =
                     true;
 
-                AFC.state.user =
+                window.AFC.state.user =
                     data.user;
 
-                AFC.state.token =
+                window.AFC.state.token =
                     data.session.token;
 
             }
 
 
-            /*
-             * --------------------------------------------------
-             * CLOSE MODAL
-             * --------------------------------------------------
-             */
+            /* ------------------------------------------------
+               CLOSE AUTH MODAL
+               ------------------------------------------------ */
 
             if (
                 window.AFC &&
-                typeof AFC.closeModal ===
-                    "function"
+                typeof window.AFC.closeModal === "function"
             ) {
 
-                AFC.closeModal();
+                window.AFC.closeModal();
 
             }
 
 
-            /*
-             * --------------------------------------------------
-             * NOTIFY APPLICATION
-             * --------------------------------------------------
-             */
+            /* ------------------------------------------------
+               NOTIFY APPLICATION
+               ------------------------------------------------ */
 
             window.dispatchEvent(
                 new CustomEvent(
                     "afc:authenticated",
                     {
+
                         detail: {
 
                             user:
@@ -1332,16 +1324,17 @@
             );
 
 
+            /* ------------------------------------------------
+               SUCCESS MESSAGE
+               ------------------------------------------------ */
+
             if (
                 window.AFC &&
-                typeof AFC.toast ===
-                    "function"
+                typeof window.AFC.toast === "function"
             ) {
 
-                AFC.toast(
-                    getResponseMessage(
-                        result
-                    ) ||
+                window.AFC.toast(
+                    getResponseMessage(result) ||
                     "Login successful.",
                     "success"
                 );
@@ -1361,17 +1354,24 @@
                 error &&
                 error.message
                     ? error.message
-                    : "Unable to log in.";
+                    : "Unable to log in. Please try again.";
 
 
             /*
-             * Network / CORS style error.
+             * Do NOT blindly convert every TypeError
+             * into a network error.
+             *
+             * Some TypeErrors can come from the
+             * backend response itself.
              */
 
             if (
                 error &&
-                error.name ===
-                    "TypeError"
+                (
+                    error.name === "TypeError" ||
+                    error.name === "NetworkError"
+                ) &&
+                !error.message
             ) {
 
                 messageText =
@@ -1386,11 +1386,9 @@
                 "error"
             );
 
-
         } finally {
 
-            loginInProgress =
-                false;
+            loginInProgress = false;
 
 
             setButtonLoading(
@@ -1404,49 +1402,38 @@
 
 
     /* ========================================================
-       REGISTRATION BINDING
+       REGISTRATION FORM BINDING
        ======================================================== */
 
     function bindRegistrationForm() {
 
         const form =
-            document.getElementById(
-                "portal-register-form"
-            );
+            $("portal-register-form");
 
 
         const password =
-            document.getElementById(
-                "portal-register-password"
-            );
+            $("portal-register-password");
 
 
         const confirmPassword =
-            document.getElementById(
-                "portal-confirm-password"
-            );
+            $("portal-confirm-password");
 
 
         const passwordToggle =
-            document.getElementById(
-                "portal-register-password-toggle"
-            );
+            $("portal-register-password-toggle");
 
 
         const confirmToggle =
-            document.getElementById(
-                "portal-confirm-password-toggle"
-            );
+            $("portal-confirm-password-toggle");
 
 
         const switchButton =
-            document.getElementById(
-                "open-login-from-register"
-            );
+            $("open-login-from-register");
 
 
         if (
-            passwordToggle
+            passwordToggle &&
+            password
         ) {
 
             bindPasswordToggle(
@@ -1458,7 +1445,8 @@
 
 
         if (
-            confirmToggle
+            confirmToggle &&
+            confirmPassword
         ) {
 
             bindPasswordToggle(
@@ -1469,9 +1457,7 @@
         }
 
 
-        if (
-            switchButton
-        ) {
+        if (switchButton) {
 
             switchButton.addEventListener(
                 "click",
@@ -1509,9 +1495,7 @@
     async function loadInstitutions() {
 
         const select =
-            document.getElementById(
-                "portal-institution"
-            );
+            $("portal-institution");
 
 
         if (!select) {
@@ -1530,16 +1514,14 @@
         `;
 
 
-        select.disabled =
-            true;
+        select.disabled = true;
 
 
         try {
 
             if (
                 !window.API ||
-                typeof API.get !==
-                    "function"
+                typeof window.API.get !== "function"
             ) {
 
                 throw new Error(
@@ -1549,8 +1531,20 @@
             }
 
 
+            if (
+                typeof window.API.isConfigured === "function" &&
+                !window.API.isConfigured()
+            ) {
+
+                throw new Error(
+                    "The portal backend has not been configured."
+                );
+
+            }
+
+
             const result =
-                await API.get(
+                await window.API.get(
                     "getinstitutions"
                 );
 
@@ -1562,29 +1556,20 @@
 
 
             const data =
-                getResponseData(
-                    result
-                );
+                getResponseData(result);
 
 
-            let institutions =
-                [];
+            let institutions = [];
 
 
-            if (
-                Array.isArray(
-                    data
-                )
-            ) {
+            if (Array.isArray(data)) {
 
                 institutions =
                     data;
 
             } else if (
                 data &&
-                Array.isArray(
-                    data.institutions
-                )
+                Array.isArray(data.institutions)
             ) {
 
                 institutions =
@@ -1607,9 +1592,14 @@
 
 
             institutions.forEach(
-                function (
-                    institution
-                ) {
+                function (institution) {
+
+                    if (!institution) {
+
+                        return;
+
+                    }
+
 
                     const id =
                         institution.institution_id ||
@@ -1656,9 +1646,7 @@
             );
 
 
-            if (
-                !institutions.length
-            ) {
+            if (!select.options.length) {
 
                 select.innerHTML = `
 
@@ -1670,13 +1658,15 @@
 
             }
 
-
         } catch (error) {
 
             console.error(
                 "AFC INSTITUTIONS ERROR:",
                 error
             );
+
+
+            institutionsCache = [];
 
 
             select.innerHTML = `
@@ -1689,22 +1679,21 @@
 
 
             const message =
-                document.getElementById(
-                    "portal-register-message"
-                );
+                $("portal-register-message");
 
 
             setMessage(
                 message,
-                error.message ||
-                "We could not load the institution list. Please try again."
+                error &&
+                error.message
+                    ? error.message
+                    : "We could not load the institution list. Please try again.",
+                "error"
             );
-
 
         } finally {
 
-            select.disabled =
-                false;
+            select.disabled = false;
 
         }
 
@@ -1718,16 +1707,12 @@
        REGISTRATION
        ======================================================== */
 
-    async function handleRegistration(
-        event
-    ) {
+    async function handleRegistration(event) {
 
         event.preventDefault();
 
 
-        if (
-            registrationInProgress
-        ) {
+        if (registrationInProgress) {
 
             return;
 
@@ -1735,119 +1720,71 @@
 
 
         const message =
-            document.getElementById(
-                "portal-register-message"
-            );
+            $("portal-register-message");
 
 
         const button =
-            document.getElementById(
-                "portal-register-submit"
-            );
+            $("portal-register-submit");
 
 
         const firstName =
-            document
-                .getElementById(
-                    "portal-first-name"
-                )
+            $("portal-first-name")
                 ?.value
-                .trim() ||
-            "";
+                .trim() || "";
 
 
         const lastName =
-            document
-                .getElementById(
-                    "portal-last-name"
-                )
+            $("portal-last-name")
                 ?.value
-                .trim() ||
-            "";
+                .trim() || "";
 
 
         const email =
-            document
-                .getElementById(
-                    "portal-register-email"
-                )
+            $("portal-register-email")
                 ?.value
-                .trim() ||
-            "";
+                .trim() || "";
 
 
         const phone =
-            document
-                .getElementById(
-                    "portal-phone"
-                )
+            $("portal-phone")
                 ?.value
-                .trim() ||
-            "";
+                .trim() || "";
 
 
         const dateOfBirth =
-            document
-                .getElementById(
-                    "portal-date-of-birth"
-                )
-                ?.value ||
-            "";
+            $("portal-date-of-birth")
+                ?.value || "";
 
 
         const institutionId =
-            document
-                .getElementById(
-                    "portal-institution"
-                )
-                ?.value ||
-            "";
+            $("portal-institution")
+                ?.value || "";
 
 
         const course =
-            document
-                .getElementById(
-                    "portal-course"
-                )
+            $("portal-course")
                 ?.value
-                .trim() ||
-            "";
+                .trim() || "";
 
 
         const level =
-            document
-                .getElementById(
-                    "portal-level"
-                )
-                ?.value ||
-            "";
+            $("portal-level")
+                ?.value || "";
 
 
         const gender =
-            document
-                .getElementById(
-                    "portal-gender"
-                )
-                ?.value ||
-            "";
+            $("portal-gender")
+                ?.value || "";
 
 
         const password =
-            document
-                .getElementById(
-                    "portal-register-password"
-                )
-                ?.value ||
-            "";
+            $("portal-register-password")
+                ?.value || "";
 
 
         const confirmPassword =
-            document
-                .getElementById(
-                    "portal-confirm-password"
-                )
-                ?.value ||
-            "";
+            $("portal-confirm-password")
+                ?.value || "";
 
 
         setMessage(
@@ -1896,11 +1833,7 @@
         }
 
 
-        if (
-            !isValidEmail(
-                email
-            )
-        ) {
+        if (!isValidEmail(email)) {
 
             setMessage(
                 message,
@@ -1960,10 +1893,7 @@
         }
 
 
-        if (
-            password.length <
-            8
-        ) {
+        if (password.length < 8) {
 
             setMessage(
                 message,
@@ -1975,10 +1905,7 @@
         }
 
 
-        if (
-            password !==
-            confirmPassword
-        ) {
+        if (password !== confirmPassword) {
 
             setMessage(
                 message,
@@ -1990,8 +1917,7 @@
         }
 
 
-        registrationInProgress =
-            true;
+        registrationInProgress = true;
 
 
         setButtonLoading(
@@ -2003,10 +1929,13 @@
 
         try {
 
+            /* ------------------------------------------------
+               CHECK API
+               ------------------------------------------------ */
+
             if (
                 !window.API ||
-                typeof API.post !==
-                    "function"
+                typeof window.API.post !== "function"
             ) {
 
                 throw new Error(
@@ -2017,9 +1946,8 @@
 
 
             if (
-                typeof API.isConfigured ===
-                    "function" &&
-                !API.isConfigured()
+                typeof window.API.isConfigured === "function" &&
+                !window.API.isConfigured()
             ) {
 
                 throw new Error(
@@ -2029,24 +1957,22 @@
             }
 
 
-            /*
-             * Find institution name.
-             */
+            /* ------------------------------------------------
+               FIND INSTITUTION NAME
+               ------------------------------------------------ */
 
             const institution =
                 institutionsCache.find(
-                    function (
-                        item
-                    ) {
+                    function (item) {
 
-                        return String(
+                        const itemId =
                             item.institution_id ||
                             item.id ||
-                            ""
-                        ) ===
-                        String(
-                            institutionId
-                        );
+                            "";
+
+
+                        return String(itemId) ===
+                            String(institutionId);
 
                     }
                 );
@@ -2063,14 +1989,12 @@
                     : "";
 
 
-            /*
-             * ------------------------------------------------
-             * SEND TO GOOGLE APPS SCRIPT
-             * ------------------------------------------------
-             */
+            /* ------------------------------------------------
+               SEND REGISTRATION REQUEST
+               ------------------------------------------------ */
 
             const result =
-                await API.post(
+                await window.API.post(
                     "register",
                     {
 
@@ -2126,57 +2050,96 @@
             );
 
 
+            /* ------------------------------------------------
+               CHECK RESPONSE
+               ------------------------------------------------ */
+
+            const responseData =
+                getResponseData(result);
+
+
             /*
-             * If API.post() returned successfully,
-             * the Apps Script backend accepted
-             * the request.
+             * Some API layers return:
+             *
+             * {
+             *   success: true,
+             *   message: "...",
+             *   data: {...}
+             * }
+             *
+             * Others return data directly.
+             *
+             * If an explicit success:false exists,
+             * treat it as an error.
              */
+
+            if (
+                result &&
+                result.success === false
+            ) {
+
+                throw new Error(
+                    getResponseMessage(result) ||
+                    "Unable to create your account."
+                );
+
+            }
+
+
+            if (
+                responseData &&
+                responseData.success === false
+            ) {
+
+                throw new Error(
+                    getResponseMessage(responseData) ||
+                    "Unable to create your account."
+                );
+
+            }
+
+
+            /* ------------------------------------------------
+               SUCCESS
+               ------------------------------------------------ */
 
             setMessage(
                 message,
-                getResponseMessage(
-                    result
-                ) ||
+                getResponseMessage(result) ||
                 "Your account has been created successfully.",
                 "success"
             );
 
 
-            /*
-             * Clear password fields.
-             */
+            /* ------------------------------------------------
+               CLEAR PASSWORD FIELDS
+               ------------------------------------------------ */
 
             const passwordInput =
-                document.getElementById(
-                    "portal-register-password"
-                );
+                $("portal-register-password");
 
 
             const confirmInput =
-                document.getElementById(
-                    "portal-confirm-password"
-                );
+                $("portal-confirm-password");
 
 
             if (passwordInput) {
 
-                passwordInput.value =
-                    "";
+                passwordInput.value = "";
 
             }
 
 
             if (confirmInput) {
 
-                confirmInput.value =
-                    "";
+                confirmInput.value = "";
 
             }
 
 
             /*
-             * Return to login after
-             * successful registration.
+             * Keep the successful registration message
+             * visible briefly, then move to login.
              */
 
             setTimeout(
@@ -2188,9 +2151,7 @@
 
 
                     const loginEmail =
-                        document.getElementById(
-                            "portal-login-email"
-                        );
+                        $("portal-login-email");
 
 
                     if (loginEmail) {
@@ -2204,9 +2165,7 @@
 
 
                     const loginMessage =
-                        document.getElementById(
-                            "portal-login-message"
-                        );
+                        $("portal-login-message");
 
 
                     setMessage(
@@ -2228,23 +2187,11 @@
             );
 
 
-            let messageText =
+            const messageText =
                 error &&
                 error.message
                     ? error.message
-                    : "Unable to create your account.";
-
-
-            if (
-                error &&
-                error.name ===
-                    "TypeError"
-            ) {
-
-                messageText =
-                    "We could not connect to the portal server. Please check your internet connection and try again.";
-
-            }
+                    : "Unable to create your account. Please try again.";
 
 
             setMessage(
@@ -2253,11 +2200,9 @@
                 "error"
             );
 
-
         } finally {
 
-            registrationInProgress =
-                false;
+            registrationInProgress = false;
 
 
             setButtonLoading(
@@ -2278,8 +2223,8 @@
 
         if (
             window.AFC &&
-            AFC.state &&
-            AFC.state.authenticated
+            window.AFC.state &&
+            window.AFC.state.authenticated
         ) {
 
             return;
@@ -2300,6 +2245,17 @@
 
     function openRegister() {
 
+        if (
+            window.AFC &&
+            window.AFC.state &&
+            window.AFC.state.authenticated
+        ) {
+
+            return;
+
+        }
+
+
         openAuthModal(
             "register"
         );
@@ -2315,8 +2271,8 @@
 
         const token =
             window.AFC &&
-            AFC.state
-                ? AFC.state.token
+            window.AFC.state
+                ? window.AFC.state.token
                 : null;
 
 
@@ -2325,15 +2281,13 @@
             if (
                 token &&
                 window.API &&
-                typeof API.post ===
-                    "function"
+                typeof window.API.post === "function"
             ) {
 
-                await API.post(
+                await window.API.post(
                     "logout",
                     {
-                        token:
-                            token
+                        token: token
                     }
                 );
 
@@ -2349,40 +2303,44 @@
         }
 
 
-        /*
-         * Clear in-memory state.
-         *
-         * NO localStorage.
-         * NO sessionStorage.
-         */
+        /* ----------------------------------------------------
+           CLEAR IN-MEMORY SESSION
+           ---------------------------------------------------- */
 
         if (
             window.AFC &&
-            AFC.state
+            window.AFC.state
         ) {
 
-            AFC.state.authenticated =
+            window.AFC.state.authenticated =
                 false;
 
-            AFC.state.user =
+            window.AFC.state.user =
                 null;
 
-            AFC.state.token =
+            window.AFC.state.token =
                 null;
 
         }
 
+
+        /* ----------------------------------------------------
+           CLOSE MODAL
+           ---------------------------------------------------- */
 
         if (
             window.AFC &&
-            typeof AFC.closeModal ===
-                "function"
+            typeof window.AFC.closeModal === "function"
         ) {
 
-            AFC.closeModal();
+            window.AFC.closeModal();
 
         }
 
+
+        /* ----------------------------------------------------
+           NOTIFY APPLICATION
+           ---------------------------------------------------- */
 
         window.dispatchEvent(
             new CustomEvent(
@@ -2391,13 +2349,16 @@
         );
 
 
+        /* ----------------------------------------------------
+           TOAST
+           ---------------------------------------------------- */
+
         if (
             window.AFC &&
-            typeof AFC.toast ===
-                "function"
+            typeof window.AFC.toast === "function"
         ) {
 
-            AFC.toast(
+            window.AFC.toast(
                 "You have been logged out.",
                 "success"
             );
@@ -2415,8 +2376,8 @@
 
         return Boolean(
             window.AFC &&
-            AFC.state &&
-            AFC.state.authenticated
+            window.AFC.state &&
+            window.AFC.state.authenticated
         );
 
     }
@@ -2426,8 +2387,8 @@
 
         return (
             window.AFC &&
-            AFC.state
-                ? AFC.state.user
+            window.AFC.state
+                ? window.AFC.state.user
                 : null
         );
 
@@ -2438,9 +2399,63 @@
 
         return (
             window.AFC &&
-            AFC.state
-                ? AFC.state.token
+            window.AFC.state
+                ? window.AFC.state.token
                 : null
+        );
+
+    }
+
+
+    /* ========================================================
+       LOGIN BUTTON INTERCEPTION
+       ========================================================
+       
+       IMPORTANT:
+       app.js currently contains an older handler for
+       #sidebar-login-button.
+
+       This capture listener takes control of that click
+       before the old handler can display the
+       "Login will be connected in Phase B" message.
+
+       Authentication is therefore opened ONLY when
+       the user deliberately clicks Login.
+       ======================================================== */
+
+    function bindLoginButton() {
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const loginButton =
+                    event.target.closest(
+                        "#sidebar-login-button"
+                    );
+
+
+                if (!loginButton) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Prevent the old Phase A handler
+                 * in app.js from running.
+                 */
+
+                event.preventDefault();
+
+                event.stopImmediatePropagation();
+
+
+                openLogin();
+
+            },
+            true
         );
 
     }
@@ -2488,6 +2503,9 @@
     /* ========================================================
        STARTUP
        ======================================================== */
+
+    bindLoginButton();
+
 
     console.log(
         "AFC Isiwu Youth Portal authentication module loaded."
