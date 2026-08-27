@@ -1,178 +1,205 @@
-/**
- * ============================================================
- * AFC ISIU YOUTH PORTAL V2
- * APP FOUNDATION
- * ============================================================
- *
- * RESPONSIBILITIES:
- * ------------------------------------------------------------
- * 1. Initialize global icons
- * 2. Highlight current navigation item
- * 3. Provide global icon refresh helper
- *
- * IMPORTANT:
- * ------------------------------------------------------------
- * Mobile menu is NOT handled here.
- *
- * The homepage owns the mobile menu through home.js.
- * This prevents duplicate hamburger event listeners.
- * ============================================================
- */
-
-"use strict";
-
-
 /* ============================================================
-   GLOBAL STARTUP
-============================================================ */
+   AFC ISIU YOUTH PORTAL V2
+   APPLICATION BOOTSTRAP
+   PHASE A
+   ============================================================ */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+(function () {
 
-        initializeNavigation();
-
-        initializeIcons();
-
-    }
-);
+    "use strict";
 
 
-/* ============================================================
-   LUCIDE ICONS
-============================================================ */
+    /* ========================================================
+       REGISTER INITIAL HOME ROUTE
+       ======================================================== */
 
-function initializeIcons() {
+    registerRoute(
+        "home",
+        renderInitialPage
+    );
 
-    if (
-        typeof lucide !== "undefined" &&
-        typeof lucide.createIcons === "function"
-    ) {
 
-        try {
+    /* ========================================================
+       INITIAL PAGE
+       ======================================================== */
 
-            lucide.createIcons();
+    function renderInitialPage() {
 
-        } catch (error) {
-
-            console.warn(
-                "AFC Portal: unable to initialize icons.",
-                error
+        const app =
+            document.getElementById(
+                "app"
             );
 
-        }
+
+        app.innerHTML = `
+
+            <main
+                class="
+                    portal-page
+                    flex
+                    min-h-screen
+                    items-center
+                    justify-center
+                    px-5
+                "
+            >
+
+                <section
+                    class="
+                        w-full
+                        max-w-md
+                        text-center
+                    "
+                >
+
+                    <div
+                        class="
+                            mx-auto
+                            mb-6
+                            flex
+                            h-16
+                            w-16
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-afc-950
+                            text-2xl
+                            font-bold
+                            text-white
+                            shadow-lg
+                        "
+                    >
+
+                        AFC
+
+                    </div>
+
+
+                    <h1
+                        class="
+                            text-2xl
+                            font-bold
+                            tracking-tight
+                            text-slate-950
+                        "
+                    >
+
+                        AFC Isiwu Youth Portal
+
+                    </h1>
+
+
+                    <p
+                        class="
+                            mt-2
+                            text-sm
+                            leading-6
+                            text-slate-500
+                        "
+                    >
+
+                        Your new portal foundation is ready.
+
+                    </p>
+
+
+                    <div
+                        class="
+                            mt-6
+                            rounded-2xl
+                            border
+                            border-slate-200
+                            bg-white
+                            p-5
+                            text-left
+                            shadow-sm
+                        "
+                    >
+
+                        <p
+                            class="
+                                text-xs
+                                font-semibold
+                                uppercase
+                                tracking-wider
+                                text-afc-600
+                            "
+                        >
+
+                            Phase A
+
+                        </p>
+
+
+                        <p
+                            class="
+                                mt-2
+                                text-sm
+                                leading-6
+                                text-slate-600
+                            "
+                        >
+
+                            Application foundation,
+                            API layer, global state,
+                            routing, modals, toasts
+                            and loading system are
+                            initialized.
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </main>
+
+        `;
 
     }
 
-}
 
+    /* ========================================================
+       APPLICATION START
+       ======================================================== */
 
-/* ============================================================
-   REFRESH ICONS
-============================================================ */
+    function boot() {
 
-function refreshIcons() {
-
-    if (
-        typeof lucide !== "undefined" &&
-        typeof lucide.createIcons === "function"
-    ) {
-
-        try {
-
-            lucide.createIcons();
-
-        } catch (error) {
-
-            console.warn(
-                "AFC Portal: unable to refresh icons.",
-                error
-            );
-
-        }
-
-    }
-
-}
-
-
-/* ============================================================
-   NAVIGATION
-============================================================ */
-
-function initializeNavigation() {
-
-    const currentPage =
-        window.location.pathname
-            .split("/")
-            .pop()
-            .toLowerCase();
-
-
-    const navigationItems =
-        document.querySelectorAll(
-            ".sidebar .nav-item, .bottom-nav-item"
+        console.log(
+            "AFC Isiwu Youth Portal V2 starting..."
         );
 
 
-    navigationItems.forEach(
-        function (item) {
-
-            const href =
-                item.getAttribute("href");
-
-
-            if (!href) {
-                return;
-            }
+        console.log(
+            "Application state:",
+            AppState
+        );
 
 
-            const itemPage =
-                href
-                    .split("/")
-                    .pop()
-                    .toLowerCase();
+        navigate("home");
+
+    }
 
 
-            const isHome =
-                currentPage === "" ||
-                currentPage === "index.html";
+    /* ========================================================
+       DOM READY
+       ======================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            boot
+        );
+
+    } else {
+
+        boot();
+
+    }
 
 
-            if (
-                itemPage === currentPage ||
-                (
-                    isHome &&
-                    itemPage === "index.html"
-                )
-            ) {
-
-                item.classList.add("active");
-
-            } else {
-
-                item.classList.remove("active");
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   GLOBAL EXPORT
-============================================================ */
-
-window.refreshIcons =
-    refreshIcons;
-
-
-/* ============================================================
-   STARTUP LOG
-============================================================ */
-
-console.log(
-    "AFC Isiu Youth Portal — app.js loaded."
-);
+})();
