@@ -1,7 +1,7 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   APPLICATION BOOTSTRAP
-   PHASE A
+   FILE: app.js
+   PURPOSE: Application bootstrap
    ============================================================ */
 
 (function () {
@@ -10,160 +10,10 @@
 
 
     /* ========================================================
-       REGISTER INITIAL HOME ROUTE
-       ======================================================== */
+       START APPLICATION
+    ======================================================== */
 
-    registerRoute(
-        "home",
-        renderInitialPage
-    );
-
-
-    /* ========================================================
-       INITIAL PAGE
-       ======================================================== */
-
-    function renderInitialPage() {
-
-        const app =
-            document.getElementById(
-                "app"
-            );
-
-
-        app.innerHTML = `
-
-            <main
-                class="
-                    portal-page
-                    flex
-                    min-h-screen
-                    items-center
-                    justify-center
-                    px-5
-                "
-            >
-
-                <section
-                    class="
-                        w-full
-                        max-w-md
-                        text-center
-                    "
-                >
-
-                    <div
-                        class="
-                            mx-auto
-                            mb-6
-                            flex
-                            h-16
-                            w-16
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-afc-950
-                            text-2xl
-                            font-bold
-                            text-white
-                            shadow-lg
-                        "
-                    >
-
-                        AFC
-
-                    </div>
-
-
-                    <h1
-                        class="
-                            text-2xl
-                            font-bold
-                            tracking-tight
-                            text-slate-950
-                        "
-                    >
-
-                        AFC Isiwu Youth Portal
-
-                    </h1>
-
-
-                    <p
-                        class="
-                            mt-2
-                            text-sm
-                            leading-6
-                            text-slate-500
-                        "
-                    >
-
-                        Your new portal foundation is ready.
-
-                    </p>
-
-
-                    <div
-                        class="
-                            mt-6
-                            rounded-2xl
-                            border
-                            border-slate-200
-                            bg-white
-                            p-5
-                            text-left
-                            shadow-sm
-                        "
-                    >
-
-                        <p
-                            class="
-                                text-xs
-                                font-semibold
-                                uppercase
-                                tracking-wider
-                                text-afc-600
-                            "
-                        >
-
-                            Phase A
-
-                        </p>
-
-
-                        <p
-                            class="
-                                mt-2
-                                text-sm
-                                leading-6
-                                text-slate-600
-                            "
-                        >
-
-                            Application foundation,
-                            API layer, global state,
-                            routing, modals, toasts
-                            and loading system are
-                            initialized.
-
-                        </p>
-
-                    </div>
-
-                </section>
-
-            </main>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       APPLICATION START
-       ======================================================== */
-
-    function boot() {
+    async function startApplication() {
 
         console.log(
             "AFC Isiwu Youth Portal V2 starting..."
@@ -176,14 +26,96 @@
         );
 
 
-        navigate("home");
+        try {
+
+            await checkApiHealth();
+
+        } catch (error) {
+
+            console.error(
+                "API health check failed:",
+                error
+            );
+
+        }
+
+
+        renderPage();
+
+
+        console.log(
+            "AFC Isiwu Youth Portal V2 ready."
+        );
 
     }
 
 
     /* ========================================================
-       DOM READY
-       ======================================================== */
+       API HEALTH
+    ======================================================== */
+
+    async function checkApiHealth() {
+
+        if (
+            !API_URL_IS_CONFIGURED()
+        ) {
+
+            console.warn(
+                "API URL has not been configured yet."
+            );
+
+            return null;
+
+        }
+
+
+        const result =
+            await apiGet(
+                "health"
+            );
+
+
+        console.log(
+            "API Health:",
+            result
+        );
+
+
+        return result;
+
+    }
+
+
+    function API_URL_IS_CONFIGURED() {
+
+        return (
+            typeof PortalAPI !== "undefined" &&
+            typeof apiGet === "function"
+        );
+
+    }
+
+
+    /* ========================================================
+       STATE LISTENER
+    ======================================================== */
+
+    window.addEventListener(
+        "appstatechange",
+        function (event) {
+
+            console.log(
+                "Application state updated:",
+                event.detail
+            );
+
+        }
+    );
+
+
+    /* ========================================================
+       START
+    ======================================================== */
 
     if (
         document.readyState ===
@@ -192,12 +124,12 @@
 
         document.addEventListener(
             "DOMContentLoaded",
-            boot
+            startApplication
         );
 
     } else {
 
-        boot();
+        startApplication();
 
     }
 
