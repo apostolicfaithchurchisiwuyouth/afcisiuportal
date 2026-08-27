@@ -1,8 +1,8 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   FILE: js/api.js
+   FILE: js/core/api.js
    PURPOSE: Central API communication layer
-   PHASE B
+   PHASE B — AUTHENTICATION + APPLICATION API
    ============================================================ */
 
 (function () {
@@ -17,10 +17,10 @@
     const API_CONFIG = {
 
         /*
-         * IMPORTANT:
+         * IMPORTANT
          *
-         * Replace this with your deployed
-         * Google Apps Script Web App URL.
+         * This should normally be the deployed Web App URL
+         * ending in /exec.
          *
          * Example:
          *
@@ -30,8 +30,194 @@
         BASE_URL:
             "https://script.google.com/macros/s/AKfycbyt9ATaXy8u-5kQ9OZFzblzhkMk9W1qo8TjaXSl3wE/dev"
 
-
     };
+
+
+    /* ========================================================
+       CONFIGURATION CHECK
+       ======================================================== */
+
+    function isConfigured() {
+
+        return Boolean(
+
+            API_CONFIG.BASE_URL &&
+
+            API_CONFIG.BASE_URL.trim() !== ""
+
+        );
+
+    }
+
+
+    /* ========================================================
+       HANDLE RESPONSE
+       ======================================================== */
+
+    async function handleResponse(
+        response
+    ) {
+
+        let data = null;
+
+
+        /*
+         * ----------------------------------------------------
+         * Try to read JSON response
+         * ----------------------------------------------------
+         */
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (error) {
+
+            console.error(
+                "AFC API JSON parse error:",
+                error
+            );
+
+
+            return {
+
+                success:
+                    false,
+
+                message:
+                    "The server returned an invalid response.",
+
+                data:
+                    null,
+
+                raw:
+                    null,
+
+                httpStatus:
+                    response.status
+
+            };
+
+        }
+
+
+        /*
+         * ----------------------------------------------------
+         * HTTP FAILURE
+         * ----------------------------------------------------
+         */
+
+        if (!response.ok) {
+
+            return {
+
+                success:
+                    false,
+
+                message:
+                    data &&
+                    data.message
+                        ? data.message
+                        : "The request could not be completed.",
+
+                data:
+                    data &&
+                    data.data !== undefined
+                        ? data.data
+                        : null,
+
+                raw:
+                    data,
+
+                httpStatus:
+                    response.status
+
+            };
+
+        }
+
+
+        /*
+         * ----------------------------------------------------
+         * NORMAL RESPONSE
+         *
+         * Apps Script responses are expected to look like:
+         *
+         * {
+         *   success: true,
+         *   message: "...",
+         *   data: {...}
+         * }
+         * ----------------------------------------------------
+         */
+
+        return {
+
+            success:
+                data &&
+                data.success === true,
+
+            message:
+                data &&
+                data.message
+                    ? data.message
+                    : "",
+
+            data:
+                data &&
+                data.data !== undefined
+                    ? data.data
+                    : null,
+
+            raw:
+                data,
+
+            httpStatus:
+                response.status
+
+        };
+
+    }
+
+
+    /* ========================================================
+       NETWORK ERROR
+       ======================================================== */
+
+    function handleNetworkError(
+        error
+    ) {
+
+        console.error(
+            "AFC API request failed:",
+            error
+        );
+
+
+        return {
+
+            success:
+                false,
+
+            message:
+                "Unable to connect to the portal server. Please check your internet connection and try again.",
+
+            data:
+                null,
+
+            raw:
+                null,
+
+            networkError:
+                true,
+
+            error:
+                error
+
+        };
+
+    }
 
 
     /* ========================================================
@@ -42,16 +228,122 @@
 
 
         /* ====================================================
+           CONFIGURATION
+           ==================================================== */
+
+        isConfigured:
+            isConfigured,
+
+
+        getBaseUrl:
+            function () {
+
+                return API_CONFIG.BASE_URL;
+
+            },
+
+
+        /* ====================================================
            GET REQUEST
            ==================================================== */
 
-        async get(action, params = {}) {
+        async get(
+            action,
+            params = {}
+        ) {
 
-            const url =
-                new URL(
-                    API_CONFIG.BASE_URL
+            /*
+             * ------------------------------------------------
+             * Validate configuration
+             * ------------------------------------------------
+             */
+
+            if (
+                !isConfigured()
+            ) {
+
+                return {
+
+                    success:
+                        false,
+
+                    message:
+                        "The portal backend has not been configured.",
+
+                    data:
+                        null,
+
+                    networkError:
+                        false
+
+                };
+
+            }
+
+
+            if (!action) {
+
+                return {
+
+                    success:
+                        false,
+
+                    message:
+                        "API action is required.",
+
+                    data:
+                        null
+
+                };
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * Build URL
+             * ------------------------------------------------
+             */
+
+            let url;
+
+
+            try {
+
+                url =
+                    new URL(
+                        API_CONFIG.BASE_URL
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid AFC API URL:",
+                    error
                 );
 
+
+                return {
+
+                    success:
+                        false,
+
+                    message:
+                        "The portal API URL is invalid.",
+
+                    data:
+                        null
+
+                };
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * Action
+             * ------------------------------------------------
+             */
 
             url.searchParams.set(
                 "action",
@@ -59,39 +351,66 @@
             );
 
 
-            Object.keys(params)
-                .forEach(function (key) {
+            /*
+             * ------------------------------------------------
+             * Additional parameters
+             * ------------------------------------------------
+             */
 
-                    const value =
-                        params[key];
+            Object.keys(
+                params || {}
+            )
+                .forEach(
+                    function (key) {
+
+                        const value =
+                            params[key];
 
 
-                    if (
-                        value !== undefined &&
-                        value !== null &&
-                        value !== ""
-                    ) {
+                        if (
+                            value !== undefined &&
+                            value !== null &&
+                            value !== ""
+                        ) {
 
-                        url.searchParams.set(
-                            key,
-                            value
-                        );
+                            url.searchParams.set(
+                                key,
+                                value
+                            );
+
+                        }
 
                     }
+                );
 
-                });
 
+            /*
+             * ------------------------------------------------
+             * Request
+             * ------------------------------------------------
+             */
 
             try {
+
+                console.log(
+                    "AFC API GET:",
+                    action
+                );
+
 
                 const response =
                     await fetch(
                         url.toString(),
                         {
 
-                            method: "GET",
+                            method:
+                                "GET",
 
-                            credentials: "omit"
+                            credentials:
+                                "omit",
+
+                            cache:
+                                "no-store"
 
                         }
                     );
@@ -123,9 +442,59 @@
             token = ""
         ) {
 
+            /*
+             * ------------------------------------------------
+             * Validate configuration
+             * ------------------------------------------------
+             */
+
+            if (
+                !isConfigured()
+            ) {
+
+                return {
+
+                    success:
+                        false,
+
+                    message:
+                        "The portal backend has not been configured.",
+
+                    data:
+                        null
+
+                };
+
+            }
+
+
+            if (!action) {
+
+                return {
+
+                    success:
+                        false,
+
+                    message:
+                        "API action is required.",
+
+                    data:
+                        null
+
+                };
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * Build payload
+             * ------------------------------------------------
+             */
+
             const payload = {
 
-                ...body,
+                ...(body || {}),
 
                 action:
                     action
@@ -133,7 +502,15 @@
             };
 
 
-            if (token) {
+            /*
+             * ------------------------------------------------
+             * Add authentication token
+             * ------------------------------------------------
+             */
+
+            if (
+                token
+            ) {
 
                 payload.token =
                     token;
@@ -141,14 +518,27 @@
             }
 
 
+            /*
+             * ------------------------------------------------
+             * Request
+             * ------------------------------------------------
+             */
+
             try {
+
+                console.log(
+                    "AFC API POST:",
+                    action
+                );
+
 
                 const response =
                     await fetch(
                         API_CONFIG.BASE_URL,
                         {
 
-                            method: "POST",
+                            method:
+                                "POST",
 
                             headers: {
 
@@ -162,7 +552,11 @@
                                     payload
                                 ),
 
-                            credentials: "omit"
+                            credentials:
+                                "omit",
+
+                            cache:
+                                "no-store"
 
                         }
                     );
@@ -183,120 +577,7 @@
 
         }
 
-
     };
-
-
-    /* ========================================================
-       HANDLE RESPONSE
-       ======================================================== */
-
-    async function handleResponse(
-        response
-    ) {
-
-        let data;
-
-
-        try {
-
-            data =
-                await response.json();
-
-        } catch (error) {
-
-            return {
-
-                success:
-                    false,
-
-                message:
-                    "The server returned an invalid response.",
-
-                data:
-                    null
-
-            };
-
-        }
-
-
-        /*
-         * HTTP failure
-         */
-
-        if (!response.ok) {
-
-            return {
-
-                success:
-                    false,
-
-                message:
-                    data.message ||
-                    "The request could not be completed.",
-
-                data:
-                    data.data ||
-                    null
-
-            };
-
-        }
-
-
-        return {
-
-            success:
-                data.success === true,
-
-            message:
-                data.message ||
-                "",
-
-            data:
-                data.data ||
-                null,
-
-            raw:
-                data
-
-        };
-
-    }
-
-
-    /* ========================================================
-       HANDLE NETWORK ERROR
-       ======================================================== */
-
-    function handleNetworkError(
-        error
-    ) {
-
-        console.error(
-            "API request failed:",
-            error
-        );
-
-
-        return {
-
-            success:
-                false,
-
-            message:
-                "Unable to connect to the portal server. Please check your internet connection and try again.",
-
-            data:
-                null,
-
-            networkError:
-                true
-
-        };
-
-    }
 
 
     /* ========================================================
@@ -310,7 +591,9 @@
            REGISTER
            ---------------------------------------------------- */
 
-        register(data) {
+        register(
+            data
+        ) {
 
             return API.post(
                 "register",
@@ -356,7 +639,9 @@
            LOGOUT
            ---------------------------------------------------- */
 
-        logout(token) {
+        logout(
+            token
+        ) {
 
             return API.post(
                 "logout",
@@ -371,7 +656,9 @@
            PROFILE
            ---------------------------------------------------- */
 
-        getProfile(token) {
+        getProfile(
+            token
+        ) {
 
             return API.post(
                 "getprofile",
@@ -404,7 +691,9 @@
            PERMISSIONS
            ---------------------------------------------------- */
 
-        getPermissions(token) {
+        getPermissions(
+            token
+        ) {
 
             return API.post(
                 "getmypermissions",
@@ -454,7 +743,9 @@
            LESSONS
            ---------------------------------------------------- */
 
-        getLessons(params = {}) {
+        getLessons(
+            params = {}
+        ) {
 
             return API.get(
                 "getlessons",
@@ -464,7 +755,9 @@
         },
 
 
-        getLesson(params = {}) {
+        getLesson(
+            params = {}
+        ) {
 
             return API.get(
                 "getlesson",
@@ -551,7 +844,9 @@
            QUIZ STATUS
            ---------------------------------------------------- */
 
-        getQuizStatus(token) {
+        getQuizStatus(
+            token
+        ) {
 
             return API.post(
                 "getquizstatus",
@@ -674,7 +969,9 @@
            WELFARE REPORTS
            ---------------------------------------------------- */
 
-        getWelfareReports(token) {
+        getWelfareReports(
+            token
+        ) {
 
             return API.post(
                 "getwelfarereports",
@@ -741,7 +1038,9 @@
            NOTIFICATIONS
            ---------------------------------------------------- */
 
-        getNotifications(token) {
+        getNotifications(
+            token
+        ) {
 
             return API.post(
                 "getnotifications",
@@ -779,7 +1078,9 @@
            SETTINGS
            ---------------------------------------------------- */
 
-        getSettings(token) {
+        getSettings(
+            token
+        ) {
 
             return API.post(
                 "getsettings",
@@ -807,28 +1108,91 @@
 
 
     /* ========================================================
-       EXPORT
+       PRESERVE EXISTING AFC APPLICATION OBJECT
        ======================================================== */
 
-    window.AFC = {
+    /*
+     * IMPORTANT:
+     *
+     * app.js creates window.AFC.
+     *
+     * We must NOT replace it.
+     *
+     * Instead, preserve everything already there and add
+     * the API modules to it.
+     */
 
-        API:
-            API,
+    window.AFC =
+        window.AFC || {};
 
-        AuthAPI:
-            AuthAPI,
 
-        PublicAPI:
-            PublicAPI,
+    window.AFC.API =
+        API;
 
-        MemberAPI:
-            MemberAPI
 
-    };
+    window.AFC.AuthAPI =
+        AuthAPI;
+
+
+    window.AFC.PublicAPI =
+        PublicAPI;
+
+
+    window.AFC.MemberAPI =
+        MemberAPI;
+
+
+    /* ========================================================
+       GLOBAL API ALIAS
+       ======================================================== */
+
+    /*
+     * auth.js uses:
+     *
+     * window.API
+     *
+     * Therefore expose the same API client globally.
+     */
+
+    window.API =
+        API;
+
+
+    /* ========================================================
+       GLOBAL AUTH API ALIASES
+       ======================================================== */
+
+    window.AuthAPI =
+        AuthAPI;
+
+
+    window.PublicAPI =
+        PublicAPI;
+
+
+    window.MemberAPI =
+        MemberAPI;
+
+
+    /* ========================================================
+       DEBUG INFORMATION
+       ======================================================== */
+
+    console.log(
+        "AFC API client loaded successfully."
+    );
 
 
     console.log(
-        "AFC API client loaded."
+        "AFC API configured:",
+        API.isConfigured()
     );
+
+
+    console.log(
+        "AFC API base URL:",
+        API.getBaseUrl()
+    );
+
 
 })();
