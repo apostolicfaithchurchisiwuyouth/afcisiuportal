@@ -1,7 +1,8 @@
 /**
  * ============================================================
- * AFC ISIU YOUTH PORTAL
- * PHASE 4A — LESSONS MODULE
+ * AFC ISIU YOUTH PORTAL V2
+ * LESSONS PAGE CONTROLLER
+ * PHASE 4A.1
  * ============================================================
  */
 
@@ -12,63 +13,34 @@ const LessonsPage = (function () {
 
 
     /* ========================================================
-       1. STATE
+       STATE
        ======================================================== */
 
     let lessons = [];
 
-    let currentLessonId = null;
+    let currentLessonId =
+        null;
+
+
+    let progressHandler =
+        null;
 
 
     /* ========================================================
-       2. GET RESPONSE DATA
+       HELPERS
        ======================================================== */
 
-    function getResponseData(response) {
+    function $(id) {
 
-        if (
-            !response
-        ) {
+        return document.getElementById(id);
 
-            return null;
-        }
-
-
-        /*
-         * Standard backend response.
-         *
-         * Expected:
-         *
-         * {
-         *   success: true,
-         *   data: ...
-         * }
-         */
-
-        if (
-            response.data !== undefined
-        ) {
-
-            return response.data;
-        }
-
-
-        /*
-         * Fallback.
-         */
-
-        return response;
     }
 
-
-    /* ========================================================
-       3. ESCAPE HTML
-       ======================================================== */
 
     function escapeHtml(value) {
 
         return String(
-            value || ""
+            value ?? ""
         )
 
         .replace(
@@ -95,18 +67,65 @@ const LessonsPage = (function () {
             /'/g,
             "&#039;"
         );
+
     }
 
 
-    /* ========================================================
-       4. FORMAT DATE
-       ======================================================== */
+    function refreshIcons() {
 
-    function formatLessonDate(value) {
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons ===
+                "function"
+        ) {
+
+            try {
+
+                window.lucide.createIcons();
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Lessons: icon error",
+                    error
+                );
+
+            }
+
+        }
+
+    }
+
+
+    function getResponseData(response) {
+
+        if (!response) {
+
+            return null;
+
+        }
+
+
+        if (
+            response.data !== undefined
+        ) {
+
+            return response.data;
+
+        }
+
+
+        return response;
+
+    }
+
+
+    function formatDate(value) {
 
         if (!value) {
 
             return "";
+
         }
 
 
@@ -121,6 +140,7 @@ const LessonsPage = (function () {
         ) {
 
             return String(value);
+
         }
 
 
@@ -137,76 +157,15 @@ const LessonsPage = (function () {
                     "numeric"
             }
         );
+
     }
 
 
-    /* ========================================================
-       5. GET LESSONS
-       ======================================================== */
-
-    async function fetchLessons() {
-
-        const response =
-            await API.get(
-                "getLessons"
-            );
-
-
-        const data =
-            getResponseData(
-                response
-            );
-
-
-        if (
-            !Array.isArray(data)
-        ) {
-
-            return [];
-        }
-
-
-        return data;
-    }
-
-
-    /* ========================================================
-       6. GET SINGLE LESSON
-       ======================================================== */
-
-    async function fetchLesson(
-        lessonId
-    ) {
-
-        const response =
-            await API.get(
-                "getLesson",
-                {
-                    lesson_id:
-                        lessonId
-                }
-            );
-
-
-        return getResponseData(
-            response
-        );
-    }
-
-
-    /* ========================================================
-       7. SORT LESSONS
-       ======================================================== */
-
-    function sortLessons(
-        lessonList
-    ) {
+    function sortLessons(list) {
 
         return [
-            ...lessonList
-        ]
-
-        .sort(
+            ...list
+        ].sort(
             function (a, b) {
 
                 const aDate =
@@ -229,112 +188,230 @@ const LessonsPage = (function () {
                     bDate -
                     aDate
                 );
+
             }
         );
+
     }
 
 
     /* ========================================================
-       8. LOADING SCREEN
+       FETCH ALL LESSONS
+       ======================================================== */
+
+    async function fetchLessons() {
+
+        const response =
+            await API.get(
+                "getLessons"
+            );
+
+
+        const data =
+            getResponseData(
+                response
+            );
+
+
+        if (
+            !Array.isArray(data)
+        ) {
+
+            throw new Error(
+                "The backend returned an unexpected lessons format."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* ========================================================
+       FETCH ONE LESSON
+       ======================================================== */
+
+    async function fetchLesson(
+        lessonId
+    ) {
+
+        const cleanId =
+            String(
+                lessonId || ""
+            ).trim();
+
+
+        if (!cleanId) {
+
+            throw new Error(
+                "No lesson ID was supplied."
+            );
+
+        }
+
+
+        console.log(
+            "[LESSONS] Opening lesson:",
+            cleanId
+        );
+
+
+        const response =
+            await API.get(
+                "getLesson",
+                {
+                    lesson_id:
+                        cleanId
+                }
+            );
+
+
+        const data =
+            getResponseData(
+                response
+            );
+
+
+        if (!data) {
+
+            throw new Error(
+                "The backend returned no lesson data."
+            );
+
+        }
+
+
+        /*
+         * Expected:
+         *
+         * {
+         *   lesson: {...},
+         *   sections: [...],
+         *   reflection_questions: [...]
+         * }
+         */
+
+        if (!data.lesson) {
+
+            throw new Error(
+                "The backend did not return the requested lesson."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* ========================================================
+       LOADING SKELETON
        ======================================================== */
 
     function renderLoading() {
 
         return `
+
             <div class="lessons-page">
 
-                <div class="lessons-intro">
+                <div class="lesson-page-heading skeleton-heading">
 
-                    <h2>
-                        Weekly Lessons
-                    </h2>
+                    <div class="skeleton-line skeleton-small"></div>
 
-                    <p>
-                        Grow deeper in God's Word.
-                    </p>
+                    <div class="skeleton-line skeleton-title"></div>
+
+                    <div class="skeleton-line skeleton-text"></div>
 
                 </div>
 
 
-                <div
-                    class="
-                        skeleton
-                        skeleton-featured
-                    "
-                ></div>
+                <div class="lesson-featured-skeleton">
+
+                    <div class="skeleton-line skeleton-badge"></div>
+
+                    <div class="skeleton-line skeleton-feature-title"></div>
+
+                    <div class="skeleton-line skeleton-text wide"></div>
+
+                    <div class="skeleton-line skeleton-text medium"></div>
+
+                    <div class="skeleton-button"></div>
+
+                </div>
 
 
-                <section
-                    class="lessons-section"
-                >
+                <div class="lesson-skeleton-grid">
 
-                    <div
-                        class="lessons-grid"
-                    >
+                    ${Array(4)
+                        .fill("")
+                        .map(
+                            function () {
 
-                        ${Array(6)
-                            .fill("")
-                            .map(
-                                function () {
+                                return `
 
-                                    return `
-                                        <div
-                                            class="
-                                                skeleton
-                                                skeleton-card
-                                            "
-                                        ></div>
-                                    `;
-                                }
-                            )
-                            .join("")
-                        }
+                                    <div class="lesson-card-skeleton">
 
-                    </div>
+                                        <div class="skeleton-line skeleton-small"></div>
 
-                </section>
+                                        <div class="skeleton-line skeleton-card-title"></div>
+
+                                        <div class="skeleton-line skeleton-text"></div>
+
+                                        <div class="skeleton-line skeleton-text short"></div>
+
+                                    </div>
+
+                                `;
+
+                            }
+                        )
+                        .join("")
+                    }
+
+                </div>
 
             </div>
+
         `;
+
     }
 
 
     /* ========================================================
-       9. EMPTY STATE
+       EMPTY
        ======================================================== */
 
     function renderEmpty() {
 
         return `
-            <div
-                class="lessons-state"
-            >
 
-                <div
-                    class="lessons-state-icon"
-                >
-                    📖
+            <div class="lesson-state">
+
+                <div class="lesson-state-icon">
+                    <span data-lucide="book-open"></span>
                 </div>
 
-
-                <h3>
+                <h2>
                     No lessons yet
-                </h3>
-
+                </h2>
 
                 <p>
-                    There are currently no
-                    published lessons available.
-                    Please check back later.
+                    Published lessons will appear here
+                    when they become available.
                 </p>
 
             </div>
+
         `;
+
     }
 
 
     /* ========================================================
-       10. ERROR STATE
+       ERROR
        ======================================================== */
 
     function renderError(
@@ -342,21 +419,16 @@ const LessonsPage = (function () {
     ) {
 
         return `
-            <div
-                class="lessons-state"
-            >
 
-                <div
-                    class="lessons-state-icon"
-                >
-                    !
+            <div class="lesson-state lesson-state-error">
+
+                <div class="lesson-state-icon">
+                    <span data-lucide="triangle-alert"></span>
                 </div>
 
-
-                <h3>
+                <h2>
                     Unable to load lessons
-                </h3>
-
+                </h2>
 
                 <p>
                     ${escapeHtml(
@@ -365,22 +437,24 @@ const LessonsPage = (function () {
                     )}
                 </p>
 
-
                 <button
-                    class="lessons-retry"
-                    id="retryLessonsButton"
                     type="button"
+                    class="lesson-retry-button"
+                    id="retryLessonsButton"
                 >
-                    Try Again
+                    <span data-lucide="rotate-cw"></span>
+                    <span>Try Again</span>
                 </button>
 
             </div>
+
         `;
+
     }
 
 
     /* ========================================================
-       11. LESSON CARD
+       LESSON CARD
        ======================================================== */
 
     function renderLessonCard(
@@ -388,174 +462,197 @@ const LessonsPage = (function () {
     ) {
 
         const lessonId =
-            escapeHtml(
-                lesson.lesson_id
-            );
-
-
-        const week =
-            lesson.week_number
-                ? `Week ${escapeHtml(
-                    lesson.week_number
-                )}`
-                : "Weekly Lesson";
-
-
-        const type =
-            lesson.lesson_type ||
-            "Youth Lesson";
+            String(
+                lesson.lesson_id || ""
+            ).trim();
 
 
         return `
-            <article
-                class="lesson-card"
-            >
 
-                <div
-                    class="lesson-card-top"
-                >
+            <article class="lesson-card">
 
-                    <span
-                        class="lesson-week"
-                    >
-                        ${week}
+                <div class="lesson-card-top">
+
+                    <span class="lesson-card-week">
+
+                        ${
+                            lesson.week_number
+                                ? `Week ${escapeHtml(
+                                    lesson.week_number
+                                )}`
+                                : "Weekly Lesson"
+                        }
+
                     </span>
 
+                    <span class="lesson-card-type">
 
-                    <span
-                        class="lesson-type"
-                    >
-                        ${escapeHtml(type)}
+                        ${escapeHtml(
+                            lesson.lesson_type ||
+                            "Youth Lesson"
+                        )}
+
                     </span>
 
                 </div>
 
 
-                <h4>
-                    ${escapeHtml(
-                        lesson.title ||
-                        "Untitled Lesson"
-                    )}
-                </h4>
+                <div class="lesson-card-body">
 
-
-                <p>
-                    ${escapeHtml(
-                        lesson.description ||
-                        "Open this lesson to begin reading."
-                    )}
-                </p>
-
-
-                <div
-                    class="lesson-card-footer"
-                >
-
-                    <span
-                        class="lesson-date"
-                    >
+                    <h3>
                         ${escapeHtml(
-                            formatLessonDate(
+                            lesson.title ||
+                            "Untitled Lesson"
+                        )}
+                    </h3>
+
+
+                    <p>
+                        ${escapeHtml(
+                            lesson.description ||
+                            "Open this lesson to begin reading."
+                        )}
+                    </p>
+
+                </div>
+
+
+                <div class="lesson-card-footer">
+
+                    <span class="lesson-card-date">
+
+                        ${escapeHtml(
+                            formatDate(
                                 lesson.lesson_date
                             )
                         )}
+
                     </span>
 
 
                     <button
-                        class="lesson-read-link"
                         type="button"
-                        data-open-lesson="${lessonId}"
+                        class="lesson-card-button"
+                        data-open-lesson="${escapeHtml(
+                            lessonId
+                        )}"
                     >
-                        Read →
+
+                        <span>Read lesson</span>
+
+                        <span data-lucide="arrow-up-right"></span>
+
                     </button>
 
                 </div>
 
             </article>
+
         `;
+
     }
 
 
     /* ========================================================
-       12. LESSONS HUB
+       HUB
        ======================================================== */
 
-    function renderLessonsHub(
+    function renderHub(
         lessonList
     ) {
 
         if (
-            !lessonList ||
-            lessonList.length === 0
+            !lessonList.length
         ) {
 
             return renderEmpty();
+
         }
 
 
-        const sortedLessons =
+        const sorted =
             sortLessons(
                 lessonList
             );
 
 
         const featured =
-            sortedLessons[0];
+            sorted[0];
 
 
-        const previousLessons =
-            sortedLessons.slice(
-                1
-            );
+        const previous =
+            sorted.slice(1);
+
+
+        const featuredId =
+            String(
+                featured.lesson_id || ""
+            ).trim();
 
 
         return `
-            <div
-                class="lessons-page"
-            >
 
-                <div
-                    class="lessons-intro"
-                >
-
-                    <h2>
-                        Weekly Lessons
-                    </h2>
-
-                    <p>
-                        Explore God's Word,
-                        reflect on what you learn
-                        and grow in your walk with Christ.
-                    </p>
-
-                </div>
+            <div class="lessons-page">
 
 
-                <!-- FEATURED LESSON -->
+                <header class="lesson-page-heading">
 
-                <article
-                    class="featured-lesson"
-                >
+                    <div>
 
-                    <div
-                        class="
-                            featured-lesson-content
-                        "
-                    >
-
-                        <span
-                            class="lesson-badge"
-                        >
-                            Current Lesson
+                        <span class="eyebrow">
+                            Weekly Lessons
                         </span>
 
+                        <h1>
+                            Grow in God's Word.
+                        </h1>
 
-                        <h3>
+                        <p>
+                            Read, reflect and keep growing
+                            in your walk with Christ.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <article class="lesson-featured">
+
+                    <div class="lesson-featured-glow"></div>
+
+
+                    <div class="lesson-featured-content">
+
+                        <div class="lesson-featured-top">
+
+                            <span class="lesson-current-badge">
+                                <span class="status-dot"></span>
+                                Current lesson
+                            </span>
+
+
+                            ${
+                                featured.week_number
+                                    ? `
+                                        <span class="lesson-featured-week">
+                                            Week ${escapeHtml(
+                                                featured.week_number
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+
+                        <h2>
                             ${escapeHtml(
-                                featured.title
+                                featured.title ||
+                                "Weekly Lesson"
                             )}
-                        </h3>
+                        </h2>
 
 
                         <p>
@@ -566,74 +663,71 @@ const LessonsPage = (function () {
                         </p>
 
 
-                        <div
-                            class="
-                                featured-lesson-footer
-                            "
+                        <div class="lesson-featured-meta">
+
+                            ${
+                                featured.lesson_type
+                                    ? `
+                                        <span>
+                                            <span data-lucide="book-open"></span>
+                                            ${escapeHtml(
+                                                featured.lesson_type
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+
+                            ${
+                                featured.lesson_date
+                                    ? `
+                                        <span>
+                                            <span data-lucide="calendar-days"></span>
+                                            ${escapeHtml(
+                                                formatDate(
+                                                    featured.lesson_date
+                                                )
+                                            )}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="lesson-start-button"
+                            data-open-lesson="${escapeHtml(
+                                featuredId
+                            )}"
                         >
 
-                            <div
-                                class="lesson-meta"
-                            >
+                            <span>
+                                Start reading
+                            </span>
 
-                                ${
-                                    featured.week_number
-                                        ? `
-                                            <span>
-                                                Week
-                                                ${escapeHtml(
-                                                    featured.week_number
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
+                            <span data-lucide="arrow-right"></span>
+
+                        </button>
+
+                    </div>
 
 
-                                ${
-                                    featured.lesson_type
-                                        ? `
-                                            <span>
-                                                ${escapeHtml(
-                                                    featured.lesson_type
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
+                    <div
+                        class="lesson-featured-art"
+                        aria-hidden="true"
+                    >
 
+                        <div class="lesson-art-circle circle-one"></div>
 
-                                ${
-                                    featured.lesson_date
-                                        ? `
-                                            <span>
-                                                ${escapeHtml(
-                                                    formatLessonDate(
-                                                        featured.lesson_date
-                                                    )
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
+                        <div class="lesson-art-circle circle-two"></div>
 
-                            </div>
+                        <div class="lesson-art-book">
 
-
-                            <button
-                                class="
-                                    lesson-primary-button
-                                "
-                                type="button"
-                                data-open-lesson="
-                                    ${escapeHtml(
-                                        featured.lesson_id
-                                    )}
-                                "
-                            >
-                                Start Reading
-                                <span>→</span>
-                            </button>
+                            <span data-lucide="book-open"></span>
 
                         </div>
 
@@ -642,213 +736,240 @@ const LessonsPage = (function () {
                 </article>
 
 
-                <!-- PREVIOUS LESSONS -->
+                <section class="lessons-history">
 
-                <section
-                    class="lessons-section"
-                >
-
-                    <div
-                        class="
-                            lessons-section-header
-                        "
-                    >
+                    <div class="lessons-section-heading">
 
                         <div>
 
-                            <h3>
-                                More Lessons
-                            </h3>
+                            <span class="eyebrow">
+                                Library
+                            </span>
 
-                            <p>
-                                Continue learning
-                                from previous weeks.
-                            </p>
+                            <h2>
+                                Previous lessons
+                            </h2>
 
                         </div>
 
-                    </div>
-
-
-                    <div
-                        class="lessons-grid"
-                    >
-
                         ${
-                            previousLessons.length
-                                ? previousLessons
-                                    .map(
-                                        renderLessonCard
-                                    )
-                                    .join("")
-                                : `
-                                    <p
-                                        style="
-                                            color: var(--muted);
-                                            font-size: .8rem;
-                                        "
-                                    >
-                                        More lessons will
-                                        appear here.
-                                    </p>
+                            previous.length
+                                ? `
+                                    <span class="lesson-count">
+                                        ${previous.length}
+                                        ${
+                                            previous.length === 1
+                                                ? "lesson"
+                                                : "lessons"
+                                        }
+                                    </span>
                                 `
+                                : ""
                         }
 
                     </div>
 
+
+                    ${
+                        previous.length
+                            ? `
+                                <div class="lessons-grid">
+
+                                    ${previous
+                                        .map(
+                                            renderLessonCard
+                                        )
+                                        .join("")
+                                    }
+
+                                </div>
+                            `
+                            : `
+                                <div class="lessons-empty-library">
+
+                                    <span data-lucide="book-open"></span>
+
+                                    <span>
+                                        Previous lessons will appear here.
+                                    </span>
+
+                                </div>
+                            `
+                    }
+
                 </section>
 
             </div>
+
         `;
+
     }
 
 
     /* ========================================================
-       13. FORMAT LESSON CONTENT
+       CONTENT FORMATTER
        ======================================================== */
 
-    function formatLessonContent(
+    function formatContent(
         content
     ) {
 
         if (!content) {
 
             return "";
+
         }
 
 
-        /*
-         * Escape content first.
-         *
-         * Then convert line breaks
-         * into paragraphs.
-         */
-
-        const safeContent =
+        const safe =
             escapeHtml(
                 content
             );
 
 
-        return safeContent
+        /*
+         * Supports normal line breaks and
+         * blank-line paragraph separation.
+         */
 
+        return safe
             .split(
-                /\\n\\s*\\n/
+                /\n\s*\n/
             )
-
             .map(
-                function (
-                    paragraph
-                ) {
+                function (paragraph) {
 
-                    const text =
+                    const cleaned =
                         paragraph
                             .trim()
                             .replace(
-                                /\\n/g,
+                                /\n/g,
                                 "<br>"
                             );
 
 
-                    if (!text) {
+                    if (!cleaned) {
 
                         return "";
+
                     }
 
 
                     return `
                         <p>
-                            ${text}
+                            ${cleaned}
                         </p>
                     `;
+
                 }
             )
-
             .join("");
+
     }
 
 
     /* ========================================================
-       14. LESSON READER
+       READER
        ======================================================== */
 
-    function renderLessonReader(
-        lessonData
+    function renderReader(
+        data
     ) {
 
-        if (
-            !lessonData ||
-            !lessonData.lesson
-        ) {
-
-            return renderError(
-                "The lesson could not be loaded."
-            );
-        }
-
-
         const lesson =
-            lessonData.lesson;
+            data.lesson;
 
 
         const sections =
             Array.isArray(
-                lessonData.sections
+                data.sections
             )
-                ? lessonData.sections
+                ? data.sections
+                : [];
+
+
+        const questions =
+            Array.isArray(
+                data.reflection_questions
+            )
+                ? data.reflection_questions
                 : [];
 
 
         return `
-            <article
-                class="lesson-reader"
-            >
 
-                <button
-                    class="
-                        lesson-reader-back
-                    "
-                    id="backToLessonsButton"
-                    type="button"
-                >
-                    ← Back to Lessons
-                </button>
+            <article class="lesson-reader">
 
 
-                <div
-                    class="
-                        lesson-reader-header
-                    "
-                >
+                <div class="lesson-reader-topbar">
 
-                    <span
-                        class="lesson-badge"
+                    <button
+                        type="button"
+                        id="backToLessonsButton"
+                        class="lesson-back-button"
                     >
-                        ${
-                            lesson.week_number
-                                ? `Week ${escapeHtml(
-                                    lesson.week_number
-                                )}`
-                                : "Weekly Lesson"
-                        }
+
+                        <span data-lucide="arrow-left"></span>
+
+                        <span>
+                            All lessons
+                        </span>
+
+                    </button>
+
+
+                    <span class="lesson-reader-label">
+                        Reading
                     </span>
 
+                </div>
 
-                    <h2>
+
+                <header class="lesson-reader-header">
+
+
+                    <div class="lesson-reader-badges">
+
+                        ${
+                            lesson.week_number
+                                ? `
+                                    <span class="reader-badge">
+                                        Week ${escapeHtml(
+                                            lesson.week_number
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+
+                        ${
+                            lesson.lesson_type
+                                ? `
+                                    <span class="reader-badge muted">
+                                        ${escapeHtml(
+                                            lesson.lesson_type
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <h1>
                         ${escapeHtml(
-                            lesson.title
+                            lesson.title ||
+                            "Weekly Lesson"
                         )}
-                    </h2>
+                    </h1>
 
 
                     ${
                         lesson.description
                             ? `
-                                <p
-                                    class="
-                                        lesson-reader-description
-                                    "
-                                >
+                                <p class="lesson-reader-description">
                                     ${escapeHtml(
                                         lesson.description
                                     )}
@@ -858,34 +979,15 @@ const LessonsPage = (function () {
                     }
 
 
-                    <div
-                        class="
-                            lesson-meta
-                        "
-                        style="
-                            margin-top: 17px;
-                        "
-                    >
-
-                        ${
-                            lesson.lesson_type
-                                ? `
-                                    <span>
-                                        ${escapeHtml(
-                                            lesson.lesson_type
-                                        )}
-                                    </span>
-                                `
-                                : ""
-                        }
-
+                    <div class="lesson-reader-meta">
 
                         ${
                             lesson.lesson_date
                                 ? `
                                     <span>
+                                        <span data-lucide="calendar-days"></span>
                                         ${escapeHtml(
-                                            formatLessonDate(
+                                            formatDate(
                                                 lesson.lesson_date
                                             )
                                         )}
@@ -894,237 +996,338 @@ const LessonsPage = (function () {
                                 : ""
                         }
 
+
+                        ${
+                            sections.length
+                                ? `
+                                    <span>
+                                        <span data-lucide="book-open"></span>
+                                        ${sections.length}
+                                        ${
+                                            sections.length === 1
+                                                ? "section"
+                                                : "sections"
+                                        }
+                                    </span>
+                                `
+                                : ""
+                        }
+
                     </div>
 
-                </div>
+                </header>
 
 
-                <div
-                    class="
-                        reading-progress
-                    "
-                >
+                <div class="reading-progress-track">
 
                     <div
-                        class="
-                            reading-progress-bar
-                        "
-                        id="
-                            readingProgressBar
-                        "
+                        class="reading-progress-value"
+                        id="readingProgressBar"
                     ></div>
 
                 </div>
 
 
-                <div
-                    class="
-                        lesson-content
-                    "
-                >
+                <div class="lesson-reader-layout">
 
-                    ${
-                        sections.length
-                            ? sections
-                                .map(
-                                    function (
-                                        section,
-                                        index
-                                    ) {
 
-                                        return `
-                                            <section
-                                                class="
-                                                    lesson-section
-                                                "
-                                            >
+                    <main class="lesson-reading-content">
 
-                                                <span
-                                                    class="
-                                                        lesson-section-number
-                                                    "
+                        ${
+                            sections.length
+                                ? sections
+                                    .map(
+                                        function (
+                                            section,
+                                            index
+                                        ) {
+
+                                            return `
+
+                                                <section
+                                                    class="lesson-reading-section"
                                                 >
-                                                    ${
-                                                        section.section_number ||
-                                                        index + 1
-                                                    }
-                                                </span>
+
+                                                    <div class="section-number">
+
+                                                        ${
+                                                            escapeHtml(
+                                                                section.section_number ||
+                                                                index + 1
+                                                            )
+                                                        }
+
+                                                    </div>
 
 
-                                                ${
-                                                    section.title
-                                                        ? `
-                                                            <h3>
-                                                                ${escapeHtml(
-                                                                    section.title
-                                                                )}
-                                                            </h3>
-                                                        `
-                                                        : ""
-                                                }
+                                                    <div class="section-main">
+
+                                                        ${
+                                                            section.title
+                                                                ? `
+                                                                    <h2>
+                                                                        ${escapeHtml(
+                                                                            section.title
+                                                                        )}
+                                                                    </h2>
+                                                                `
+                                                                : ""
+                                                        }
 
 
-                                                <div
-                                                    class="
-                                                        lesson-section-content
-                                                    "
-                                                >
-                                                    ${formatLessonContent(
-                                                        section.content
-                                                    )}
-                                                </div>
+                                                        <div class="section-text">
 
-                                            </section>
-                                        `;
-                                    }
-                                )
-                                .join("")
-                            : `
-                                <div
-                                    class="
-                                        lessons-state
-                                    "
-                                >
+                                                            ${formatContent(
+                                                                section.content
+                                                            )}
 
-                                    <div
-                                        class="
-                                            lessons-state-icon
-                                        "
-                                    >
-                                        📖
+                                                        </div>
+
+                                                    </div>
+
+                                                </section>
+
+                                            `;
+
+                                        }
+                                    )
+                                    .join("")
+                                : `
+                                    <div class="lesson-no-content">
+
+                                        <span data-lucide="book-open"></span>
+
+                                        <h2>
+                                            Lesson content is coming soon
+                                        </h2>
+
+                                        <p>
+                                            This lesson has been published,
+                                            but its reading sections are
+                                            not available yet.
+                                        </p>
+
                                     </div>
+                                `
+                        }
+
+                    </main>
 
 
-                                    <h3>
-                                        Lesson content
-                                        is coming soon
-                                    </h3>
+                    <aside class="lesson-reader-sidebar">
+
+                        <div class="reader-sidebar-card">
+
+                            <span class="reader-sidebar-icon">
+                                <span data-lucide="sparkles"></span>
+                            </span>
+
+                            <h3>
+                                Read with purpose
+                            </h3>
+
+                            <p>
+                                Take your time. Think about
+                                what God is teaching you and
+                                how you can apply it.
+                            </p>
+
+                        </div>
 
 
-                                    <p>
-                                        This lesson has
-                                        been published,
-                                        but its sections
-                                        are not yet available.
-                                    </p>
+                        ${
+                            sections.length
+                                ? `
+                                    <div class="reader-section-list">
 
-                                </div>
-                            `
-                    }
+                                        <span class="reader-sidebar-heading">
+                                            In this lesson
+                                        </span>
+
+                                        ${sections
+                                            .map(
+                                                function (
+                                                    section,
+                                                    index
+                                                ) {
+
+                                                    return `
+
+                                                        <a
+                                                            href="#lesson-section-${index + 1}"
+                                                            class="reader-section-link"
+                                                        >
+
+                                                            <span>
+                                                                ${index + 1}
+                                                            </span>
+
+                                                            <strong>
+                                                                ${escapeHtml(
+                                                                    section.title ||
+                                                                    "Section " +
+                                                                    (index + 1)
+                                                                )}
+                                                            </strong>
+
+                                                        </a>
+
+                                                    `;
+
+                                                }
+                                            )
+                                            .join("")
+                                        }
+
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                    </aside>
 
                 </div>
 
 
-                <section
-                    class="
-                        lesson-completion
-                    "
-                >
+                <section class="lesson-completion-card">
 
-                    <h3>
-                        Finished reading?
-                    </h3>
+                    <div class="completion-icon">
+
+                        <span data-lucide="check"></span>
+
+                    </div>
 
 
-                    <p>
-                        When you have carefully read
-                        this lesson, continue to the
-                        reflection section.
-                    </p>
+                    <div class="completion-copy">
+
+                        <span class="eyebrow">
+                            Finished reading?
+                        </span>
+
+                        <h2>
+                            Take a moment to reflect.
+                        </h2>
+
+                        <p>
+                            Once you've carefully read the lesson,
+                            continue to the reflection step.
+                        </p>
+
+                    </div>
 
 
                     <button
-                        class="
-                            lesson-primary-button
-                        "
-                        id="
-                            lessonReadCompleteButton
-                        "
                         type="button"
+                        id="lessonReadCompleteButton"
+                        class="lesson-complete-button"
                     >
-                        I've Read This Lesson
-                        <span>→</span>
+
+                        <span>
+                            I've read this lesson
+                        </span>
+
+                        <span data-lucide="arrow-right"></span>
+
                     </button>
 
                 </section>
 
+
             </article>
+
         `;
+
     }
 
 
     /* ========================================================
-       15. READING PROGRESS
+       READING PROGRESS
        ======================================================== */
+
+    function removeProgressListener() {
+
+        if (
+            progressHandler
+        ) {
+
+            window.removeEventListener(
+                "scroll",
+                progressHandler
+            );
+
+            progressHandler =
+                null;
+
+        }
+
+    }
+
 
     function initialiseReadingProgress() {
 
-        const progressBar =
-            document.getElementById(
-                "readingProgressBar"
-            );
+        removeProgressListener();
 
 
-        if (!progressBar) {
+        const bar =
+            $("readingProgressBar");
+
+
+        if (!bar) {
 
             return;
+
         }
 
 
-        function updateProgress() {
+        progressHandler =
+            function () {
 
-            const scrollTop =
-                window.scrollY;
-
-
-            const documentHeight =
-                document.documentElement
-                    .scrollHeight;
+                const scrollTop =
+                    window.scrollY || 0;
 
 
-            const viewportHeight =
-                window.innerHeight;
+                const documentHeight =
+                    document.documentElement
+                        .scrollHeight;
 
 
-            const availableHeight =
-                documentHeight -
-                viewportHeight;
+                const viewport =
+                    window.innerHeight;
 
 
-            let progress =
-                0;
+                const available =
+                    documentHeight -
+                    viewport;
 
 
-            if (
-                availableHeight > 0
-            ) {
+                let progress =
+                    available > 0
+                        ? (
+                            scrollTop /
+                            available
+                        ) * 100
+                        : 0;
+
 
                 progress =
-                    (
-                        scrollTop /
-                        availableHeight
-                    ) * 100;
-            }
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            progress
+                        )
+                    );
 
 
-            progress =
-                Math.max(
-                    0,
-                    Math.min(
-                        progress,
-                        100
-                    )
-                );
+                bar.style.width =
+                    `${progress}%`;
 
-
-            progressBar.style.width =
-                `${progress}%`;
-        }
+            };
 
 
         window.addEventListener(
             "scroll",
-            updateProgress,
+            progressHandler,
             {
                 passive:
                     true
@@ -1132,12 +1335,273 @@ const LessonsPage = (function () {
         );
 
 
-        updateProgress();
+        progressHandler();
+
     }
 
 
     /* ========================================================
-       16. RENDER LESSONS
+       HUB EVENTS
+       ======================================================== */
+
+    function bindHubEvents(
+        container
+    ) {
+
+        container
+            .querySelectorAll(
+                "[data-open-lesson]"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const lessonId =
+                                String(
+                                    button.getAttribute(
+                                        "data-open-lesson"
+                                    ) || ""
+                                ).trim();
+
+
+                            console.log(
+                                "[LESSONS] Clicked lesson:",
+                                lessonId
+                            );
+
+
+                            if (!lessonId) {
+
+                                console.error(
+                                    "AFC Lessons: lesson button has no lesson ID."
+                                );
+
+                                return;
+
+                            }
+
+
+                            openLesson(
+                                lessonId,
+                                container
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       ERROR EVENTS
+       ======================================================== */
+
+    function bindErrorEvents(
+        container
+    ) {
+
+        const retry =
+            container.querySelector(
+                "#retryLessonsButton"
+            );
+
+
+        if (retry) {
+
+            retry.addEventListener(
+                "click",
+                function () {
+
+                    render(
+                        container
+                    );
+
+                }
+            );
+
+        }
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       READER EVENTS
+       ======================================================== */
+
+    function bindReaderEvents(
+        container
+    ) {
+
+        const back =
+            container.querySelector(
+                "#backToLessonsButton"
+            );
+
+
+        const complete =
+            container.querySelector(
+                "#lessonReadCompleteButton"
+            );
+
+
+        if (back) {
+
+            back.addEventListener(
+                "click",
+                function () {
+
+                    window.scrollTo(
+                        {
+                            top:
+                                0,
+                            behavior:
+                                "smooth"
+                        }
+                    );
+
+
+                    render(
+                        container
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (complete) {
+
+            complete.addEventListener(
+                "click",
+                function () {
+
+                    handleLessonCompletion(
+                        currentLessonId
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Sidebar section links.
+         */
+
+        container
+            .querySelectorAll(
+                ".reader-section-link"
+            )
+            .forEach(
+                function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        function (event) {
+
+                            event.preventDefault();
+
+
+                            const targetId =
+                                link
+                                    .getAttribute(
+                                        "href"
+                                    )
+                                    .replace(
+                                        "#",
+                                        ""
+                                    );
+
+
+                            const target =
+                                document.getElementById(
+                                    targetId
+                                );
+
+
+                            if (target) {
+
+                                target.scrollIntoView(
+                                    {
+                                        behavior:
+                                            "smooth",
+                                        block:
+                                            "start"
+                                    }
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /*
+         * Give each section an ID.
+         */
+
+        container
+            .querySelectorAll(
+                ".lesson-reading-section"
+            )
+            .forEach(
+                function (
+                    section,
+                    index
+                ) {
+
+                    section.id =
+                        `lesson-section-${index + 1}`;
+
+                }
+            );
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       COMPLETION
+       ======================================================== */
+
+    function handleLessonCompletion(
+        lessonId
+    ) {
+
+        console.log(
+            "Lesson completed:",
+            lessonId
+        );
+
+
+        alert(
+            "Great! The reflection step will be connected in Phase 4B."
+        );
+
+    }
+
+
+    /* ========================================================
+       RENDER HUB
        ======================================================== */
 
     async function render(
@@ -1147,7 +1611,11 @@ const LessonsPage = (function () {
         if (!container) {
 
             return;
+
         }
+
+
+        removeProgressListener();
 
 
         currentLessonId =
@@ -1158,14 +1626,26 @@ const LessonsPage = (function () {
             renderLoading();
 
 
+        refreshIcons();
+
+
         try {
+
+            if (window.AFC_Loader) {
+
+                AFC_Loader.show(
+                    "Loading weekly lessons..."
+                );
+
+            }
+
 
             lessons =
                 await fetchLessons();
 
 
             container.innerHTML =
-                renderLessonsHub(
+                renderHub(
                     lessons
                 );
 
@@ -1175,10 +1655,16 @@ const LessonsPage = (function () {
             );
 
 
+            if (window.AFC_Loader) {
+
+                AFC_Loader.hide();
+
+            }
+
         } catch (error) {
 
             console.error(
-                "[LESSONS ERROR]",
+                "[LESSONS LOAD ERROR]",
                 error
             );
 
@@ -1192,12 +1678,21 @@ const LessonsPage = (function () {
             bindErrorEvents(
                 container
             );
+
+
+            if (window.AFC_Loader) {
+
+                AFC_Loader.hide();
+
+            }
+
         }
+
     }
 
 
     /* ========================================================
-       17. OPEN LESSON
+       OPEN LESSON
        ======================================================== */
 
     async function openLesson(
@@ -1205,34 +1700,55 @@ const LessonsPage = (function () {
         container
     ) {
 
-        if (
-            !lessonId ||
-            !container
-        ) {
+        if (!lessonId || !container) {
 
             return;
+
         }
 
 
         currentLessonId =
-            lessonId;
+            String(
+                lessonId
+            ).trim();
+
+
+        removeProgressListener();
 
 
         container.innerHTML =
             renderLoading();
 
 
+        refreshIcons();
+
+
+        if (window.AFC_Loader) {
+
+            AFC_Loader.show(
+                "Opening lesson..."
+            );
+
+        }
+
+
         try {
 
-            const lessonData =
+            const data =
                 await fetchLesson(
-                    lessonId
+                    currentLessonId
                 );
 
 
+            console.log(
+                "[LESSONS] Lesson response:",
+                data
+            );
+
+
             container.innerHTML =
-                renderLessonReader(
-                    lessonData
+                renderReader(
+                    data
                 );
 
 
@@ -1242,6 +1758,13 @@ const LessonsPage = (function () {
 
 
             initialiseReadingProgress();
+
+
+            if (window.AFC_Loader) {
+
+                AFC_Loader.hide();
+
+            }
 
 
             window.scrollTo(
@@ -1257,7 +1780,7 @@ const LessonsPage = (function () {
         } catch (error) {
 
             console.error(
-                "[GET LESSON ERROR]",
+                "[LESSON OPEN ERROR]",
                 error
             );
 
@@ -1271,165 +1794,21 @@ const LessonsPage = (function () {
             bindErrorEvents(
                 container
             );
-        }
-    }
 
 
-    /* ========================================================
-       18. HUB EVENTS
-       ======================================================== */
+            if (window.AFC_Loader) {
 
-    function bindHubEvents(
-        container
-    ) {
+                AFC_Loader.hide();
 
-        const lessonButtons =
-            container.querySelectorAll(
-                "[data-open-lesson]"
-            );
-
-
-        lessonButtons.forEach(
-            function (
-                button
-            ) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        const lessonId =
-                            button.dataset
-                                .openLesson;
-
-
-                        openLesson(
-                            lessonId,
-                            container
-                        );
-                    }
-                );
             }
-        );
-    }
 
-
-    /* ========================================================
-       19. ERROR EVENTS
-       ======================================================== */
-
-    function bindErrorEvents(
-        container
-    ) {
-
-        const retryButton =
-            container.querySelector(
-                "#retryLessonsButton"
-            );
-
-
-        if (
-            retryButton
-        ) {
-
-            retryButton.addEventListener(
-                "click",
-                function () {
-
-                    render(
-                        container
-                    );
-                }
-            );
-        }
-    }
-
-
-    /* ========================================================
-       20. READER EVENTS
-       ======================================================== */
-
-    function bindReaderEvents(
-        container
-    ) {
-
-        const backButton =
-            container.querySelector(
-                "#backToLessonsButton"
-            );
-
-
-        const completeButton =
-            container.querySelector(
-                "#lessonReadCompleteButton"
-            );
-
-
-        if (
-            backButton
-        ) {
-
-            backButton.addEventListener(
-                "click",
-                function () {
-
-                    render(
-                        container
-                    );
-                }
-            );
         }
 
-
-        if (
-            completeButton
-        ) {
-
-            completeButton.addEventListener(
-                "click",
-                function () {
-
-                    handleLessonCompletion(
-                        currentLessonId
-                    );
-                }
-            );
-        }
     }
 
 
     /* ========================================================
-       21. LESSON COMPLETION
-       ======================================================== */
-
-    function handleLessonCompletion(
-        lessonId
-    ) {
-
-        /*
-         * Phase 4B will handle:
-         *
-         * - authentication check
-         * - reflection status
-         * - reflection questions
-         * - reflection submission
-         * - quiz unlocking
-         */
-
-        console.log(
-            "Lesson completed:",
-            lessonId
-        );
-
-
-        alert(
-            "Great! The reflection step will be connected next."
-        );
-    }
-
-
-    /* ========================================================
-       22. PUBLIC API
+       PUBLIC API
        ======================================================== */
 
     return {
@@ -1445,6 +1824,7 @@ const LessonsPage = (function () {
 
         fetchLesson:
             fetchLesson
+
     };
 
 
