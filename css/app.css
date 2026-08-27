@@ -1,37 +1,84 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   FILE: app.css
-   PURPOSE: Global application styling
+   PHASE A — APPLICATION FOUNDATION
    ============================================================ */
 
 
 /* ============================================================
-   GLOBAL
+   1. VARIABLES
    ============================================================ */
 
+:root {
+
+    --brand: #4a0754;
+    --brand-dark: #0a0016;
+    --brand-light: #f5eafa;
+
+    --accent: #ea580c;
+
+    --ink: #15131a;
+    --ink-soft: #57515c;
+    --ink-muted: #817a85;
+
+    --background: #f7f8fa;
+    --surface: #ffffff;
+    --surface-soft: #faf9fb;
+
+    --border: #ebe7ed;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 26px;
+
+    --shadow-sm:
+        0 2px 8px rgba(10, 0, 22, 0.05);
+
+    --shadow-md:
+        0 8px 25px rgba(10, 0, 22, 0.08);
+
+    --header-height: 68px;
+    --bottom-nav-height: 72px;
+
+}
+
+
+/* ============================================================
+   2. RESET
+   ============================================================ */
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
 html {
+
     scroll-behavior: smooth;
+
 }
 
 
 body {
 
-    margin: 0;
-
     min-height: 100vh;
 
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(74, 7, 84, 0.25),
-            transparent 35%
-        ),
-        #0a0016;
+    background: var(--background);
 
-    color: #ffffff;
+    color: var(--ink);
 
     font-family:
-        'DM Sans',
+        "DM Sans",
         sans-serif;
 
     -webkit-font-smoothing: antialiased;
@@ -41,8 +88,8 @@ body {
 
 button,
 input,
-textarea,
-select {
+select,
+textarea {
 
     font: inherit;
 
@@ -51,17 +98,16 @@ select {
 
 button {
 
+    border: 0;
+
     cursor: pointer;
 
 }
 
 
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
+button:focus-visible {
 
-    outline: 2px solid rgba(255,255,255,0.7);
+    outline: 3px solid rgba(74, 7, 84, 0.18);
 
     outline-offset: 2px;
 
@@ -69,7 +115,7 @@ select:focus-visible {
 
 
 /* ============================================================
-   HEADINGS
+   3. TYPOGRAPHY
    ============================================================ */
 
 h1,
@@ -80,367 +126,499 @@ h5,
 h6 {
 
     font-family:
-        'Bricolage Grotesque',
+        "Bricolage Grotesque",
         sans-serif;
 
-}
-
-
-/* ============================================================
-   SCROLLBAR
-   ============================================================ */
-
-::-webkit-scrollbar {
-
-    width: 7px;
+    line-height: 1.2;
 
 }
 
 
-::-webkit-scrollbar-track {
+p {
 
-    background: transparent;
-
-}
-
-
-::-webkit-scrollbar-thumb {
-
-    background: rgba(255,255,255,0.15);
-
-    border-radius: 999px;
-
-}
-
-
-::-webkit-scrollbar-thumb:hover {
-
-    background: rgba(255,255,255,0.25);
+    line-height: 1.55;
 
 }
 
 
 /* ============================================================
-   APP SHELL
+   4. APP
    ============================================================ */
 
-.portal-shell {
+#app {
 
     min-height: 100vh;
 
-    display: flex;
-
-}
-
-
-.portal-main {
-
-    flex: 1;
-
-    min-width: 0;
-
-}
-
-
-.portal-content {
-
-    width: 100%;
-
-    max-width: 1400px;
-
-    margin: 0 auto;
-
-    padding: 24px;
-
-}
-
-
-@media (max-width: 640px) {
-
-    .portal-content {
-
-        padding: 16px;
-
-    }
-
 }
 
 
 /* ============================================================
-   GLASS CARD
+   5. HEADER
    ============================================================ */
 
-.portal-card {
+.app-header {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    height: var(--header-height);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 20px;
 
     background:
-        rgba(255,255,255,0.045);
-
-    border:
-        1px solid rgba(255,255,255,0.08);
-
-    border-radius: 20px;
+        rgba(255, 255, 255, 0.94);
 
     backdrop-filter:
         blur(18px);
 
-    -webkit-backdrop-filter:
-        blur(18px);
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.header-left,
+.header-right {
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.header-left {
+
+    gap: 12px;
 
 }
 
 
 /* ============================================================
-   BUTTON
+   6. BRAND
    ============================================================ */
 
-.portal-button {
+.brand,
+.sidebar-brand {
 
-    display: inline-flex;
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.brand-mark {
+
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
 
     align-items: center;
 
     justify-content: center;
 
-    gap: 8px;
+    border-radius: 11px;
 
-    min-height: 44px;
-
-    padding:
-        0 18px;
-
-    border-radius: 12px;
-
-    border: 1px solid
-        rgba(255,255,255,0.08);
-
-    background:
-        linear-gradient(
-            135deg,
-            #4a0754,
-            #64106f
-        );
-
-    color: white;
-
-    font-weight: 600;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease,
-        box-shadow .2s ease;
-
-}
-
-
-.portal-button:hover {
-
-    transform:
-        translateY(-1px);
-
-    box-shadow:
-        0 10px 30px
-        rgba(74,7,84,0.35);
-
-}
-
-
-.portal-button:active {
-
-    transform:
-        translateY(0);
-
-}
-
-
-.portal-button:disabled {
-
-    opacity: .5;
-
-    cursor:
-        not-allowed;
-
-    transform:
-        none;
-
-}
-
-
-/* ============================================================
-   SECONDARY BUTTON
-   ============================================================ */
-
-.portal-button-secondary {
-
-    background:
-        rgba(255,255,255,0.06);
-
-    border:
-        1px solid rgba(255,255,255,0.10);
-
-}
-
-
-/* ============================================================
-   INPUT
-   ============================================================ */
-
-.portal-input {
-
-    width: 100%;
-
-    min-height: 46px;
-
-    padding:
-        0 14px;
-
-    border-radius: 12px;
-
-    border:
-        1px solid rgba(255,255,255,0.10);
-
-    background:
-        rgba(255,255,255,0.05);
+    background: var(--brand);
 
     color: white;
 
 }
 
 
-.portal-input::placeholder {
+.brand-mark svg {
 
-    color:
-        rgba(255,255,255,0.35);
+    width: 19px;
+
+    height: 19px;
 
 }
 
 
-.portal-input:focus {
+.brand-text {
 
-    border-color:
-        rgba(255,255,255,0.30);
+    display: flex;
 
-    background:
-        rgba(255,255,255,0.07);
+    flex-direction: column;
+
+}
+
+
+.brand-name {
+
+    font-family:
+        "Bricolage Grotesque",
+        sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: var(--brand-dark);
+
+}
+
+
+.brand-subtitle {
+
+    font-size: 11px;
+
+    color: var(--ink-muted);
 
 }
 
 
 /* ============================================================
-   MOBILE BOTTOM NAV
+   7. ICON BUTTON
    ============================================================ */
 
-.mobile-nav {
+.icon-button {
+
+    position: relative;
+
+    width: 40px;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: var(--ink);
+
+}
+
+
+.icon-button:hover {
+
+    background: var(--surface-soft);
+
+}
+
+
+.icon-button svg {
+
+    width: 20px;
+
+    height: 20px;
+
+    stroke-width: 2;
+
+}
+
+
+/* ============================================================
+   8. NOTIFICATION BADGE
+   ============================================================ */
+
+.notification-badge {
+
+    position: absolute;
+
+    top: 4px;
+
+    right: 3px;
+
+    min-width: 16px;
+
+    height: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 4px;
+
+    border-radius: 999px;
+
+    background: var(--danger);
+
+    color: white;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+/* ============================================================
+   9. SIDEBAR
+   ============================================================ */
+
+.sidebar {
 
     position: fixed;
 
-    left: 12px;
-
-    right: 12px;
-
-    bottom: 12px;
-
-    z-index: 100;
-
-    height: 68px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(20,0,31,0.92);
-
-    border:
-        1px solid rgba(255,255,255,0.10);
-
-    backdrop-filter:
-        blur(20px);
-
-    -webkit-backdrop-filter:
-        blur(20px);
-
-    box-shadow:
-        0 15px 50px
-        rgba(0,0,0,0.35);
-
-}
-
-
-@media (min-width: 768px) {
-
-    .mobile-nav {
-
-        display: none;
-
-    }
-
-}
-
-
-/* ============================================================
-   DESKTOP SIDEBAR
-   ============================================================ */
-
-.desktop-sidebar {
-
-    width: 260px;
-
-    flex-shrink: 0;
-
-    min-height: 100vh;
-
-    position: sticky;
-
     top: 0;
+    left: 0;
+
+    z-index: 1200;
+
+    width: 270px;
 
     height: 100vh;
 
-    overflow-y: auto;
+    display: flex;
 
-    background:
-        rgba(10,0,22,0.85);
+    flex-direction: column;
+
+    background: var(--surface);
 
     border-right:
-        1px solid rgba(255,255,255,0.07);
+        1px solid var(--border);
+
+    transform:
+        translateX(0);
 
 }
 
 
-@media (max-width: 767px) {
+.sidebar-header {
 
-    .desktop-sidebar {
+    height: var(--header-height);
 
-        display: none;
+    display: flex;
 
-    }
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.sidebar-navigation {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 20px 12px;
+
+}
+
+
+.nav-item {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: var(--ink-soft);
+
+    text-align: left;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+
+}
+
+
+.nav-item svg {
+
+    width: 19px;
+
+    height: 19px;
+
+}
+
+
+.nav-item:hover {
+
+    background: var(--surface-soft);
+
+    color: var(--brand);
+
+}
+
+
+.nav-item.active {
+
+    background: var(--brand-light);
+
+    color: var(--brand);
+
+    font-weight: 600;
+
+}
+
+
+.sidebar-footer {
+
+    padding: 15px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+.sidebar-action {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+
+    background: var(--surface-soft);
+
+    color: var(--ink-soft);
+
+}
+
+
+.sidebar-action svg {
+
+    width: 18px;
+
+    height: 18px;
 
 }
 
 
 /* ============================================================
-   MOBILE CONTENT SPACE
+   10. SIDEBAR OVERLAY
    ============================================================ */
 
-@media (max-width: 767px) {
-
-    .portal-main {
-
-        padding-bottom: 90px;
-
-    }
-
-}
-
-
-/* ============================================================
-   MODAL
-   ============================================================ */
-
-.modal-backdrop {
+.sidebar-overlay {
 
     position: fixed;
 
     inset: 0;
 
-    z-index: 1000;
+    z-index: 1100;
+
+    background:
+        rgba(10, 0, 22, 0.45);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease;
+
+}
+
+
+.sidebar-overlay.active {
+
+    opacity: 1;
+
+    pointer-events: auto;
+
+}
+
+
+/* ============================================================
+   11. MAIN CONTENT
+   ============================================================ */
+
+.main-content {
+
+    min-height: 100vh;
+
+    margin-left: 270px;
+
+    padding-top: var(--header-height);
+
+}
+
+
+.page-container {
+
+    width: 100%;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 28px;
+
+}
+
+
+/* ============================================================
+   12. BOTTOM NAVIGATION
+   ============================================================ */
+
+.bottom-navigation {
+
+    display: none;
+
+}
+
+
+/* ============================================================
+   13. GLOBAL LOADING
+   ============================================================ */
+
+.global-loading {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 3000;
 
     display: flex;
 
@@ -448,68 +626,120 @@ h6 {
 
     justify-content: center;
 
-    padding: 20px;
-
     background:
-        rgba(0,0,0,0.70);
+        rgba(247, 248, 250, 0.78);
 
     backdrop-filter:
-        blur(8px);
+        blur(5px);
 
 }
 
 
-.modal-panel {
+.loading-card {
 
-    width: 100%;
+    min-width: 130px;
 
-    max-width: 520px;
+    padding: 20px;
 
-    max-height: 90vh;
+    display: flex;
 
-    overflow-y: auto;
+    flex-direction: column;
 
-    border-radius: 24px;
+    align-items: center;
 
-    background:
-        #160020;
+    gap: 10px;
 
-    border:
-        1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-md);
 
-    box-shadow:
-        0 30px 100px
-        rgba(0,0,0,0.5);
+    background: white;
+
+    box-shadow: var(--shadow-md);
+
+}
+
+
+.loading-card p {
+
+    font-size: 13px;
+
+    color: var(--ink-soft);
+
+}
+
+
+.loading-spinner {
+
+    width: 28px;
+
+    height: 28px;
+
+    border: 3px solid var(--border);
+
+    border-top-color: var(--brand);
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.8s linear infinite;
+
+}
+
+
+@keyframes spin {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
 
 }
 
 
 /* ============================================================
-   TOAST
+   14. TOAST
    ============================================================ */
 
-.portal-toast {
+.toast-container {
 
-    min-width: 260px;
+    position: fixed;
 
-    max-width: 360px;
+    right: 20px;
+
+    bottom: 20px;
+
+    z-index: 4000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    width: min(
+        360px,
+        calc(100vw - 40px)
+    );
+
+}
+
+
+.toast {
 
     padding: 14px 16px;
 
     border-radius: 14px;
 
-    background:
-        rgba(25,0,35,0.95);
+    background: var(--brand-dark);
 
-    border:
-        1px solid rgba(255,255,255,0.10);
+    color: white;
 
-    box-shadow:
-        0 15px 40px
-        rgba(0,0,0,0.35);
+    box-shadow: var(--shadow-md);
+
+    font-size: 13px;
 
     animation:
-        toastIn .25s ease;
+        toastIn 0.25s ease;
 
 }
 
@@ -521,7 +751,7 @@ h6 {
         opacity: 0;
 
         transform:
-            translateY(-10px);
+            translateY(10px);
 
     }
 
@@ -538,35 +768,327 @@ h6 {
 
 
 /* ============================================================
-   LOADING
+   15. MODAL ROOT
    ============================================================ */
 
-.portal-spinner {
+.modal-root {
 
-    width: 24px;
+    position: relative;
 
-    height: 24px;
-
-    border:
-        3px solid rgba(255,255,255,0.15);
-
-    border-top-color:
-        white;
-
-    border-radius: 50%;
-
-    animation:
-        portalSpin .7s linear infinite;
+    z-index: 5000;
 
 }
 
 
-@keyframes portalSpin {
+.modal-backdrop {
 
-    to {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(10, 0, 22, 0.5);
+
+    backdrop-filter:
+        blur(5px);
+
+}
+
+
+.modal {
+
+    width: min(
+        500px,
+        100%
+    );
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    border-radius: var(--radius-lg);
+
+    background: white;
+
+    box-shadow: var(--shadow-md);
+
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 18px 20px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.modal-body {
+
+    padding: 20px;
+
+}
+
+
+.modal-footer {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 16px 20px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+/* ============================================================
+   16. RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    :root {
+
+        --header-height: 62px;
+
+        --bottom-nav-height: 70px;
+
+    }
+
+
+    .app-header {
+
+        padding:
+            0 14px;
+
+    }
+
+
+    .brand-mark {
+
+        width: 34px;
+
+        height: 34px;
+
+    }
+
+
+    .brand-name {
+
+        font-size: 14px;
+
+    }
+
+
+    .brand-subtitle {
+
+        font-size: 10px;
+
+    }
+
+
+    .sidebar {
+
+        width: 280px;
 
         transform:
-            rotate(360deg);
+            translateX(-100%);
+
+        transition:
+            transform 0.25s ease;
+
+    }
+
+
+    .sidebar.open {
+
+        transform:
+            translateX(0);
+
+    }
+
+
+    .main-content {
+
+        margin-left: 0;
+
+        padding-bottom:
+            calc(
+                var(--bottom-nav-height) +
+                env(safe-area-inset-bottom)
+            );
+
+    }
+
+
+    .page-container {
+
+        padding: 20px 16px;
+
+    }
+
+
+    .bottom-navigation {
+
+        position: fixed;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        z-index: 1000;
+
+        height:
+            calc(
+                var(--bottom-nav-height) +
+                env(safe-area-inset-bottom)
+            );
+
+        padding:
+            6px 10px
+            env(safe-area-inset-bottom);
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(5, 1fr);
+
+        align-items: center;
+
+        background:
+            rgba(255, 255, 255, 0.96);
+
+        backdrop-filter:
+            blur(18px);
+
+        border-top:
+            1px solid var(--border);
+
+    }
+
+
+    .bottom-nav-item {
+
+        height: 56px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 4px;
+
+        background: transparent;
+
+        color: var(--ink-muted);
+
+        font-size: 10px;
+
+    }
+
+
+    .bottom-nav-item svg {
+
+        width: 20px;
+
+        height: 20px;
+
+    }
+
+
+    .bottom-nav-item.active {
+
+        color: var(--brand);
+
+    }
+
+
+    .main-action-button {
+
+        width: 50px;
+
+        height: 50px;
+
+        justify-self: center;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: var(--brand);
+
+        color: white;
+
+        box-shadow:
+            0 7px 18px
+            rgba(74, 7, 84, 0.28);
+
+        transform:
+            translateY(-8px);
+
+    }
+
+
+    .main-action-button svg {
+
+        width: 22px;
+
+        height: 22px;
+
+    }
+
+
+    .toast-container {
+
+        right: 12px;
+
+        bottom:
+            calc(
+                var(--bottom-nav-height) +
+                15px
+            );
+
+        width:
+            calc(100vw - 24px);
+
+    }
+
+}
+
+
+@media (min-width: 769px) {
+
+    #menu-button {
+
+        display: none;
 
     }
 
