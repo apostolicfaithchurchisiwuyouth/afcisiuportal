@@ -1,6 +1,21 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   HOME PAGE CONTROLLER
+   PHASE 4A.1 — HOME PAGE CONTROLLER
+
+   PURPOSE:
+   ------------------------------------------------------------
+   Controls the existing index.html home page.
+
+   This version is aligned with the actual IDs and structure
+   currently present in index.html.
+
+   IMPORTANT:
+   ------------------------------------------------------------
+   This file does NOT invent a new lesson structure.
+
+   The lesson preview on the home page is populated through
+   the existing lessons module/API integration.
+
    ============================================================ */
 
 (function () {
@@ -9,17 +24,21 @@
 
 
     /* ========================================================
-       DOM HELPERS
+       1. DOM HELPERS
     ======================================================== */
 
     function $(id) {
+
         return document.getElementById(id);
+
     }
 
 
     function show(element) {
 
-        if (!element) return;
+        if (!element) {
+            return;
+        }
 
         element.hidden = false;
 
@@ -28,7 +47,9 @@
 
     function hide(element) {
 
-        if (!element) return;
+        if (!element) {
+            return;
+        }
 
         element.hidden = true;
 
@@ -36,7 +57,7 @@
 
 
     /* ========================================================
-       ICONS
+       2. ICONS
     ======================================================== */
 
     function refreshHomeIcons() {
@@ -65,7 +86,7 @@
 
 
     /* ========================================================
-       AUTHENTICATION
+       3. AUTHENTICATION
     ======================================================== */
 
     function getUser() {
@@ -91,6 +112,7 @@
         }
 
         return null;
+
     }
 
 
@@ -117,28 +139,36 @@
         }
 
         return false;
+
     }
 
 
     /* ========================================================
-       USER NAME
+       4. USER NAME
     ======================================================== */
 
     function getFirstName(user) {
 
         if (!user) {
+
             return "Friend";
+
         }
 
 
         const firstName =
             String(
-                user.first_name || ""
+                user.first_name ||
+                user.firstName ||
+                ""
             ).trim();
 
 
         if (firstName) {
-            return firstName.split(/\s+/)[0];
+
+            return firstName
+                .split(/\s+/)[0];
+
         }
 
 
@@ -146,28 +176,35 @@
             String(
                 user.name ||
                 user.full_name ||
+                user.fullName ||
                 user.displayName ||
                 ""
             ).trim();
 
 
         if (fullName) {
-            return fullName.split(/\s+/)[0];
+
+            return fullName
+                .split(/\s+/)[0];
+
         }
 
 
         return "Friend";
+
     }
 
 
     /* ========================================================
-       AVATAR
+       5. USER AVATAR
     ======================================================== */
 
     function getAvatarUrl(user) {
 
         if (!user) {
+
             return "";
+
         }
 
 
@@ -203,46 +240,71 @@
         }
 
 
-        return "";
+        const possibleAvatar =
+
+            user.avatar ||
+            user.avatar_url ||
+            user.avatarUrl ||
+            user.photo ||
+            user.photo_url ||
+            user.photoUrl ||
+            user.profile_picture ||
+            "";
+
+
+        return String(
+            possibleAvatar
+        ).trim();
+
     }
 
 
     /* ========================================================
-       HEADER AVATAR
+       6. CREATE AVATAR CONTENT
     ======================================================== */
 
-    function renderHeaderAvatar(user) {
-
-        const container =
-            $("headerAvatarLetter");
-
-
-        if (!container) {
-            return;
-        }
-
+    function getUserInitial(user) {
 
         const firstName =
             getFirstName(user);
 
 
-        const letter =
+        return (
             firstName
                 .charAt(0)
-                .toUpperCase() || "A";
+                .toUpperCase() ||
+            "A"
+        );
+
+    }
 
 
-        const avatarUrl =
-            getAvatarUrl(user);
+    function createAvatarImage(
+        container,
+        avatarUrl,
+        initial,
+        className,
+        altText
+    ) {
+
+        if (!container) {
+
+            return;
+
+        }
 
 
         container.innerHTML = "";
 
 
+        /*
+         * No image available.
+         */
+
         if (!avatarUrl) {
 
             container.textContent =
-                letter;
+                initial;
 
             return;
 
@@ -254,12 +316,11 @@
 
 
         image.className =
-            "header-avatar-image";
+            className;
 
 
         image.alt =
-            firstName +
-            "'s profile picture";
+            altText;
 
 
         image.src =
@@ -272,45 +333,96 @@
                 container.innerHTML = "";
 
                 container.textContent =
-                    letter;
+                    initial;
 
             };
 
 
-        container.appendChild(image);
+        container.appendChild(
+            image
+        );
 
     }
 
 
     /* ========================================================
-       GUEST HEADER AVATAR
+       7. HEADER ACCOUNT AVATAR
     ======================================================== */
 
-    function renderGuestHeaderAvatar() {
+    function renderHeaderAvatar(user) {
+
+        /*
+         * IMPORTANT:
+         * This matches index.html:
+         *
+         * id="headerAvatarContent"
+         */
 
         const container =
-            $("headerAvatarLetter");
+            $("headerAvatarContent");
 
 
         if (!container) {
+
             return;
+
         }
 
 
-        container.innerHTML = "";
+        const firstName =
+            getFirstName(user);
 
 
-        const icon =
-            document.createElement("span");
+        const initial =
+            getUserInitial(user);
 
 
-        icon.setAttribute(
-            "data-lucide",
-            "user-round"
+        const avatarUrl =
+            getAvatarUrl(user);
+
+
+        createAvatarImage(
+
+            container,
+
+            avatarUrl,
+
+            initial,
+
+            "header-avatar-image",
+
+            firstName +
+            "'s profile picture"
+
         );
 
+    }
 
-        container.appendChild(icon);
+
+    function renderGuestHeaderAvatar() {
+
+        /*
+         * IMPORTANT:
+         * This matches index.html:
+         *
+         * id="headerAvatarContent"
+         */
+
+        const container =
+            $("headerAvatarContent");
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            `
+            <span data-lucide="user-round"></span>
+            `;
 
 
         refreshHomeIcons();
@@ -319,7 +431,7 @@
 
 
     /* ========================================================
-       SIDEBAR AVATAR
+       8. SIDEBAR AVATAR
     ======================================================== */
 
     function renderSidebarAvatar(user) {
@@ -329,7 +441,9 @@
 
 
         if (!container) {
+
             return;
+
         }
 
 
@@ -337,64 +451,34 @@
             getFirstName(user);
 
 
-        const letter =
-            firstName
-                .charAt(0)
-                .toUpperCase() || "A";
+        const initial =
+            getUserInitial(user);
 
 
         const avatarUrl =
             getAvatarUrl(user);
 
 
-        container.innerHTML = "";
+        createAvatarImage(
 
+            container,
 
-        if (!avatarUrl) {
+            avatarUrl,
 
-            container.textContent =
-                letter;
+            initial,
 
-            return;
+            "sidebar-avatar-image",
 
-        }
-
-
-        const image =
-            document.createElement("img");
-
-
-        image.className =
-            "bottom-avatar-image";
-
-
-        image.alt =
             firstName +
-            "'s profile picture";
+            "'s profile picture"
 
-
-        image.src =
-            avatarUrl;
-
-
-        image.onerror =
-            function () {
-
-                container.innerHTML = "";
-
-                container.textContent =
-                    letter;
-
-            };
-
-
-        container.appendChild(image);
+        );
 
     }
 
 
     /* ========================================================
-       BOTTOM AVATAR
+       9. BOTTOM AVATAR
     ======================================================== */
 
     function renderBottomAvatar(user) {
@@ -404,7 +488,9 @@
 
 
         if (!container) {
+
             return;
+
         }
 
 
@@ -412,65 +498,35 @@
             getFirstName(user);
 
 
-        const letter =
-            firstName
-                .charAt(0)
-                .toUpperCase() || "A";
+        const initial =
+            getUserInitial(user);
 
 
         const avatarUrl =
             getAvatarUrl(user);
 
 
-        container.innerHTML = "";
+        createAvatarImage(
 
+            container,
 
-        if (!avatarUrl) {
+            avatarUrl,
 
-            container.textContent =
-                letter;
+            initial,
 
-            return;
+            "bottom-avatar-image",
 
-        }
-
-
-        const image =
-            document.createElement("img");
-
-
-        image.className =
-            "bottom-avatar-image";
-
-
-        image.alt =
             firstName +
-            "'s profile picture";
+            "'s profile picture"
 
-
-        image.src =
-            avatarUrl;
-
-
-        image.onerror =
-            function () {
-
-                container.innerHTML = "";
-
-                container.textContent =
-                    letter;
-
-            };
-
-
-        container.appendChild(image);
+        );
 
     }
 
 
     /* ========================================================
-       MOBILE MENU
-       ======================================================== */
+       10. MOBILE MENU
+    ======================================================== */
 
     function openMobileMenu() {
 
@@ -487,16 +543,22 @@
 
 
         if (!sidebar) {
+
             return;
+
         }
 
 
-        sidebar.classList.add("open");
+        sidebar.classList.add(
+            "open"
+        );
 
 
         if (overlay) {
 
-            overlay.classList.add("active");
+            overlay.classList.add(
+                "active"
+            );
 
         }
 
@@ -519,26 +581,7 @@
                 "Close navigation menu"
             );
 
-
-            const icon =
-                button.querySelector(
-                    "[data-lucide]"
-                );
-
-
-            if (icon) {
-
-                icon.setAttribute(
-                    "data-lucide",
-                    "x"
-                );
-
-            }
-
         }
-
-
-        refreshHomeIcons();
 
     }
 
@@ -593,26 +636,7 @@
                 "Open navigation menu"
             );
 
-
-            const icon =
-                button.querySelector(
-                    "[data-lucide]"
-                );
-
-
-            if (icon) {
-
-                icon.setAttribute(
-                    "data-lucide",
-                    "menu"
-                );
-
-            }
-
         }
-
-
-        refreshHomeIcons();
 
     }
 
@@ -624,12 +648,16 @@
 
 
         if (!sidebar) {
+
             return;
+
         }
 
 
         if (
-            sidebar.classList.contains("open")
+            sidebar.classList.contains(
+                "open"
+            )
         ) {
 
             closeMobileMenu();
@@ -644,7 +672,7 @@
 
 
     /* ========================================================
-       NAVIGATION
+       11. NAVIGATION
     ======================================================== */
 
     function setupNavigation() {
@@ -668,7 +696,9 @@
         if (menuButton) {
 
             menuButton.addEventListener(
+
                 "click",
+
                 function (event) {
 
                     event.preventDefault();
@@ -678,12 +708,16 @@
                     toggleMobileMenu();
 
                 }
+
             );
 
 
             menuButton.setAttribute(
+
                 "aria-expanded",
+
                 "false"
+
             );
 
         }
@@ -696,12 +730,15 @@
         if (overlay) {
 
             overlay.addEventListener(
+
                 "click",
+
                 function () {
 
                     closeMobileMenu();
 
                 }
+
             );
 
         }
@@ -714,15 +751,21 @@
         if (sidebar) {
 
             sidebar.addEventListener(
+
                 "click",
+
                 function (event) {
 
                     const link =
-                        event.target.closest("a");
+                        event.target.closest(
+                            "a"
+                        );
 
 
                     if (!link) {
+
                         return;
+
                     }
 
 
@@ -735,17 +778,20 @@
                     }
 
                 }
+
             );
 
         }
 
 
         /* ----------------------------------------------------
-           ESCAPE
+           ESCAPE KEY
         ---------------------------------------------------- */
 
         document.addEventListener(
+
             "keydown",
+
             function (event) {
 
                 if (
@@ -757,15 +803,18 @@
                 }
 
             }
+
         );
 
 
         /* ----------------------------------------------------
-           RESIZE
+           WINDOW RESIZE
         ---------------------------------------------------- */
 
         window.addEventListener(
+
             "resize",
+
             function () {
 
                 if (
@@ -777,13 +826,14 @@
                 }
 
             }
+
         );
 
     }
 
 
     /* ========================================================
-       HEADER ACCOUNT
+       12. HEADER ACCOUNT
     ======================================================== */
 
     function updateHeaderAccount(
@@ -796,7 +846,9 @@
 
 
         if (!accountButton) {
+
             return;
+
         }
 
 
@@ -807,8 +859,11 @@
 
 
             accountButton.setAttribute(
+
                 "aria-label",
+
                 "Open your profile"
+
             );
 
 
@@ -822,7 +877,9 @@
             );
 
 
-            renderHeaderAvatar(user);
+            renderHeaderAvatar(
+                user
+            );
 
         } else {
 
@@ -831,8 +888,11 @@
 
 
             accountButton.setAttribute(
+
                 "aria-label",
+
                 "Login"
+
             );
 
 
@@ -850,72 +910,67 @@
 
         }
 
-
-        /* Keep avatar perfectly circular */
-
-        accountButton.style.width =
-            "42px";
-
-        accountButton.style.height =
-            "42px";
-
-        accountButton.style.minWidth =
-            "42px";
-
-        accountButton.style.maxWidth =
-            "42px";
-
-        accountButton.style.minHeight =
-            "42px";
-
-        accountButton.style.maxHeight =
-            "42px";
-
-        accountButton.style.flex =
-            "0 0 42px";
-
-        accountButton.style.borderRadius =
-            "50%";
-
-        accountButton.style.overflow =
-            "hidden";
-
     }
 
 
     /* ========================================================
-       NOTIFICATION
+       13. NOTIFICATIONS
     ======================================================== */
 
-    function updateNotificationHeader() {
+    function updateNotificationHeader(
+        loggedIn
+    ) {
+
+        /*
+         * IMPORTANT:
+         * Matches index.html:
+         *
+         * id="headerNotificationButton"
+         */
 
         const notificationButton =
-            document.querySelector(
-                ".header-notification-button"
-            );
+            $("headerNotificationButton");
 
 
         if (!notificationButton) {
+
             return;
+
         }
 
 
         notificationButton.hidden =
-            false;
-
-
-        notificationButton.style.display =
-            "inline-flex";
-
-
-        notificationButton.href =
-            "pages/notifications.html";
+            !loggedIn;
 
     }
 
 
     /* ========================================================
-       BOTTOM PROFILE
+       14. MEMBER-ONLY ELEMENTS
+    ======================================================== */
+
+    function updateMemberOnlyElements(
+        loggedIn
+    ) {
+
+        document
+            .querySelectorAll(
+                ".member-only"
+            )
+            .forEach(
+                function (element) {
+
+                    element.hidden =
+                        !loggedIn;
+
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       15. BOTTOM PROFILE
     ======================================================== */
 
     function updateBottomProfile(
@@ -938,9 +993,6 @@
                 guestProfile.hidden =
                     true;
 
-                guestProfile.style.display =
-                    "none";
-
             }
 
 
@@ -949,13 +1001,12 @@
                 memberProfile.hidden =
                     false;
 
-                memberProfile.style.display =
-                    "flex";
-
             }
 
 
-            renderBottomAvatar(user);
+            renderBottomAvatar(
+                user
+            );
 
         } else {
 
@@ -963,9 +1014,6 @@
 
                 memberProfile.hidden =
                     true;
-
-                memberProfile.style.display =
-                    "none";
 
             }
 
@@ -975,9 +1023,6 @@
                 guestProfile.hidden =
                     false;
 
-                guestProfile.style.display =
-                    "flex";
-
             }
 
         }
@@ -986,40 +1031,7 @@
 
 
     /* ========================================================
-       MEMBER-ONLY ELEMENTS
-    ======================================================== */
-
-    function updateMemberOnlyElements(
-        loggedIn
-    ) {
-
-        document
-            .querySelectorAll(".member-only")
-            .forEach(
-                function (element) {
-
-                    if (loggedIn) {
-
-                        element.classList.add(
-                            "member-visible"
-                        );
-
-                    } else {
-
-                        element.classList.remove(
-                            "member-visible"
-                        );
-
-                    }
-
-                }
-            );
-
-    }
-
-
-    /* ========================================================
-       PERSONALIZED HOME
+       16. PERSONALIZED HOME
     ======================================================== */
 
     function updatePersonalizedHome() {
@@ -1032,8 +1044,14 @@
             getUser();
 
 
+        /*
+         * A member is active only when authentication
+         * and user information are both available.
+         */
+
         const memberActive =
-            loggedIn && !!user;
+            loggedIn &&
+            !!user;
 
 
         const guestHero =
@@ -1069,28 +1087,45 @@
 
 
         /* ----------------------------------------------------
-           MEMBER
+           MEMBER STATE
         ---------------------------------------------------- */
 
         if (memberActive) {
 
             const firstName =
-                getFirstName(user);
+                getFirstName(
+                    user
+                );
 
 
-            hide(guestHero);
-
-            show(memberHero);
-
-
-            hide(guestInformation);
-
-            show(memberDashboard);
+            hide(
+                guestHero
+            );
 
 
-            hide(sidebarGuest);
+            show(
+                memberHero
+            );
 
-            show(sidebarMember);
+
+            hide(
+                guestInformation
+            );
+
+
+            show(
+                memberDashboard
+            );
+
+
+            hide(
+                sidebarGuest
+            );
+
+
+            show(
+                sidebarMember
+            );
 
 
             if (welcomeUserName) {
@@ -1109,30 +1144,47 @@
             }
 
 
-            renderSidebarAvatar(user);
+            renderSidebarAvatar(
+                user
+            );
 
         }
 
 
         /* ----------------------------------------------------
-           GUEST
+           GUEST STATE
         ---------------------------------------------------- */
 
         else {
 
-            show(guestHero);
-
-            hide(memberHero);
-
-
-            show(guestInformation);
-
-            hide(memberDashboard);
+            show(
+                guestHero
+            );
 
 
-            show(sidebarGuest);
+            hide(
+                memberHero
+            );
 
-            hide(sidebarMember);
+
+            show(
+                guestInformation
+            );
+
+
+            hide(
+                memberDashboard
+            );
+
+
+            show(
+                sidebarGuest
+            );
+
+
+            hide(
+                sidebarMember
+            );
 
 
             if (welcomeUserName) {
@@ -1145,6 +1197,10 @@
         }
 
 
+        /*
+         * Shared UI updates.
+         */
+
         updateMemberOnlyElements(
             memberActive
         );
@@ -1156,7 +1212,9 @@
         );
 
 
-        updateNotificationHeader();
+        updateNotificationHeader(
+            memberActive
+        );
 
 
         updateBottomProfile(
@@ -1171,216 +1229,258 @@
 
 
     /* ========================================================
-       LOGOUT
+       17. LOGOUT
     ======================================================== */
 
-   async function performLogout() {
+    async function performLogout() {
 
-    /*
-     * Prevent multiple logout requests.
-     */
-
-    if (performLogout.isRunning) {
-        return;
-    }
-
-    performLogout.isRunning = true;
-
-
-    /*
-     * Close mobile navigation first.
-     */
-
-    closeMobileMenu();
-
-
-    /*
-     * Find every logout button on the page.
-     */
-
-    const logoutButtons =
-        document.querySelectorAll(
-            "#sidebarLogoutButton, #heroLogoutButton, [data-logout]"
-        );
-
-
-    /*
-     * Save the original content so it can be
-     * restored if something goes wrong.
-     */
-
-    const originalContents = [];
-
-
-    logoutButtons.forEach(
-        function (button) {
-
-            originalContents.push({
-                button: button,
-                html: button.innerHTML
-            });
-
-
-            button.disabled = true;
-
-            button.setAttribute(
-                "aria-busy",
-                "true"
-            );
-
-
-            button.classList.add(
-                "is-loading"
-            );
-
-
-            button.innerHTML = `
-                <span class="button-spinner"
-                      aria-hidden="true"></span>
-                <span>Logging out...</span>
-            `;
-
-        }
-    );
-
-
-    /*
-     * Give the browser a moment to paint the
-     * loading state before starting the logout.
-     */
-
-    await new Promise(
-        function (resolve) {
-
-            requestAnimationFrame(
-                function () {
-
-                    requestAnimationFrame(
-                        resolve
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    try {
 
         /*
-         * Use the central authentication system.
+         * Prevent multiple simultaneous requests.
          */
 
         if (
-            window.AUTH &&
-            typeof window.AUTH.logout === "function"
+            performLogout.isRunning
         ) {
 
-            await window.AUTH.logout();
-
-        } else if (
-            window.AUTH &&
-            typeof window.AUTH.clear === "function"
-        ) {
-
-            /*
-             * Emergency fallback.
-             */
-
-            window.AUTH.clear();
+            return;
 
         }
 
 
-        /*
-         * Update the current page before redirecting.
-         */
-
-        updatePersonalizedHome();
+        performLogout.isRunning =
+            true;
 
 
-        /*
-         * Short delay so the user actually sees
-         * the interaction instead of getting an
-         * instant page replacement.
-         */
-
-        await new Promise(
-            function (resolve) {
-
-                setTimeout(
-                    resolve,
-                    350
-                );
-
-            }
-        );
+        closeMobileMenu();
 
 
-        window.location.replace(
-            "index.html"
-        );
+        const logoutButtons =
+            document.querySelectorAll(
+
+                "#sidebarLogoutButton, " +
+                "#heroLogoutButton, " +
+                "[data-logout]"
+
+            );
 
 
-    } catch (error) {
-
-        console.error(
-            "AFC Portal: logout failed.",
-            error
-        );
+        const originalContents =
+            [];
 
 
-        /*
-         * Restore the buttons if logout fails.
-         */
+        logoutButtons.forEach(
 
-        originalContents.forEach(
-            function (item) {
+            function (button) {
 
-                item.button.innerHTML =
-                    item.html;
+                originalContents.push({
+
+                    button:
+                        button,
+
+                    html:
+                        button.innerHTML
+
+                });
 
 
-                item.button.disabled =
-                    false;
+                button.disabled =
+                    true;
 
 
-                item.button.removeAttribute(
-                    "aria-busy"
+                button.setAttribute(
+
+                    "aria-busy",
+
+                    "true"
+
                 );
 
 
-                item.button.classList.remove(
+                button.classList.add(
                     "is-loading"
                 );
 
+
+                button.innerHTML =
+                    `
+                    <span
+                        class="button-spinner"
+                        aria-hidden="true">
+                    </span>
+
+                    <span>
+                        Logging out...
+                    </span>
+                    `;
+
             }
+
         );
 
 
         /*
-         * Allow another attempt.
+         * Allow loading state to render.
          */
 
-        performLogout.isRunning =
-            false;
+        await new Promise(
 
+            function (resolve) {
 
-        /*
-         * Give the user a visible error.
-         */
+                requestAnimationFrame(
 
-        console.warn(
-            "Logout could not be completed."
+                    function () {
+
+                        requestAnimationFrame(
+                            resolve
+                        );
+
+                    }
+
+                );
+
+            }
+
         );
+
+
+        try {
+
+
+            /* -----------------------------------------------
+               PRIMARY LOGOUT
+            ----------------------------------------------- */
+
+            if (
+
+                window.AUTH &&
+
+                typeof window.AUTH.logout ===
+                    "function"
+
+            ) {
+
+                await window.AUTH.logout();
+
+            }
+
+
+            /* -----------------------------------------------
+               FALLBACK LOGOUT
+            ----------------------------------------------- */
+
+            else if (
+
+                window.AUTH &&
+
+                typeof window.AUTH.clear ===
+                    "function"
+
+            ) {
+
+                await window.AUTH.clear();
+
+            }
+
+
+            /*
+             * Update UI immediately.
+             */
+
+            updatePersonalizedHome();
+
+
+            /*
+             * Small visual delay.
+             */
+
+            await new Promise(
+
+                function (resolve) {
+
+                    setTimeout(
+
+                        resolve,
+
+                        350
+
+                    );
+
+                }
+
+            );
+
+
+            /*
+             * Return to home.
+             */
+
+            window.location.replace(
+                "index.html"
+            );
+
+
+        } catch (error) {
+
+
+            console.error(
+
+                "AFC Portal: logout failed.",
+
+                error
+
+            );
+
+
+            /*
+             * Restore buttons.
+             */
+
+            originalContents.forEach(
+
+                function (item) {
+
+                    item.button.innerHTML =
+                        item.html;
+
+
+                    item.button.disabled =
+                        false;
+
+
+                    item.button.removeAttribute(
+                        "aria-busy"
+                    );
+
+
+                    item.button.classList.remove(
+                        "is-loading"
+                    );
+
+                }
+
+            );
+
+
+            performLogout.isRunning =
+                false;
+
+
+            alert(
+                "Logout could not be completed. Please try again."
+            );
+
+        }
 
     }
 
-}
+
+    performLogout.isRunning =
+        false;
+
 
     /* ========================================================
-       LOGOUT BUTTONS
+       18. LOGOUT BUTTONS
     ======================================================== */
 
     function setupLogoutButtons() {
@@ -1396,7 +1496,9 @@
         if (sidebarLogout) {
 
             sidebarLogout.addEventListener(
+
                 "click",
+
                 function (event) {
 
                     event.preventDefault();
@@ -1404,6 +1506,7 @@
                     performLogout();
 
                 }
+
             );
 
         }
@@ -1412,7 +1515,9 @@
         if (heroLogout) {
 
             heroLogout.addEventListener(
+
                 "click",
+
                 function (event) {
 
                     event.preventDefault();
@@ -1420,6 +1525,7 @@
                     performLogout();
 
                 }
+
             );
 
         }
@@ -1428,7 +1534,7 @@
 
 
     /* ========================================================
-       AUTH EVENTS
+       19. AUTH EVENTS
     ======================================================== */
 
     function setupAuthListeners() {
@@ -1459,33 +1565,58 @@
 
 
         events.forEach(
+
             function (eventName) {
 
                 window.addEventListener(
+
                     eventName,
+
                     function () {
 
                         setTimeout(
+
                             updatePersonalizedHome,
+
                             50
+
                         );
 
                     }
+
                 );
 
             }
+
         );
 
 
+        /*
+         * Synchronize authentication changes
+         * across browser tabs.
+         */
+
         window.addEventListener(
+
             "storage",
+
             function (event) {
 
+                const watchedKeys = [
+
+                    "afc_isiu_auth_user",
+
+                    "afc_isiu_auth_session"
+
+                ];
+
+
                 if (
-                    event.key ===
-                        "afc_isiu_auth_user" ||
-                    event.key ===
-                        "afc_isiu_auth_session"
+
+                    watchedKeys.includes(
+                        event.key
+                    )
+
                 ) {
 
                     updatePersonalizedHome();
@@ -1493,13 +1624,14 @@
                 }
 
             }
+
         );
 
     }
 
 
     /* ========================================================
-       INITIALIZE
+       20. INITIALIZE
     ======================================================== */
 
     function initializeHome() {
@@ -1518,16 +1650,22 @@
 
 
     /* ========================================================
-       DOM READY
+       21. DOM READY
     ======================================================== */
 
     if (
-        document.readyState === "loading"
+
+        document.readyState ===
+            "loading"
+
     ) {
 
         document.addEventListener(
+
             "DOMContentLoaded",
+
             initializeHome
+
         );
 
     } else {
@@ -1538,7 +1676,7 @@
 
 
     /* ========================================================
-       PUBLIC METHODS
+       22. PUBLIC METHODS
     ======================================================== */
 
     window.openMobileMenu =
@@ -1555,6 +1693,10 @@
 
     window.updatePersonalizedHome =
         updatePersonalizedHome;
+
+
+    window.performPortalLogout =
+        performLogout;
 
 
 })();
