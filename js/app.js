@@ -1293,3 +1293,54 @@
 
 
 })();
+
+
+document.addEventListener(
+    "afc:authenticated",
+    function (event) {
+
+        console.log(
+            "User authenticated:",
+            event.detail.user
+        );
+
+
+        /*
+         * Re-render the application.
+         *
+         * Use your existing render/init
+         * function here.
+         */
+
+        if (
+            typeof renderApp ===
+            "function"
+        ) {
+
+            renderApp();
+
+        }
+
+    }
+);
+
+document.addEventListener(
+    "afc:loggedout",
+    function () {
+
+        console.log(
+            "User logged out."
+        );
+
+
+        if (
+            typeof renderApp ===
+            "function"
+        ) {
+
+            renderApp();
+
+        }
+
+    }
+);
