@@ -25,19 +25,7 @@
     </title>
 
 
-    <!-- ======================================================
-         PWA
-         ====================================================== -->
-
-    <link
-        rel="manifest"
-        href="../manifest.json"
-    >
-
-
-    <!-- ======================================================
-         GOOGLE FONTS
-         ====================================================== -->
+    <!-- Fonts -->
 
     <link
         rel="preconnect"
@@ -56,9 +44,7 @@
     >
 
 
-    <!-- ======================================================
-         GLOBAL CSS
-         ====================================================== -->
+    <!-- Core CSS -->
 
     <link
         rel="stylesheet"
@@ -82,18 +68,16 @@
 
     <link
         rel="stylesheet"
-        href="../css/home.css"
+        href="../css/lessons.css"
     >
 
     <link
         rel="stylesheet"
-        href="../css/lessons.css"
+        href="../css/loader.css"
     >
 
 
-    <!-- ======================================================
-         LUCIDE ICONS
-         ====================================================== -->
+    <!-- Icons -->
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -160,7 +144,6 @@
             <a
                 href="lessons.html"
                 class="nav-item active"
-                aria-current="page"
             >
 
                 <span data-lucide="book-open"></span>
@@ -227,27 +210,12 @@
                     Notifications
                 </span>
 
-                <span
-                    class="notification-badge"
-                    id="desktopNotificationBadge"
-                    hidden
-                >
-                    0
-                </span>
-
             </a>
 
         </nav>
 
 
-        <!-- ==================================================
-             SIDEBAR FOOTER
-             ================================================== -->
-
         <div class="sidebar-footer">
-
-
-            <!-- GUEST -->
 
             <div
                 class="sidebar-guest"
@@ -274,8 +242,6 @@
 
             </div>
 
-
-            <!-- MEMBER -->
 
             <div
                 class="sidebar-member"
@@ -333,22 +299,15 @@
 
 
     <!-- ======================================================
-         MAIN AREA
+         MAIN
          ====================================================== -->
 
     <main class="main-area">
 
 
-        <!-- ==================================================
-             HEADER
-             ================================================== -->
-
         <header class="top-header">
 
             <div class="header-left">
-
-
-                <!-- MOBILE MENU -->
 
                 <button
                     type="button"
@@ -364,12 +323,9 @@
                 </button>
 
 
-                <!-- MOBILE BRAND -->
-
                 <a
                     href="../index.html"
                     class="mobile-brand"
-                    aria-label="AFC Isiu Youth Portal Home"
                 >
 
                     <span class="mobile-brand-icon">
@@ -377,6 +333,7 @@
                         <span data-lucide="church"></span>
 
                     </span>
+
 
                     <span class="mobile-brand-text">
 
@@ -397,32 +354,8 @@
 
             <div class="header-actions">
 
-
-                <!-- NOTIFICATIONS -->
-
                 <a
-                    href="notifications.html"
-                    class="header-icon-button member-only"
-                    id="headerNotificationButton"
-                    hidden
-                    aria-label="Notifications"
-                >
-
-                    <span data-lucide="bell"></span>
-
-                    <span
-                        class="header-notification-dot"
-                        id="headerNotificationDot"
-                        hidden
-                    ></span>
-
-                </a>
-
-
-                <!-- ACCOUNT -->
-
-                <a
-                    href="../login.html"
+                    href="login.html"
                     class="header-avatar"
                     id="headerAccountButton"
                     aria-label="Login"
@@ -448,43 +381,12 @@
              PAGE CONTENT
              ================================================== -->
 
-        <section class="page-content">
+        <section
+            class="page-content"
+            id="lessonsPageContent"
+        >
 
-            <!--
-
-                IMPORTANT:
-
-                LessonsPage.render() will completely manage
-                this container.
-
-                Do NOT put lesson cards inside here.
-
-            -->
-
-            <div
-                id="lessonsPage"
-                class="lessons-page-container"
-            >
-
-                <div class="lessons-state">
-
-                    <div class="lessons-state-icon">
-
-                        <span data-lucide="book-open"></span>
-
-                    </div>
-
-                    <h3>
-                        Loading lessons...
-                    </h3>
-
-                    <p>
-                        Please wait while your lessons are loaded.
-                    </p>
-
-                </div>
-
-            </div>
+            <!-- LessonsPage renders here -->
 
         </section>
 
@@ -493,15 +395,14 @@
 </div>
 
 
-<!-- ==========================================================
-     MOBILE BOTTOM NAVIGATION
-     ========================================================== -->
+<!-- =========================================================
+     MOBILE NAVIGATION
+     ========================================================= -->
 
 <nav
     class="bottom-navigation"
     aria-label="Mobile navigation"
 >
-
 
     <a
         href="../index.html"
@@ -523,7 +424,6 @@
     <a
         href="lessons.html"
         class="bottom-nav-item active"
-        aria-current="page"
     >
 
         <span
@@ -577,10 +477,8 @@
     </a>
 
 
-    <!-- GUEST ACCOUNT -->
-
     <a
-        href="../login.html"
+        href="login.html"
         class="bottom-nav-item"
         id="guestBottomProfile"
     >
@@ -596,8 +494,6 @@
 
     </a>
 
-
-    <!-- MEMBER PROFILE -->
 
     <a
         href="profile.html"
@@ -622,157 +518,67 @@
 </nav>
 
 
-<!-- ==========================================================
-     MOBILE OVERLAY
-     ========================================================== -->
-
 <div
     class="mobile-overlay"
     id="mobileOverlay"
 ></div>
 
 
-<!-- ==========================================================
+<!-- =========================================================
      JAVASCRIPT
-     ========================================================== -->
-
-
-<!-- CONFIG -->
+     ========================================================= -->
 
 <script src="../js/config.js"></script>
 
-
-<!-- API -->
-
 <script src="../js/api.js"></script>
-
-
-<!-- AUTH -->
 
 <script src="../js/auth.js"></script>
 
 <script src="../js/auth-state.js"></script>
 
+<script src="../js/global-loader.js"></script>
 
-<!-- LESSONS MODULE -->
+<script src="../js/app.js"></script>
 
 <script src="../js/pages/lessons.js"></script>
 
 
-<!-- APP -->
-
-<script src="../js/app.js"></script>
-
-
-<!-- HOME CONTROLLER
-
-     We use the same home controller because it currently
-     contains the shared sidebar, mobile menu, account,
-     authentication and logout behaviour.
--->
-
-<script src="../js/home.js"></script>
-
-
 <script>
 
-    /*
-     * ========================================================
-     * LESSONS PAGE STARTUP
-     * ========================================================
-     *
-     * LessonsPage is responsible for rendering:
-     *
-     * - Loading state
-     * - Current lesson
-     * - Previous lessons
-     * - Lesson reader
-     * - Reading progress
-     * - Back button
-     *
-     * This page only provides the container.
-     */
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-
-            const container =
-                document.getElementById(
-                    "lessonsPage"
-                );
+        const container =
+            document.getElementById(
+                "lessonsPageContent"
+            );
 
 
-            if (
-                !container
-            ) {
+        if (
+            window.LessonsPage &&
+            container
+        ) {
 
-                console.error(
-                    "AFC Portal: lessonsPage container was not found."
-                );
-
-                return;
-            }
-
-
-            if (
-                window.LessonsPage &&
-                typeof window.LessonsPage.render === "function"
-            ) {
-
-                window.LessonsPage.render(
-                    container
-                );
-
-            } else {
-
-                console.error(
-                    "AFC Portal: LessonsPage module was not loaded."
-                );
-
-                container.innerHTML = `
-
-                    <div class="lessons-state">
-
-                        <div class="lessons-state-icon">
-                            !
-                        </div>
-
-                        <h3>
-                            Lessons module unavailable
-                        </h3>
-
-                        <p>
-                            The lessons system could not be loaded.
-                            Please refresh the page and try again.
-                        </p>
-
-                    </div>
-
-                `;
-
-            }
+            LessonsPage.render(
+                container
+            );
 
         }
-    );
-
-</script>
 
 
-<!-- ==========================================================
-     INITIAL ICON RENDER
-     ========================================================== -->
+        if (
+            window.lucide &&
+            typeof window.lucide.createIcons ===
+                "function"
+        ) {
 
-<script>
+            window.lucide.createIcons();
 
-    if (
-        window.lucide &&
-        typeof window.lucide.createIcons === "function"
-    ) {
-
-        window.lucide.createIcons();
+        }
 
     }
+);
 
 </script>
 
