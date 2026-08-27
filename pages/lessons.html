@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#4a0754"
+    >
+
+    <meta
+        name="description"
+        content="AFC Isiu Youth Portal — Weekly Bible lessons."
+    >
+
+    <title>
+        Lessons — AFC Isiu Youth Portal
+    </title>
+
+
+    <!-- ======================================================
+         PWA
+         ====================================================== -->
+
+    <link
+        rel="manifest"
+        href="../manifest.json"
+    >
+
+
+    <!-- ======================================================
+         GOOGLE FONTS
+         ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ======================================================
+         GLOBAL CSS
+         ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/base.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/layout.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/components.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/home.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/lessons.css"
+    >
+
+
+    <!-- ======================================================
+         LUCIDE ICONS
+         ====================================================== -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+
+<body>
+
+
+<div class="app-shell">
+
+
+    <!-- ======================================================
+         SIDEBAR
+         ====================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="sidebar-brand">
+
+            <div class="brand-mark">
+
+                <span data-lucide="church"></span>
+
+            </div>
+
+            <div class="brand-text">
+
+                <strong>
+                    AFC Isiu
+                </strong>
+
+                <span>
+                    Youth Portal
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav
+            class="sidebar-navigation"
+            aria-label="Main navigation"
+        >
+
+            <a
+                href="../index.html"
+                class="nav-item"
+            >
+
+                <span data-lucide="house"></span>
+
+                <span>
+                    Home
+                </span>
+
+            </a>
+
+
+            <a
+                href="lessons.html"
+                class="nav-item active"
+                aria-current="page"
+            >
+
+                <span data-lucide="book-open"></span>
+
+                <span>
+                    Lessons
+                </span>
+
+            </a>
+
+
+            <a
+                href="quiz.html"
+                class="nav-item"
+            >
+
+                <span data-lucide="clipboard-check"></span>
+
+                <span>
+                    Quiz
+                </span>
+
+            </a>
+
+
+            <a
+                href="gallery.html"
+                class="nav-item"
+            >
+
+                <span data-lucide="images"></span>
+
+                <span>
+                    Gallery
+                </span>
+
+            </a>
+
+
+            <a
+                href="profile.html"
+                class="nav-item member-only"
+                hidden
+            >
+
+                <span data-lucide="user-round"></span>
+
+                <span>
+                    Profile
+                </span>
+
+            </a>
+
+
+            <a
+                href="notifications.html"
+                class="nav-item member-only"
+                hidden
+            >
+
+                <span data-lucide="bell"></span>
+
+                <span>
+                    Notifications
+                </span>
+
+                <span
+                    class="notification-badge"
+                    id="desktopNotificationBadge"
+                    hidden
+                >
+                    0
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- ==================================================
+             SIDEBAR FOOTER
+             ================================================== -->
+
+        <div class="sidebar-footer">
+
+
+            <!-- GUEST -->
+
+            <div
+                class="sidebar-guest"
+                id="sidebarGuest"
+            >
+
+                <div class="sidebar-guest-icon">
+
+                    <span data-lucide="user-round"></span>
+
+                </div>
+
+                <div class="sidebar-guest-copy">
+
+                    <strong>
+                        Welcome
+                    </strong>
+
+                    <small>
+                        Sign in to access your account
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- MEMBER -->
+
+            <div
+                class="sidebar-member"
+                id="sidebarMember"
+                hidden
+            >
+
+                <a
+                    href="profile.html"
+                    class="sidebar-profile"
+                >
+
+                    <div class="avatar">
+
+                        <span id="sidebarAvatar">
+                            A
+                        </span>
+
+                    </div>
+
+                    <div>
+
+                        <strong id="sidebarUserName">
+                            Member
+                        </strong>
+
+                        <small>
+                            My Profile
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <button
+                    type="button"
+                    class="sidebar-logout"
+                    id="sidebarLogoutButton"
+                >
+
+                    <span data-lucide="log-out"></span>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ======================================================
+         MAIN AREA
+         ====================================================== -->
+
+    <main class="main-area">
+
+
+        <!-- ==================================================
+             HEADER
+             ================================================== -->
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+
+                <!-- MOBILE MENU -->
+
+                <button
+                    type="button"
+                    class="icon-button mobile-menu-button"
+                    id="mobileMenuButton"
+                    aria-label="Open navigation menu"
+                    aria-controls="sidebar"
+                    aria-expanded="false"
+                >
+
+                    <span data-lucide="menu"></span>
+
+                </button>
+
+
+                <!-- MOBILE BRAND -->
+
+                <a
+                    href="../index.html"
+                    class="mobile-brand"
+                    aria-label="AFC Isiu Youth Portal Home"
+                >
+
+                    <span class="mobile-brand-icon">
+
+                        <span data-lucide="church"></span>
+
+                    </span>
+
+                    <span class="mobile-brand-text">
+
+                        <strong>
+                            AFC Isiu
+                        </strong>
+
+                        <small>
+                            Youth Portal
+                        </small>
+
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <div class="header-actions">
+
+
+                <!-- NOTIFICATIONS -->
+
+                <a
+                    href="notifications.html"
+                    class="header-icon-button member-only"
+                    id="headerNotificationButton"
+                    hidden
+                    aria-label="Notifications"
+                >
+
+                    <span data-lucide="bell"></span>
+
+                    <span
+                        class="header-notification-dot"
+                        id="headerNotificationDot"
+                        hidden
+                    ></span>
+
+                </a>
+
+
+                <!-- ACCOUNT -->
+
+                <a
+                    href="../login.html"
+                    class="header-avatar"
+                    id="headerAccountButton"
+                    aria-label="Login"
+                >
+
+                    <span
+                        id="headerAvatarLetter"
+                        class="header-avatar-content"
+                    >
+
+                        <span data-lucide="user-round"></span>
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+             PAGE CONTENT
+             ================================================== -->
+
+        <section class="page-content">
+
+            <!--
+
+                IMPORTANT:
+
+                LessonsPage.render() will completely manage
+                this container.
+
+                Do NOT put lesson cards inside here.
+
+            -->
+
+            <div
+                id="lessonsPage"
+                class="lessons-page-container"
+            >
+
+                <div class="lessons-state">
+
+                    <div class="lessons-state-icon">
+
+                        <span data-lucide="book-open"></span>
+
+                    </div>
+
+                    <h3>
+                        Loading lessons...
+                    </h3>
+
+                    <p>
+                        Please wait while your lessons are loaded.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ==========================================================
+     MOBILE BOTTOM NAVIGATION
+     ========================================================== -->
+
+<nav
+    class="bottom-navigation"
+    aria-label="Mobile navigation"
+>
+
+
+    <a
+        href="../index.html"
+        class="bottom-nav-item"
+    >
+
+        <span
+            class="bottom-nav-icon"
+            data-lucide="house"
+        ></span>
+
+        <span>
+            Home
+        </span>
+
+    </a>
+
+
+    <a
+        href="lessons.html"
+        class="bottom-nav-item active"
+        aria-current="page"
+    >
+
+        <span
+            class="bottom-nav-icon"
+            data-lucide="book-open"
+        ></span>
+
+        <span>
+            Lessons
+        </span>
+
+    </a>
+
+
+    <a
+        href="quiz.html"
+        class="bottom-nav-item bottom-nav-center"
+        aria-label="Quiz"
+    >
+
+        <span class="bottom-nav-main">
+
+            <span
+                data-lucide="clipboard-check"
+                class="bottom-nav-main-icon"
+            ></span>
+
+        </span>
+
+        <span class="bottom-nav-center-label">
+            Quiz
+        </span>
+
+    </a>
+
+
+    <a
+        href="gallery.html"
+        class="bottom-nav-item"
+    >
+
+        <span
+            class="bottom-nav-icon"
+            data-lucide="images"
+        ></span>
+
+        <span>
+            Gallery
+        </span>
+
+    </a>
+
+
+    <!-- GUEST ACCOUNT -->
+
+    <a
+        href="../login.html"
+        class="bottom-nav-item"
+        id="guestBottomProfile"
+    >
+
+        <span
+            class="bottom-nav-icon"
+            data-lucide="user-round"
+        ></span>
+
+        <span>
+            Account
+        </span>
+
+    </a>
+
+
+    <!-- MEMBER PROFILE -->
+
+    <a
+        href="profile.html"
+        class="bottom-nav-item"
+        id="memberBottomProfile"
+        hidden
+    >
+
+        <span
+            class="bottom-nav-avatar"
+            id="bottomAvatar"
+        >
+            A
+        </span>
+
+        <span>
+            Profile
+        </span>
+
+    </a>
+
+</nav>
+
+
+<!-- ==========================================================
+     MOBILE OVERLAY
+     ========================================================== -->
+
+<div
+    class="mobile-overlay"
+    id="mobileOverlay"
+></div>
+
+
+<!-- ==========================================================
+     JAVASCRIPT
+     ========================================================== -->
+
+
+<!-- CONFIG -->
+
+<script src="../js/config.js"></script>
+
+
+<!-- API -->
+
+<script src="../js/api.js"></script>
+
+
+<!-- AUTH -->
+
+<script src="../js/auth.js"></script>
+
+<script src="../js/auth-state.js"></script>
+
+
+<!-- LESSONS MODULE -->
+
+<script src="../js/pages/lessons.js"></script>
+
+
+<!-- APP -->
+
+<script src="../js/app.js"></script>
+
+
+<!-- HOME CONTROLLER
+
+     We use the same home controller because it currently
+     contains the shared sidebar, mobile menu, account,
+     authentication and logout behaviour.
+-->
+
+<script src="../js/home.js"></script>
+
+
+<script>
+
+    /*
+     * ========================================================
+     * LESSONS PAGE STARTUP
+     * ========================================================
+     *
+     * LessonsPage is responsible for rendering:
+     *
+     * - Loading state
+     * - Current lesson
+     * - Previous lessons
+     * - Lesson reader
+     * - Reading progress
+     * - Back button
+     *
+     * This page only provides the container.
+     */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const container =
+                document.getElementById(
+                    "lessonsPage"
+                );
+
+
+            if (
+                !container
+            ) {
+
+                console.error(
+                    "AFC Portal: lessonsPage container was not found."
+                );
+
+                return;
+            }
+
+
+            if (
+                window.LessonsPage &&
+                typeof window.LessonsPage.render === "function"
+            ) {
+
+                window.LessonsPage.render(
+                    container
+                );
+
+            } else {
+
+                console.error(
+                    "AFC Portal: LessonsPage module was not loaded."
+                );
+
+                container.innerHTML = `
+
+                    <div class="lessons-state">
+
+                        <div class="lessons-state-icon">
+                            !
+                        </div>
+
+                        <h3>
+                            Lessons module unavailable
+                        </h3>
+
+                        <p>
+                            The lessons system could not be loaded.
+                            Please refresh the page and try again.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<!-- ==========================================================
+     INITIAL ICON RENDER
+     ========================================================== -->
+
+<script>
+
+    if (
+        window.lucide &&
+        typeof window.lucide.createIcons === "function"
+    ) {
+
+        window.lucide.createIcons();
+
+    }
+
+</script>
+
+
+</body>
+
+</html>
