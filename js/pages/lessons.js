@@ -1,15 +1,33 @@
 /**
  * ============================================================
  * AFC ISIU YOUTH PORTAL V2
- * LESSONS PAGE CONTROLLER
- * OPTIMIZED VERSION
+ * FILE: lessons.js
+ * PURPOSE: LESSONS PAGE CONTROLLER
+ * ============================================================
+ *
+ * PUBLIC FLOW:
+ *
+ * Lessons Hub
+ *      ↓
+ * Open Lesson
+ *      ↓
+ * Read Sections
+ *      ↓
+ * Click "I've read this lesson"
+ *      ↓
+ * Reflection (Phase 4B)
+ *
+ * IMPORTANT:
+ * - Lessons are publicly readable.
+ * - Global AFC_Loader is PRESERVED.
+ * - Local loading skeleton is also used.
  * ============================================================
  */
 
 "use strict";
 
 
-const LessonsPage = (function() {
+const LessonsPage = (function () {
 
 
     /* ========================================================
@@ -18,29 +36,11 @@ const LessonsPage = (function() {
 
     let lessons = [];
 
-    let currentLessonId =
-        null;
+    let currentLessonId = null;
 
-    let progressHandler =
-        null;
+    let progressHandler = null;
 
-
-    /*
-     * In-memory lesson cache.
-     *
-     * This makes opening a lesson again essentially instant.
-     */
-
-    const lessonMemoryCache =
-        new Map();
-
-
-    const LESSON_BROWSER_CACHE_PREFIX =
-        "afc_lesson_page_";
-
-
-    const LESSON_BROWSER_CACHE_TTL =
-        10 * 60 * 1000;
+    let currentContainer = null;
 
 
     /* ========================================================
@@ -49,43 +49,39 @@ const LessonsPage = (function() {
 
     function $(id) {
 
-        return document.getElementById(
-            id
-        );
+        return document.getElementById(id);
 
     }
 
 
     function escapeHtml(value) {
 
-        return String(
-            value ?? ""
-        )
+        return String(value ?? "")
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+            .replace(
+                /</g,
+                "&lt;"
+            )
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+            .replace(
+                />/g,
+                "&gt;"
+            )
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+            .replace(
+                /'/g,
+                "&#039;"
+            );
 
     }
 
@@ -93,12 +89,8 @@ const LessonsPage = (function() {
     function refreshIcons() {
 
         if (
-
             window.lucide &&
-
-            typeof window.lucide.createIcons ===
-            "function"
-
+            typeof window.lucide.createIcons === "function"
         ) {
 
             try {
@@ -108,7 +100,7 @@ const LessonsPage = (function() {
             } catch (error) {
 
                 console.warn(
-                    "AFC Lessons: icon error",
+                    "AFC Lessons: Unable to refresh icons.",
                     error
                 );
 
@@ -119,9 +111,37 @@ const LessonsPage = (function() {
     }
 
 
-    function getResponseData(
-        response
-    ) {
+    function showGlobalLoader(message) {
+
+        if (
+            window.AFC_Loader &&
+            typeof window.AFC_Loader.show === "function"
+        ) {
+
+            AFC_Loader.show(
+                message
+            );
+
+        }
+
+    }
+
+
+    function hideGlobalLoader() {
+
+        if (
+            window.AFC_Loader &&
+            typeof window.AFC_Loader.hide === "function"
+        ) {
+
+            AFC_Loader.hide();
+
+        }
+
+    }
+
+
+    function getResponseData(response) {
 
         if (!response) {
 
@@ -130,9 +150,17 @@ const LessonsPage = (function() {
         }
 
 
+        /*
+         * Standard API response:
+         *
+         * {
+         *   success: true,
+         *   data: ...
+         * }
+         */
+
         if (
-            response.data !==
-            undefined
+            response.data !== undefined
         ) {
 
             return response.data;
@@ -145,9 +173,7 @@ const LessonsPage = (function() {
     }
 
 
-    function formatDate(
-        value
-    ) {
+    function formatDate(value) {
 
         if (!value) {
 
@@ -157,9 +183,7 @@ const LessonsPage = (function() {
 
 
         const date =
-            new Date(
-                value
-            );
+            new Date(value);
 
 
         if (
@@ -168,9 +192,7 @@ const LessonsPage = (function() {
             )
         ) {
 
-            return String(
-                value
-            );
+            return String(value);
 
         }
 
@@ -178,48 +200,35 @@ const LessonsPage = (function() {
         return date.toLocaleDateString(
             "en-NG",
             {
-
-                day:
-                    "numeric",
-
-                month:
-                    "short",
-
-                year:
-                    "numeric"
-
+                day: "numeric",
+                month: "short",
+                year: "numeric"
             }
         );
 
     }
 
 
-    function sortLessons(
-        list
-    ) {
+    function sortLessons(list) {
 
         return [
             ...list
         ].sort(
-            function(a, b) {
+            function (a, b) {
 
                 const aDate =
                     new Date(
-
                         a.lesson_date ||
                         a.published_at ||
                         0
-
                     );
 
 
                 const bDate =
                     new Date(
-
                         b.lesson_date ||
                         b.published_at ||
                         0
-
                     );
 
 
@@ -234,199 +243,11 @@ const LessonsPage = (function() {
     }
 
 
-    /* ========================================================
-       BROWSER LESSON CACHE
-       ======================================================== */
-
-    function lessonCacheKey(
-        lessonId
-    ) {
-
-        return (
-            LESSON_BROWSER_CACHE_PREFIX +
-            String(
-                lessonId
-            ).trim()
-        );
-
-    }
-
-
-    function getBrowserLessonCache(
-        lessonId
-    ) {
-
-        const key =
-            lessonCacheKey(
-                lessonId
-            );
-
-
-        /*
-         * Memory first.
-         */
-
-        const memory =
-            lessonMemoryCache.get(
-                key
-            );
-
-
-        if (memory) {
-
-            if (
-                Date.now() -
-                memory.timestamp
-                <=
-                LESSON_BROWSER_CACHE_TTL
-            ) {
-
-                return memory.data;
-
-            }
-
-
-            lessonMemoryCache.delete(
-                key
-            );
-
-        }
-
-
-        /*
-         * Session storage second.
-         */
-
-        try {
-
-            const raw =
-                sessionStorage.getItem(
-                    key
-                );
-
-
-            if (!raw) {
-
-                return null;
-
-            }
-
-
-            const parsed =
-                JSON.parse(
-                    raw
-                );
-
-
-            if (
-                !parsed ||
-                !parsed.timestamp
-            ) {
-
-                return null;
-
-            }
-
-
-            if (
-                Date.now() -
-                parsed.timestamp
-                >
-                LESSON_BROWSER_CACHE_TTL
-            ) {
-
-                sessionStorage.removeItem(
-                    key
-                );
-
-
-                return null;
-
-            }
-
-
-            lessonMemoryCache.set(
-
-                key,
-
-                {
-
-                    timestamp:
-                        Date.now(),
-
-                    data:
-                        parsed.data
-
-                }
-
-            );
-
-
-            return parsed.data;
-
-        } catch (error) {
-
-            return null;
-
-        }
-
-    }
-
-
-    function saveBrowserLessonCache(
-        lessonId,
-        data
-    ) {
-
-        const key =
-            lessonCacheKey(
-                lessonId
-            );
-
-
-        lessonMemoryCache.set(
-
-            key,
-
-            {
-
-                timestamp:
-                    Date.now(),
-
-                data:
-                    data
-
-            }
-
-        );
-
-
-        try {
-
-            sessionStorage.setItem(
-
-                key,
-
-                JSON.stringify({
-
-                    timestamp:
-                        Date.now(),
-
-                    data:
-                        data
-
-                })
-
-            );
-
-        } catch (error) {
-
-            console.warn(
-                "AFC Lessons: browser cache unavailable.",
-                error
-            );
-
-        }
+    function getLessonId(lesson) {
+
+        return String(
+            lesson?.lesson_id || ""
+        ).trim();
 
     }
 
@@ -435,28 +256,23 @@ const LessonsPage = (function() {
        FETCH ALL LESSONS
        ======================================================== */
 
-    async function fetchLessons(
-        options = {}
-    ) {
+    async function fetchLessons() {
 
-        const useCache =
-            options.cache !== false;
+        if (
+            !window.API ||
+            typeof window.API.get !== "function"
+        ) {
+
+            throw new Error(
+                "The API connection is not available."
+            );
+
+        }
 
 
         const response =
-            await API.get(
-
-                "getLessons",
-
-                {},
-
-                {
-
-                    cache:
-                        useCache
-
-                }
-
+            await window.API.get(
+                "getLessons"
             );
 
 
@@ -467,10 +283,14 @@ const LessonsPage = (function() {
 
 
         if (
-            !Array.isArray(
-                data
-            )
+            !Array.isArray(data)
         ) {
+
+            console.error(
+                "[LESSONS] Unexpected lessons response:",
+                response
+            );
+
 
             throw new Error(
                 "The backend returned an unexpected lessons format."
@@ -488,15 +308,11 @@ const LessonsPage = (function() {
        FETCH ONE LESSON
        ======================================================== */
 
-    async function fetchLesson(
-        lessonId,
-        options = {}
-    ) {
+    async function fetchLesson(lessonId) {
 
         const cleanId =
             String(
-                lessonId ||
-                ""
+                lessonId || ""
             ).trim();
 
 
@@ -509,64 +325,31 @@ const LessonsPage = (function() {
         }
 
 
-        const useCache =
-            options.cache !== false;
+        if (
+            !window.API ||
+            typeof window.API.get !== "function"
+        ) {
 
-
-        /*
-         * ----------------------------------------------------
-         * BROWSER CACHE
-         * ----------------------------------------------------
-         */
-
-        if (useCache) {
-
-            const cached =
-                getBrowserLessonCache(
-                    cleanId
-                );
-
-
-            if (cached) {
-
-                console.log(
-                    "[LESSONS] Browser cache hit:",
-                    cleanId
-                );
-
-
-                return cached;
-
-            }
+            throw new Error(
+                "The API connection is not available."
+            );
 
         }
 
 
         console.log(
-            "[LESSONS] Requesting lesson:",
+            "[LESSONS] Opening lesson:",
             cleanId
         );
 
 
         const response =
-            await API.get(
-
+            await window.API.get(
                 "getLesson",
-
                 {
-
                     lesson_id:
                         cleanId
-
-                },
-
-                {
-
-                    cache:
-                        useCache
-
                 }
-
             );
 
 
@@ -587,6 +370,12 @@ const LessonsPage = (function() {
 
         if (!data.lesson) {
 
+            console.error(
+                "[LESSONS] Invalid lesson response:",
+                response
+            );
+
+
             throw new Error(
                 "The backend did not return the requested lesson."
             );
@@ -595,13 +384,29 @@ const LessonsPage = (function() {
 
 
         /*
-         * Save locally.
+         * Ensure predictable structure.
          */
 
-        saveBrowserLessonCache(
-            cleanId,
-            data
-        );
+        if (
+            !Array.isArray(
+                data.sections
+            )
+        ) {
+
+            data.sections = [];
+
+        }
+
+
+        if (
+            !Array.isArray(
+                data.reflection_questions
+            )
+        ) {
+
+            data.reflection_questions = [];
+
+        }
 
 
         return data;
@@ -610,78 +415,94 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       LOADING
+       LOADING SKELETON
        ======================================================== */
 
-    function renderLoading(
-        message = "Loading weekly lessons..."
-    ) {
+    function renderLoading() {
 
         return `
 
-            <div class="lessons-page">
+            <div class="lessons-page lessons-loading-state">
 
                 <div class="lesson-page-heading skeleton-heading">
 
-                    <div class="skeleton-line skeleton-small"></div>
+                    <div
+                        class="skeleton-line skeleton-small"
+                    ></div>
 
-                    <div class="skeleton-line skeleton-title"></div>
+                    <div
+                        class="skeleton-line skeleton-title"
+                    ></div>
 
-                    <div class="skeleton-line skeleton-text"></div>
+                    <div
+                        class="skeleton-line skeleton-text"
+                    ></div>
 
                 </div>
 
 
                 <div class="lesson-featured-skeleton">
 
-                    <div class="skeleton-line skeleton-badge"></div>
+                    <div
+                        class="skeleton-line skeleton-badge"
+                    ></div>
 
-                    <div class="skeleton-line skeleton-feature-title"></div>
+                    <div
+                        class="skeleton-line skeleton-feature-title"
+                    ></div>
 
-                    <div class="skeleton-line skeleton-text wide"></div>
+                    <div
+                        class="skeleton-line skeleton-text wide"
+                    ></div>
 
-                    <div class="skeleton-line skeleton-text medium"></div>
+                    <div
+                        class="skeleton-line skeleton-text medium"
+                    ></div>
 
-                    <div class="skeleton-button"></div>
-
-                </div>
-
-
-                <div class="lesson-loading-message">
-
-                    ${escapeHtml(
-                        message
-                    )}
+                    <div
+                        class="skeleton-button"
+                    ></div>
 
                 </div>
 
 
                 <div class="lesson-skeleton-grid">
 
-                    ${Array(4)
-                        .fill("")
-                        .map(
-                            function() {
+                    ${
+                        Array(4)
+                            .fill("")
+                            .map(
+                                function () {
 
-                                return `
+                                    return `
 
-                                    <div class="lesson-card-skeleton">
+                                        <div
+                                            class="lesson-card-skeleton"
+                                        >
 
-                                        <div class="skeleton-line skeleton-small"></div>
+                                            <div
+                                                class="skeleton-line skeleton-small"
+                                            ></div>
 
-                                        <div class="skeleton-line skeleton-card-title"></div>
+                                            <div
+                                                class="skeleton-line skeleton-card-title"
+                                            ></div>
 
-                                        <div class="skeleton-line skeleton-text"></div>
+                                            <div
+                                                class="skeleton-line skeleton-text"
+                                            ></div>
 
-                                        <div class="skeleton-line skeleton-text short"></div>
+                                            <div
+                                                class="skeleton-line skeleton-text short"
+                                            ></div>
 
-                                    </div>
+                                        </div>
 
-                                `;
+                                    `;
 
-                            }
-                        )
-                        .join("")
+                                }
+                            )
+                            .join("")
                     }
 
                 </div>
@@ -694,7 +515,7 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       EMPTY
+       EMPTY STATE
        ======================================================== */
 
     function renderEmpty() {
@@ -730,16 +551,16 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       ERROR
+       ERROR STATE
        ======================================================== */
 
-    function renderError(
-        message
-    ) {
+    function renderError(message) {
 
         return `
 
-            <div class="lesson-state lesson-state-error">
+            <div
+                class="lesson-state lesson-state-error"
+            >
 
                 <div class="lesson-state-icon">
 
@@ -757,11 +578,8 @@ const LessonsPage = (function() {
 
                 <p>
                     ${escapeHtml(
-
                         message ||
-
                         "Something went wrong while loading the lessons."
-
                     )}
                 </p>
 
@@ -793,15 +611,12 @@ const LessonsPage = (function() {
        LESSON CARD
        ======================================================== */
 
-    function renderLessonCard(
-        lesson
-    ) {
+    function renderLessonCard(lesson) {
 
         const lessonId =
-            String(
-                lesson.lesson_id ||
-                ""
-            ).trim();
+            getLessonId(
+                lesson
+            );
 
 
         return `
@@ -814,11 +629,9 @@ const LessonsPage = (function() {
 
                         ${
                             lesson.week_number
-
                                 ? `Week ${escapeHtml(
                                     lesson.week_number
                                 )}`
-
                                 : "Weekly Lesson"
                         }
 
@@ -828,11 +641,8 @@ const LessonsPage = (function() {
                     <span class="lesson-card-type">
 
                         ${escapeHtml(
-
                             lesson.lesson_type ||
-
                             "Youth Lesson"
-
                         )}
 
                     </span>
@@ -845,11 +655,8 @@ const LessonsPage = (function() {
                     <h3>
 
                         ${escapeHtml(
-
                             lesson.title ||
-
                             "Untitled Lesson"
-
                         )}
 
                     </h3>
@@ -858,11 +665,8 @@ const LessonsPage = (function() {
                     <p>
 
                         ${escapeHtml(
-
                             lesson.description ||
-
                             "Open this lesson to begin reading."
-
                         )}
 
                     </p>
@@ -875,32 +679,25 @@ const LessonsPage = (function() {
                     <span class="lesson-card-date">
 
                         ${escapeHtml(
-
                             formatDate(
                                 lesson.lesson_date
                             )
-
                         )}
 
                     </span>
 
 
                     <button
-
                         type="button"
-
                         class="lesson-card-button"
-
                         data-open-lesson="${escapeHtml(
                             lessonId
                         )}"
-
                     >
 
                         <span>
                             Read lesson
                         </span>
-
 
                         <span
                             data-lucide="arrow-up-right"
@@ -918,14 +715,15 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       HUB
+       LESSON HUB
        ======================================================== */
 
-    function renderHub(
-        lessonList
-    ) {
+    function renderHub(lessonList) {
 
         if (
+            !Array.isArray(
+                lessonList
+            ) ||
             !lessonList.length
         ) {
 
@@ -949,10 +747,9 @@ const LessonsPage = (function() {
 
 
         const featuredId =
-            String(
-                featured.lesson_id ||
-                ""
-            ).trim();
+            getLessonId(
+                featured
+            );
 
 
         return `
@@ -986,16 +783,23 @@ const LessonsPage = (function() {
 
                 <article class="lesson-featured">
 
-                    <div class="lesson-featured-glow"></div>
+                    <div
+                        class="lesson-featured-glow"
+                    ></div>
 
 
                     <div class="lesson-featured-content">
 
+
                         <div class="lesson-featured-top">
 
-                            <span class="lesson-current-badge">
+                            <span
+                                class="lesson-current-badge"
+                            >
 
-                                <span class="status-dot"></span>
+                                <span
+                                    class="status-dot"
+                                ></span>
 
                                 Current lesson
 
@@ -1004,10 +808,11 @@ const LessonsPage = (function() {
 
                             ${
                                 featured.week_number
-
                                     ? `
 
-                                        <span class="lesson-featured-week">
+                                        <span
+                                            class="lesson-featured-week"
+                                        >
 
                                             Week ${escapeHtml(
                                                 featured.week_number
@@ -1016,7 +821,6 @@ const LessonsPage = (function() {
                                         </span>
 
                                     `
-
                                     : ""
                             }
 
@@ -1026,11 +830,8 @@ const LessonsPage = (function() {
                         <h2>
 
                             ${escapeHtml(
-
                                 featured.title ||
-
                                 "Weekly Lesson"
-
                             )}
 
                         </h2>
@@ -1039,11 +840,8 @@ const LessonsPage = (function() {
                         <p>
 
                             ${escapeHtml(
-
                                 featured.description ||
-
                                 "Start reading this week's lesson."
-
                             )}
 
                         </p>
@@ -1051,9 +849,9 @@ const LessonsPage = (function() {
 
                         <div class="lesson-featured-meta">
 
+
                             ${
                                 featured.lesson_type
-
                                     ? `
 
                                         <span>
@@ -1069,14 +867,12 @@ const LessonsPage = (function() {
                                         </span>
 
                                     `
-
                                     : ""
                             }
 
 
                             ${
                                 featured.lesson_date
-
                                     ? `
 
                                         <span>
@@ -1094,7 +890,6 @@ const LessonsPage = (function() {
                                         </span>
 
                                     `
-
                                     : ""
                             }
 
@@ -1102,15 +897,11 @@ const LessonsPage = (function() {
 
 
                         <button
-
                             type="button"
-
                             class="lesson-start-button"
-
                             data-open-lesson="${escapeHtml(
                                 featuredId
                             )}"
-
                         >
 
                             <span>
@@ -1136,7 +927,6 @@ const LessonsPage = (function() {
                             class="lesson-art-circle circle-one"
                         ></div>
 
-
                         <div
                             class="lesson-art-circle circle-two"
                         ></div>
@@ -1157,7 +947,10 @@ const LessonsPage = (function() {
 
                 <section class="lessons-history">
 
-                    <div class="lessons-section-heading">
+
+                    <div
+                        class="lessons-section-heading"
+                    >
 
                         <div>
 
@@ -1175,7 +968,6 @@ const LessonsPage = (function() {
 
                         ${
                             previous.length
-
                                 ? `
 
                                     <span class="lesson-count">
@@ -1184,16 +976,13 @@ const LessonsPage = (function() {
 
                                         ${
                                             previous.length === 1
-
                                                 ? "lesson"
-
                                                 : "lessons"
                                         }
 
                                     </span>
 
                                 `
-
                                 : ""
                         }
 
@@ -1202,7 +991,6 @@ const LessonsPage = (function() {
 
                     ${
                         previous.length
-
                             ? `
 
                                 <div class="lessons-grid">
@@ -1217,20 +1005,18 @@ const LessonsPage = (function() {
                                 </div>
 
                             `
-
                             : `
 
-                                <div class="lessons-empty-library">
+                                <div
+                                    class="lessons-empty-library"
+                                >
 
                                     <span
                                         data-lucide="book-open"
                                     ></span>
 
-
                                     <span>
-
                                         Previous lessons will appear here.
-
                                     </span>
 
                                 </div>
@@ -1251,9 +1037,7 @@ const LessonsPage = (function() {
        CONTENT FORMATTER
        ======================================================== */
 
-    function formatContent(
-        content
-    ) {
+    function formatContent(content) {
 
         if (!content) {
 
@@ -1275,7 +1059,7 @@ const LessonsPage = (function() {
             )
 
             .map(
-                function(paragraph) {
+                function (paragraph) {
 
                     const cleaned =
                         paragraph
@@ -1310,259 +1094,20 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       BIBLE TEXT
+       LESSON READER
        ======================================================== */
 
-    function renderBibleText(
-        lesson
-    ) {
-
-        if (
-            !lesson.bible_text
-        ) {
-
-            return "";
-
-        }
-
-
-        return `
-
-            <section class="lesson-bible-card">
-
-                <div class="lesson-special-heading">
-
-                    <span
-                        class="lesson-special-icon"
-                    >
-
-                        <span
-                            data-lucide="book-marked"
-                        ></span>
-
-                    </span>
-
-
-                    <div>
-
-                        <span class="eyebrow">
-                            Bible Text
-                        </span>
-
-
-                        <h2>
-                            Read the Scripture
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div class="lesson-bible-content">
-
-                    ${formatContent(
-                        lesson.bible_text
-                    )}
-
-                </div>
-
-            </section>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       MEMORY VERSE
-       ======================================================== */
-
-    function renderMemoryVerse(
-        lesson
-    ) {
-
-        if (
-            !lesson.memory_verse &&
-            !lesson.yoruba_memory_verse
-        ) {
-
-            return "";
-
-        }
-
-
-        return `
-
-            <section class="lesson-memory-card">
-
-                <div class="lesson-special-heading">
-
-                    <span
-                        class="lesson-special-icon"
-                    >
-
-                        <span
-                            data-lucide="heart"
-                        ></span>
-
-                    </span>
-
-
-                    <div>
-
-                        <span class="eyebrow">
-                            Memory Verse
-                        </span>
-
-
-                        <h2>
-                            Hide God's Word in your heart
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                ${
-                    lesson.memory_verse
-
-                        ? `
-
-                            <blockquote>
-
-                                ${formatContent(
-                                    lesson.memory_verse
-                                )}
-
-                            </blockquote>
-
-                        `
-
-                        : ""
-                }
-
-
-                ${
-                    lesson.memory_verse_reference
-
-                        ? `
-
-                            <div class="memory-verse-reference">
-
-                                <span
-                                    data-lucide="bookmark"
-                                ></span>
-
-                                ${escapeHtml(
-                                    lesson.memory_verse_reference
-                                )}
-
-                            </div>
-
-                        `
-
-                        : ""
-                }
-
-
-                ${
-                    lesson.yoruba_memory_verse
-
-                        ? `
-
-                            <div class="yoruba-memory-verse">
-
-                                <div class="yoruba-heading">
-
-                                    <span>
-                                        Yoruba Memory Verse
-                                    </span>
-
-                                </div>
-
-
-                                <div class="yoruba-text">
-
-                                    ${formatContent(
-                                        lesson.yoruba_memory_verse
-                                    )}
-
-                                </div>
-
-
-                                ${
-                                    lesson.yoruba_audio_url
-
-                                        ? `
-
-                                            <audio
-                                                class="yoruba-memory-audio"
-                                                controls
-                                                preload="none"
-                                            >
-
-                                                <source
-                                                    src="${escapeHtml(
-                                                        lesson.yoruba_audio_url
-                                                    )}"
-                                                    type="audio/mpeg"
-                                                >
-
-                                                Your browser does not support audio playback.
-
-                                            </audio>
-
-                                        `
-
-                                        : ""
-                                }
-
-                            </div>
-
-                        `
-
-                        : ""
-
-                }
-
-            </section>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       READER
-       ======================================================== */
-
-    function renderReader(
-        data
-    ) {
+    function renderReader(data) {
 
         const lesson =
-            data.lesson;
+            data.lesson || {};
 
 
         const sections =
             Array.isArray(
                 data.sections
             )
-
                 ? data.sections
-
-                : [];
-
-
-        const questions =
-            Array.isArray(
-                data.reflection_questions
-            )
-
-                ? data.reflection_questions
-
                 : [];
 
 
@@ -1571,22 +1116,19 @@ const LessonsPage = (function() {
             <article class="lesson-reader">
 
 
-                <div class="lesson-reader-topbar">
+                <div
+                    class="lesson-reader-topbar"
+                >
 
                     <button
-
                         type="button"
-
                         id="backToLessonsButton"
-
                         class="lesson-back-button"
-
                     >
 
                         <span
                             data-lucide="arrow-left"
                         ></span>
-
 
                         <span>
                             All lessons
@@ -1595,24 +1137,31 @@ const LessonsPage = (function() {
                     </button>
 
 
-                    <span class="lesson-reader-label">
+                    <span
+                        class="lesson-reader-label"
+                    >
                         Reading
                     </span>
 
                 </div>
 
 
-                <header class="lesson-reader-header">
+                <header
+                    class="lesson-reader-header"
+                >
 
 
-                    <div class="lesson-reader-badges">
+                    <div
+                        class="lesson-reader-badges"
+                    >
 
                         ${
                             lesson.week_number
-
                                 ? `
 
-                                    <span class="reader-badge">
+                                    <span
+                                        class="reader-badge"
+                                    >
 
                                         Week ${escapeHtml(
                                             lesson.week_number
@@ -1621,17 +1170,17 @@ const LessonsPage = (function() {
                                     </span>
 
                                 `
-
                                 : ""
                         }
 
 
                         ${
                             lesson.lesson_type
-
                                 ? `
 
-                                    <span class="reader-badge muted">
+                                    <span
+                                        class="reader-badge muted"
+                                    >
 
                                         ${escapeHtml(
                                             lesson.lesson_type
@@ -1640,7 +1189,6 @@ const LessonsPage = (function() {
                                     </span>
 
                                 `
-
                                 : ""
                         }
 
@@ -1650,11 +1198,8 @@ const LessonsPage = (function() {
                     <h1>
 
                         ${escapeHtml(
-
                             lesson.title ||
-
                             "Weekly Lesson"
-
                         )}
 
                     </h1>
@@ -1662,10 +1207,11 @@ const LessonsPage = (function() {
 
                     ${
                         lesson.description
-
                             ? `
 
-                                <p class="lesson-reader-description">
+                                <p
+                                    class="lesson-reader-description"
+                                >
 
                                     ${escapeHtml(
                                         lesson.description
@@ -1674,16 +1220,16 @@ const LessonsPage = (function() {
                                 </p>
 
                             `
-
                             : ""
                     }
 
 
-                    <div class="lesson-reader-meta">
+                    <div
+                        class="lesson-reader-meta"
+                    >
 
                         ${
                             lesson.lesson_date
-
                                 ? `
 
                                     <span>
@@ -1701,14 +1247,12 @@ const LessonsPage = (function() {
                                     </span>
 
                                 `
-
                                 : ""
                         }
 
 
                         ${
                             sections.length
-
                                 ? `
 
                                     <span>
@@ -1721,16 +1265,13 @@ const LessonsPage = (function() {
 
                                         ${
                                             sections.length === 1
-
                                                 ? "section"
-
                                                 : "sections"
                                         }
 
                                     </span>
 
                                 `
-
                                 : ""
                         }
 
@@ -1739,7 +1280,11 @@ const LessonsPage = (function() {
                 </header>
 
 
-                <div class="reading-progress-track">
+                <!-- Reading Progress -->
+
+                <div
+                    class="reading-progress-track"
+                >
 
                     <div
                         class="reading-progress-value"
@@ -1749,34 +1294,20 @@ const LessonsPage = (function() {
                 </div>
 
 
-                <div class="lesson-reader-layout">
+                <div
+                    class="lesson-reader-layout"
+                >
 
 
-                    <main class="lesson-reading-content">
-
-
-                        ${
-                            renderBibleText(
-                                lesson
-                            )
-                        }
-
-
-                        ${
-                            renderMemoryVerse(
-                                lesson
-                            )
-                        }
-
+                    <main
+                        class="lesson-reading-content"
+                    >
 
                         ${
                             sections.length
-
                                 ? sections
-
                                     .map(
-
-                                        function(
+                                        function (
                                             section,
                                             index
                                         ) {
@@ -1784,33 +1315,28 @@ const LessonsPage = (function() {
                                             return `
 
                                                 <section
-
                                                     class="lesson-reading-section"
-
                                                     id="lesson-section-${index + 1}"
-
                                                 >
 
-                                                    <div class="section-number">
+                                                    <div
+                                                        class="section-number"
+                                                    >
 
-                                                        ${
-                                                            escapeHtml(
-
-                                                                section.section_number ||
-
-                                                                index + 1
-
-                                                            )
-                                                        }
+                                                        ${escapeHtml(
+                                                            section.section_number ||
+                                                            index + 1
+                                                        )}
 
                                                     </div>
 
 
-                                                    <div class="section-main">
+                                                    <div
+                                                        class="section-main"
+                                                    >
 
                                                         ${
                                                             section.title
-
                                                                 ? `
 
                                                                     <h2>
@@ -1822,17 +1348,16 @@ const LessonsPage = (function() {
                                                                     </h2>
 
                                                                 `
-
                                                                 : ""
                                                         }
 
 
-                                                        <div class="section-text">
+                                                        <div
+                                                            class="section-text"
+                                                        >
 
                                                             ${formatContent(
-
                                                                 section.content
-
                                                             )}
 
                                                         </div>
@@ -1844,14 +1369,14 @@ const LessonsPage = (function() {
                                             `;
 
                                         }
-
                                     )
-
                                     .join("")
 
                                 : `
 
-                                    <div class="lesson-no-content">
+                                    <div
+                                        class="lesson-no-content"
+                                    >
 
                                         <span
                                             data-lucide="book-open"
@@ -1864,28 +1389,31 @@ const LessonsPage = (function() {
 
 
                                         <p>
-
                                             This lesson has been published,
                                             but its reading sections are
                                             not available yet.
-
                                         </p>
 
                                     </div>
 
                                 `
-
                         }
 
                     </main>
 
 
-                    <aside class="lesson-reader-sidebar">
+                    <aside
+                        class="lesson-reader-sidebar"
+                    >
 
 
-                        <div class="reader-sidebar-card">
+                        <div
+                            class="reader-sidebar-card"
+                        >
 
-                            <span class="reader-sidebar-icon">
+                            <span
+                                class="reader-sidebar-icon"
+                            >
 
                                 <span
                                     data-lucide="sparkles"
@@ -1900,11 +1428,9 @@ const LessonsPage = (function() {
 
 
                             <p>
-
                                 Take your time. Think about
                                 what God is teaching you and
                                 how you can apply it.
-
                             </p>
 
                         </div>
@@ -1912,22 +1438,22 @@ const LessonsPage = (function() {
 
                         ${
                             sections.length
-
                                 ? `
 
-                                    <div class="reader-section-list">
+                                    <div
+                                        class="reader-section-list"
+                                    >
 
-                                        <span class="reader-sidebar-heading">
-
+                                        <span
+                                            class="reader-sidebar-heading"
+                                        >
                                             In this lesson
-
                                         </span>
 
 
                                         ${sections
                                             .map(
-
-                                                function(
+                                                function (
                                                     section,
                                                     index
                                                 ) {
@@ -1935,27 +1461,23 @@ const LessonsPage = (function() {
                                                     return `
 
                                                         <a
-
                                                             href="#lesson-section-${index + 1}"
-
                                                             class="reader-section-link"
-
                                                         >
 
                                                             <span>
+
                                                                 ${index + 1}
+
                                                             </span>
 
 
                                                             <strong>
 
                                                                 ${escapeHtml(
-
                                                                     section.title ||
-
                                                                     "Section " +
                                                                     (index + 1)
-
                                                                 )}
 
                                                             </strong>
@@ -1965,7 +1487,6 @@ const LessonsPage = (function() {
                                                     `;
 
                                                 }
-
                                             )
                                             .join("")
                                         }
@@ -1973,7 +1494,6 @@ const LessonsPage = (function() {
                                     </div>
 
                                 `
-
                                 : ""
                         }
 
@@ -1982,10 +1502,15 @@ const LessonsPage = (function() {
                 </div>
 
 
-                <section class="lesson-completion-card">
+                <!-- Completion Card -->
 
+                <section
+                    class="lesson-completion-card"
+                >
 
-                    <div class="completion-icon">
+                    <div
+                        class="completion-icon"
+                    >
 
                         <span
                             data-lucide="check"
@@ -1994,7 +1519,9 @@ const LessonsPage = (function() {
                     </div>
 
 
-                    <div class="completion-copy">
+                    <div
+                        class="completion-copy"
+                    >
 
                         <span class="eyebrow">
                             Finished reading?
@@ -2007,23 +1534,17 @@ const LessonsPage = (function() {
 
 
                         <p>
-
                             Once you've carefully read the lesson,
                             continue to the reflection step.
-
                         </p>
 
                     </div>
 
 
                     <button
-
                         type="button"
-
                         id="lessonReadCompleteButton"
-
                         class="lesson-complete-button"
-
                     >
 
                         <span>
@@ -2058,11 +1579,8 @@ const LessonsPage = (function() {
         ) {
 
             window.removeEventListener(
-
                 "scroll",
-
                 progressHandler
-
             );
 
 
@@ -2091,11 +1609,10 @@ const LessonsPage = (function() {
 
 
         progressHandler =
-            function() {
+            function () {
 
                 const scrollTop =
-                    window.scrollY ||
-                    0;
+                    window.scrollY || 0;
 
 
                 const documentHeight =
@@ -2114,27 +1631,20 @@ const LessonsPage = (function() {
 
                 let progress =
                     available > 0
-
                         ? (
-
                             scrollTop /
                             available
-
                         ) * 100
-
                         : 0;
 
 
                 progress =
                     Math.max(
-
                         0,
-
                         Math.min(
                             100,
                             progress
                         )
-
                     );
 
 
@@ -2145,16 +1655,11 @@ const LessonsPage = (function() {
 
 
         window.addEventListener(
-
             "scroll",
-
             progressHandler,
-
             {
-                passive:
-                    true
+                passive: true
             }
-
         );
 
 
@@ -2167,48 +1672,39 @@ const LessonsPage = (function() {
        HUB EVENTS
        ======================================================== */
 
-    function bindHubEvents(
-        container
-    ) {
+    function bindHubEvents(container) {
+
+        if (!container) {
+
+            return;
+
+        }
+
 
         container
-
             .querySelectorAll(
                 "[data-open-lesson]"
             )
-
             .forEach(
-
-                function(button) {
+                function (button) {
 
                     button.addEventListener(
-
                         "click",
-
-                        function() {
+                        function () {
 
                             const lessonId =
                                 String(
-
                                     button.getAttribute(
-
                                         "data-open-lesson"
-
-                                    ) ||
-
-                                    ""
-
+                                    ) || ""
                                 ).trim();
 
 
                             if (!lessonId) {
 
                                 console.error(
-
-                                    "AFC Lessons: lesson button has no lesson ID."
-
+                                    "[LESSONS] No lesson ID found."
                                 );
-
 
                                 return;
 
@@ -2216,19 +1712,14 @@ const LessonsPage = (function() {
 
 
                             openLesson(
-
                                 lessonId,
-
                                 container
-
                             );
 
                         }
-
                     );
 
                 }
-
             );
 
 
@@ -2241,9 +1732,14 @@ const LessonsPage = (function() {
        ERROR EVENTS
        ======================================================== */
 
-    function bindErrorEvents(
-        container
-    ) {
+    function bindErrorEvents(container) {
+
+        if (!container) {
+
+            return;
+
+        }
+
 
         const retry =
             container.querySelector(
@@ -2254,24 +1750,14 @@ const LessonsPage = (function() {
         if (retry) {
 
             retry.addEventListener(
-
                 "click",
-
-                function() {
+                function () {
 
                     render(
-
-                        container,
-
-                        {
-                            forceRefresh:
-                                true
-                        }
-
+                        container
                     );
 
                 }
-
             );
 
         }
@@ -2286,9 +1772,14 @@ const LessonsPage = (function() {
        READER EVENTS
        ======================================================== */
 
-    function bindReaderEvents(
-        container
-    ) {
+    function bindReaderEvents(container) {
+
+        if (!container) {
+
+            return;
+
+        }
+
 
         const back =
             container.querySelector(
@@ -2305,22 +1796,12 @@ const LessonsPage = (function() {
         if (back) {
 
             back.addEventListener(
-
                 "click",
-
-                function() {
-
-                    removeProgressListener();
-
+                function () {
 
                     window.scrollTo({
-
-                        top:
-                            0,
-
-                        behavior:
-                            "smooth"
-
+                        top: 0,
+                        behavior: "smooth"
                     });
 
 
@@ -2329,7 +1810,6 @@ const LessonsPage = (function() {
                     );
 
                 }
-
             );
 
         }
@@ -2338,54 +1818,48 @@ const LessonsPage = (function() {
         if (complete) {
 
             complete.addEventListener(
-
                 "click",
-
-                function() {
+                function () {
 
                     handleLessonCompletion(
-
                         currentLessonId
-
                     );
 
                 }
-
             );
 
         }
 
 
-        container
+        /*
+         * Sidebar navigation.
+         */
 
+        container
             .querySelectorAll(
                 ".reader-section-link"
             )
-
             .forEach(
-
-                function(link) {
+                function (link) {
 
                     link.addEventListener(
-
                         "click",
-
-                        function(event) {
+                        function (event) {
 
                             event.preventDefault();
 
 
+                            const href =
+                                link.getAttribute(
+                                    "href"
+                                ) || "";
+
+
                             const targetId =
-                                link
-
-                                    .getAttribute(
-                                        "href"
-                                    )
-
-                                    .replace(
-                                        "#",
-                                        ""
-                                    );
+                                href.replace(
+                                    "#",
+                                    ""
+                                );
 
 
                             const target =
@@ -2397,23 +1871,16 @@ const LessonsPage = (function() {
                             if (target) {
 
                                 target.scrollIntoView({
-
-                                    behavior:
-                                        "smooth",
-
-                                    block:
-                                        "start"
-
+                                    behavior: "smooth",
+                                    block: "start"
                                 });
 
                             }
 
                         }
-
                     );
 
                 }
-
             );
 
 
@@ -2423,47 +1890,49 @@ const LessonsPage = (function() {
 
 
     /* ========================================================
-       COMPLETION
+       LESSON COMPLETION
        ======================================================== */
 
-    function handleLessonCompletion(
-        lessonId
-    ) {
+    function handleLessonCompletion(lessonId) {
 
         console.log(
-            "Lesson completed:",
+            "[LESSONS] Lesson completed:",
             lessonId
         );
 
 
         /*
-         * Reflection flow will be connected
-         * in Phase 4B.
+         * Phase 4B will replace this with:
+         *
+         * 1. Check login status
+         * 2. Redirect/login if necessary
+         * 3. Load reflection questions
+         * 4. Submit reflection
+         * 5. Unlock quiz
          */
 
         alert(
-
             "Great! The reflection step will be connected in Phase 4B."
-
         );
 
     }
 
 
     /* ========================================================
-       RENDER
+       RENDER LESSON HUB
        ======================================================== */
 
-    async function render(
-        container,
-        options = {}
-    ) {
+    async function render(container) {
 
         if (!container) {
 
             return;
 
         }
+
+
+        currentContainer =
+            container;
 
 
         removeProgressListener();
@@ -2473,83 +1942,8 @@ const LessonsPage = (function() {
             null;
 
 
-        const forceRefresh =
-            options.forceRefresh ===
-            true;
-
-
         /*
-         * ----------------------------------------------------
-         * FIRST: TRY EXISTING LESSON DATA FROM MEMORY
-         * ----------------------------------------------------
-         */
-
-        if (
-            lessons.length &&
-            !forceRefresh
-        ) {
-
-            container.innerHTML =
-                renderHub(
-                    lessons
-                );
-
-
-            bindHubEvents(
-                container
-            );
-
-
-            /*
-             * Background refresh.
-             *
-             * The user does not wait for this.
-             */
-
-            fetchLessons({
-
-                cache:
-                    false
-
-            })
-
-            .then(
-
-                function(freshLessons) {
-
-                    lessons =
-                        freshLessons;
-
-                }
-
-            )
-
-            .catch(
-
-                function(error) {
-
-                    console.warn(
-
-                        "[LESSONS] Background refresh failed:",
-
-                        error
-
-                    );
-
-                }
-
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-         * ----------------------------------------------------
-         * SHOW LOADING
-         * ----------------------------------------------------
+         * Show local skeleton immediately.
          */
 
         container.innerHTML =
@@ -2559,24 +1953,19 @@ const LessonsPage = (function() {
         refreshIcons();
 
 
-        if (window.AFC_Loader) {
+        /*
+         * PRESERVED GLOBAL LOADER.
+         */
 
-            AFC_Loader.show(
-                "Loading weekly lessons..."
-            );
-
-        }
+        showGlobalLoader(
+            "Loading weekly lessons..."
+        );
 
 
         try {
 
             lessons =
-                await fetchLessons({
-
-                    cache:
-                        !forceRefresh
-
-                });
+                await fetchLessons();
 
 
             container.innerHTML =
@@ -2593,17 +1982,15 @@ const LessonsPage = (function() {
         } catch (error) {
 
             console.error(
-
                 "[LESSONS LOAD ERROR]",
-
                 error
-
             );
 
 
             container.innerHTML =
                 renderError(
-                    error.message
+                    error?.message ||
+                    "Unable to load lessons."
                 );
 
 
@@ -2611,13 +1998,14 @@ const LessonsPage = (function() {
                 container
             );
 
+
         } finally {
 
-            if (window.AFC_Loader) {
+            /*
+             * Always hide the global loader.
+             */
 
-                AFC_Loader.hide();
-
-            }
+            hideGlobalLoader();
 
         }
 
@@ -2643,6 +2031,10 @@ const LessonsPage = (function() {
         }
 
 
+        currentContainer =
+            container;
+
+
         currentLessonId =
             String(
                 lessonId
@@ -2653,153 +2045,36 @@ const LessonsPage = (function() {
 
 
         /*
-         * ----------------------------------------------------
-         * CHECK LOCAL CACHE FIRST
-         * ----------------------------------------------------
-         */
-
-        const cached =
-            getBrowserLessonCache(
-                currentLessonId
-            );
-
-
-        if (cached) {
-
-            console.log(
-
-                "[LESSONS] Opening from browser cache:",
-
-                currentLessonId
-
-            );
-
-
-            container.innerHTML =
-                renderReader(
-                    cached
-                );
-
-
-            bindReaderEvents(
-                container
-            );
-
-
-            initialiseReadingProgress();
-
-
-            refreshIcons();
-
-
-            window.scrollTo({
-
-                top:
-                    0,
-
-                behavior:
-                    "smooth"
-
-            });
-
-
-            /*
-             * Refresh in background.
-             *
-             * This makes the lesson open immediately
-             * while still allowing edited content to
-             * reach the user.
-             */
-
-            fetchLesson(
-
-                currentLessonId,
-
-                {
-                    cache:
-                        false
-                }
-
-            )
-
-            .then(
-
-                function(freshData) {
-
-                    saveBrowserLessonCache(
-
-                        currentLessonId,
-
-                        freshData
-
-                    );
-
-                }
-
-            )
-
-            .catch(
-
-                function(error) {
-
-                    console.warn(
-
-                        "[LESSONS] Background lesson refresh failed:",
-
-                        error
-
-                    );
-
-                }
-
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-         * ----------------------------------------------------
-         * NO CACHE
-         * ----------------------------------------------------
+         * Show local skeleton.
          */
 
         container.innerHTML =
-            renderLoading(
-                "Opening lesson..."
-            );
+            renderLoading();
 
 
         refreshIcons();
 
 
-        if (window.AFC_Loader) {
+        /*
+         * PRESERVED GLOBAL LOADER.
+         */
 
-            AFC_Loader.show(
-                "Opening lesson..."
-            );
-
-        }
+        showGlobalLoader(
+            "Opening lesson..."
+        );
 
 
         try {
 
             const data =
                 await fetchLesson(
-
                     currentLessonId
-
                 );
 
 
             console.log(
-
-                "[LESSONS] Lesson loaded:",
-
+                "[LESSONS] Lesson response:",
                 data
-
             );
 
 
@@ -2817,33 +2092,24 @@ const LessonsPage = (function() {
             initialiseReadingProgress();
 
 
-            refreshIcons();
-
-
             window.scrollTo({
-
-                top:
-                    0,
-
-                behavior:
-                    "smooth"
-
+                top: 0,
+                behavior: "smooth"
             });
+
 
         } catch (error) {
 
             console.error(
-
                 "[LESSON OPEN ERROR]",
-
                 error
-
             );
 
 
             container.innerHTML =
                 renderError(
-                    error.message
+                    error?.message ||
+                    "Unable to load this lesson."
                 );
 
 
@@ -2851,13 +2117,15 @@ const LessonsPage = (function() {
                 container
             );
 
+
         } finally {
 
-            if (window.AFC_Loader) {
+            /*
+             * Always hide the global loader,
+             * whether the request succeeds or fails.
+             */
 
-                AFC_Loader.hide();
-
-            }
+            hideGlobalLoader();
 
         }
 
@@ -2882,13 +2150,18 @@ const LessonsPage = (function() {
         fetchLesson:
             fetchLesson,
 
-        clearCache:
-            function() {
+        reload:
+            function () {
 
-                lessons =
-                    [];
+                if (
+                    currentContainer
+                ) {
 
-                lessonMemoryCache.clear();
+                    render(
+                        currentContainer
+                    );
+
+                }
 
             }
 
@@ -2898,5 +2171,14 @@ const LessonsPage = (function() {
 })();
 
 
+/* ============================================================
+   GLOBAL EXPORT
+   ============================================================ */
+
 window.LessonsPage =
     LessonsPage;
+
+
+console.log(
+    "AFC Isiu Youth Portal Lessons controller loaded."
+);
