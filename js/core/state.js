@@ -1,6 +1,7 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   GLOBAL APPLICATION STATE
+   FILE: state.js
+   PURPOSE: Runtime application state
    ============================================================ */
 
 (function () {
@@ -10,97 +11,81 @@
 
     window.AppState = {
 
-        /* ----------------------------------------------------
-           AUTHENTICATION
-           ---------------------------------------------------- */
-
-        user: null,
+        authenticated: false,
 
         token: null,
 
-        authenticated: false,
-
-
-        /* ----------------------------------------------------
-           APPLICATION
-           ---------------------------------------------------- */
+        user: null,
 
         currentPage: "home",
 
-        loading: false,
+        currentLesson: null,
 
+        currentQuiz: null,
 
-        /* ----------------------------------------------------
-           DATA
-           ---------------------------------------------------- */
+        lessons: [],
 
         notifications: [],
 
         settings: {},
 
-        lessons: [],
-
-        currentLesson: null,
-
-        currentQuiz: null
+        loading: false
 
     };
 
 
-    /* ========================================================
-       SESSION
-       ======================================================== */
+    window.setAppState = function (updates) {
 
-    window.setSession = function (
-        session,
-        user
-    ) {
+        if (!updates || typeof updates !== "object") {
 
-        AppState.token =
-            session &&
-            session.token
-                ? session.token
-                : null;
+            return;
+
+        }
 
 
-        AppState.user =
-            user || null;
+        Object.keys(updates).forEach(function (key) {
+
+            AppState[key] = updates[key];
+
+        });
 
 
-        AppState.authenticated =
-            Boolean(
-                AppState.token &&
-                AppState.user
-            );
+        window.dispatchEvent(
+            new CustomEvent("appstatechange", {
+                detail: AppState
+            })
+        );
 
     };
 
 
-    /* ========================================================
-       CLEAR SESSION
-       ======================================================== */
+    window.resetAppState = function () {
 
-    window.clearSession = function () {
+        AppState.authenticated = false;
 
         AppState.token = null;
 
         AppState.user = null;
 
-        AppState.authenticated = false;
+        AppState.currentPage = "home";
 
-    };
+        AppState.currentLesson = null;
+
+        AppState.currentQuiz = null;
+
+        AppState.lessons = [];
+
+        AppState.notifications = [];
+
+        AppState.settings = {};
+
+        AppState.loading = false;
 
 
-    /* ========================================================
-       AUTH CHECK
-       ======================================================== */
-
-    window.isAuthenticated = function () {
-
-        return Boolean(
-            AppState.authenticated &&
-            AppState.token &&
-            AppState.user
+        window.dispatchEvent(
+            new CustomEvent("appstatechange", {
+                detail: AppState
+            })
         );
 
     };
