@@ -1,11 +1,12 @@
-/**
- * ============================================================
- * AFC ISIU YOUTH PORTAL V2
- * FILE: lessons.js
- * PURPOSE: LESSONS PAGE CONTROLLER
- * ============================================================
- *
- * PUBLIC FLOW:
+/* ============================================================
+   AFC ISIU YOUTH PORTAL V2
+   FILE: lessons.js
+   PURPOSE: LESSONS PAGE CONTROLLER
+   PHASE 4A.1 — COMPLETE CORRECTED VERSION
+   ============================================================ */
+
+/*
+ * PUBLIC FLOW
  *
  * Lessons Hub
  *      ↓
@@ -17,34 +18,34 @@
  *      ↓
  * Reflection (Phase 4B)
  *
- * IMPORTANT:
+ * IMPORTANT
+ *
  * - Lessons are publicly readable.
- * - Global AFC_Loader is PRESERVED.
- * - Local loading skeleton is also used.
- * ============================================================
- */
+ * - Authentication is NOT required to read lessons.
+ * - Completion / reflection may require authentication.
+ * - Backend:
+ *
+ *      getLessons
+ *      getLesson
+ *
+ * - getLesson returns:
+ *
+ *      {
+ *          lesson,
+ *          sections,
+ *          reflection_questions
+ *      }
+ *
+ * ============================================================ */
 
-"use strict";
 
+(function () {
 
-const LessonsPage = (function () {
+    "use strict";
 
 
     /* ========================================================
-       STATE
-       ======================================================== */
-
-    let lessons = [];
-
-    let currentLessonId = null;
-
-    let progressHandler = null;
-
-    let currentContainer = null;
-
-
-    /* ========================================================
-       HELPERS
+       DOM HELPER
        ======================================================== */
 
     function $(id) {
@@ -54,37 +55,9 @@ const LessonsPage = (function () {
     }
 
 
-    function escapeHtml(value) {
-
-        return String(value ?? "")
-
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-
-            .replace(
-                /</g,
-                "&lt;"
-            )
-
-            .replace(
-                />/g,
-                "&gt;"
-            )
-
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
+    /* ========================================================
+       ICONS
+       ======================================================== */
 
     function refreshIcons() {
 
@@ -100,7 +73,7 @@ const LessonsPage = (function () {
             } catch (error) {
 
                 console.warn(
-                    "AFC Lessons: Unable to refresh icons.",
+                    "AFC Portal: lesson icon refresh failed.",
                     error
                 );
 
@@ -111,69 +84,171 @@ const LessonsPage = (function () {
     }
 
 
-    function showGlobalLoader(message) {
+    /* ========================================================
+       HTML ESCAPE
+       ======================================================== */
 
-        if (
-            window.AFC_Loader &&
-            typeof window.AFC_Loader.show === "function"
+    function escapeHtml(value) {
+
+        return String(
+            value == null ? "" : value
+        )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+    /* ========================================================
+       TEXT HELPERS
+       ======================================================== */
+
+    function cleanText(value) {
+
+        return String(
+            value == null ? "" : value
+        ).trim();
+
+    }
+
+
+    function firstAvailable() {
+
+        for (
+            let i = 0;
+            i < arguments.length;
+            i++
         ) {
 
-            AFC_Loader.show(
-                message
+            const value =
+                cleanText(
+                    arguments[i]
+                );
+
+
+            if (value) {
+
+                return value;
+
+            }
+
+        }
+
+
+        return "";
+
+    }
+
+
+    /* ========================================================
+       AUTHENTICATION
+       ======================================================== */
+
+    function isLoggedIn() {
+
+        if (
+            window.AUTH &&
+            typeof window.AUTH.isAuthenticated === "function"
+        ) {
+
+            try {
+
+                return !!window.AUTH.isAuthenticated();
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: authentication check failed.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return false;
+
+    }
+
+
+    function getUser() {
+
+        if (
+            window.AUTH &&
+            typeof window.AUTH.getUser === "function"
+        ) {
+
+            try {
+
+                return window.AUTH.getUser();
+
+            } catch (error) {
+
+                console.warn(
+                    "AFC Portal: unable to get current user.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* ========================================================
+       LESSON ID
+       ======================================================== */
+
+    function getLessonIdFromUrl() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
             );
 
-        }
+
+        return cleanText(
+            params.get("id") ||
+            params.get("lesson_id") ||
+            params.get("lessonId")
+        );
 
     }
 
 
-    function hideGlobalLoader() {
+    /* ========================================================
+       DATE FORMATTER
+       ======================================================== */
 
-        if (
-            window.AFC_Loader &&
-            typeof window.AFC_Loader.hide === "function"
-        ) {
-
-            AFC_Loader.hide();
-
-        }
-
-    }
-
-
-    function getResponseData(response) {
-
-        if (!response) {
-
-            return null;
-
-        }
-
-
-        /*
-         * Standard API response:
-         *
-         * {
-         *   success: true,
-         *   data: ...
-         * }
-         */
-
-        if (
-            response.data !== undefined
-        ) {
-
-            return response.data;
-
-        }
-
-
-        return response;
-
-    }
-
-
-    function formatDate(value) {
+    function formatLessonDate(value) {
 
         if (!value) {
 
@@ -192,49 +267,194 @@ const LessonsPage = (function () {
             )
         ) {
 
-            return String(value);
+            return "";
 
         }
 
 
-        return date.toLocaleDateString(
-            "en-NG",
-            {
-                day: "numeric",
-                month: "short",
-                year: "numeric"
-            }
+        try {
+
+            return new Intl.DateTimeFormat(
+                "en-NG",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            ).format(date);
+
+        } catch (error) {
+
+            return date.toLocaleDateString();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       LESSON STATUS
+       ======================================================== */
+
+    function normalizeStatus(value) {
+
+        return cleanText(
+            value
+        ).toLowerCase();
+
+    }
+
+
+    function isPublishedLesson(lesson) {
+
+        if (!lesson) {
+
+            return false;
+
+        }
+
+
+        const status =
+            normalizeStatus(
+                lesson.status
+            );
+
+
+        /*
+         * No status means the backend has already
+         * supplied the lesson, so allow it.
+         */
+
+        if (!status) {
+
+            return true;
+
+        }
+
+
+        return (
+            status === "published" ||
+            status === "active" ||
+            status === "live"
         );
 
     }
 
 
-    function sortLessons(list) {
+    /* ========================================================
+       LESSON DATA NORMALIZATION
+       ======================================================== */
 
-        return [
-            ...list
-        ].sort(
+    function normalizeLesson(item) {
+
+        if (!item || typeof item !== "object") {
+
+            return null;
+
+        }
+
+
+        return item;
+
+    }
+
+
+    function normalizeLessonList(response) {
+
+        let list =
+            response &&
+            response.data !== undefined
+                ? response.data
+                : response;
+
+
+        /*
+         * Some API responses may return:
+         *
+         * {
+         *   success: true,
+         *   data: [...]
+         * }
+         *
+         * or:
+         *
+         * [...]
+         */
+
+        if (
+            list &&
+            !Array.isArray(list) &&
+            Array.isArray(list.lessons)
+        ) {
+
+            list =
+                list.lessons;
+
+        }
+
+
+        if (!Array.isArray(list)) {
+
+            return [];
+
+        }
+
+
+        return list
+            .map(normalizeLesson)
+            .filter(Boolean);
+
+    }
+
+
+    /* ========================================================
+       LESSON SORT
+       ======================================================== */
+
+    function getLessonDateValue(lesson) {
+
+        if (!lesson) {
+
+            return 0;
+
+        }
+
+
+        const value =
+            firstAvailable(
+                lesson.lesson_date,
+                lesson.published_at,
+                lesson.date,
+                lesson.created_at
+            );
+
+
+        if (!value) {
+
+            return 0;
+
+        }
+
+
+        const time =
+            new Date(value).getTime();
+
+
+        return Number.isNaN(time)
+            ? 0
+            : time;
+
+    }
+
+
+    function sortLessonsNewestFirst(lessons) {
+
+        return lessons.sort(
             function (a, b) {
 
-                const aDate =
-                    new Date(
-                        a.lesson_date ||
-                        a.published_at ||
-                        0
-                    );
-
-
-                const bDate =
-                    new Date(
-                        b.lesson_date ||
-                        b.published_at ||
-                        0
-                    );
-
-
                 return (
-                    bDate -
-                    aDate
+                    getLessonDateValue(b) -
+                    getLessonDateValue(a)
                 );
 
             }
@@ -243,267 +463,196 @@ const LessonsPage = (function () {
     }
 
 
-    function getLessonId(lesson) {
-
-        return String(
-            lesson?.lesson_id || ""
-        ).trim();
-
-    }
-
-
     /* ========================================================
-       FETCH ALL LESSONS
+       LESSON TITLE
        ======================================================== */
 
-    async function fetchLessons() {
+    function getLessonTitle(lesson) {
 
-        if (
-            !window.API ||
-            typeof window.API.get !== "function"
-        ) {
-
-            throw new Error(
-                "The API connection is not available."
-            );
-
-        }
-
-
-        const response =
-            await window.API.get(
-                "getLessons"
-            );
-
-
-        const data =
-            getResponseData(
-                response
-            );
-
-
-        if (
-            !Array.isArray(data)
-        ) {
-
-            console.error(
-                "[LESSONS] Unexpected lessons response:",
-                response
-            );
-
-
-            throw new Error(
-                "The backend returned an unexpected lessons format."
-            );
-
-        }
-
-
-        return data;
-
-    }
-
-
-    /* ========================================================
-       FETCH ONE LESSON
-       ======================================================== */
-
-    async function fetchLesson(lessonId) {
-
-        const cleanId =
-            String(
-                lessonId || ""
-            ).trim();
-
-
-        if (!cleanId) {
-
-            throw new Error(
-                "No lesson ID was supplied."
-            );
-
-        }
-
-
-        if (
-            !window.API ||
-            typeof window.API.get !== "function"
-        ) {
-
-            throw new Error(
-                "The API connection is not available."
-            );
-
-        }
-
-
-        console.log(
-            "[LESSONS] Opening lesson:",
-            cleanId
+        return firstAvailable(
+            lesson && lesson.title,
+            lesson && lesson.lesson_title,
+            "Weekly Lesson"
         );
 
-
-        const response =
-            await window.API.get(
-                "getLesson",
-                {
-                    lesson_id:
-                        cleanId
-                }
-            );
+    }
 
 
-        const data =
-            getResponseData(
-                response
-            );
+    function getLessonDescription(lesson) {
+
+        return firstAvailable(
+            lesson && lesson.description,
+            lesson && lesson.summary,
+            lesson && lesson.introduction,
+            "Open this lesson and continue learning."
+        );
+
+    }
 
 
-        if (!data) {
+    function getLessonWeek(lesson) {
 
-            throw new Error(
-                "The backend returned no lesson data."
-            );
+        if (!lesson) {
+
+            return "";
 
         }
 
 
-        if (!data.lesson) {
-
-            console.error(
-                "[LESSONS] Invalid lesson response:",
-                response
+        const week =
+            firstAvailable(
+                lesson.week_number,
+                lesson.week,
+                lesson.week_no
             );
 
 
-            throw new Error(
-                "The backend did not return the requested lesson."
-            );
+        if (!week) {
 
-        }
-
-
-        /*
-         * Ensure predictable structure.
-         */
-
-        if (
-            !Array.isArray(
-                data.sections
-            )
-        ) {
-
-            data.sections = [];
+            return "";
 
         }
 
 
         if (
-            !Array.isArray(
-                data.reflection_questions
+            /^week\s/i.test(
+                week
             )
         ) {
 
-            data.reflection_questions = [];
+            return week;
 
         }
 
 
-        return data;
+        return "Week " + week;
+
+    }
+
+
+    function getLessonType(lesson) {
+
+        return firstAvailable(
+            lesson && lesson.type,
+            lesson && lesson.lesson_type,
+            lesson && lesson.category,
+            "Lesson"
+        );
+
+    }
+
+
+    function getLessonId(lesson) {
+
+        return firstAvailable(
+            lesson && lesson.lesson_id,
+            lesson && lesson.id
+        );
 
     }
 
 
     /* ========================================================
-       LOADING SKELETON
+       NAVIGATION
        ======================================================== */
 
-    function renderLoading() {
+    function openLesson(lessonId) {
 
-        return `
+        const id =
+            cleanText(
+                lessonId
+            );
 
-            <div class="lessons-page lessons-loading-state">
 
-                <div class="lesson-page-heading skeleton-heading">
+        if (!id) {
 
-                    <div
-                        class="skeleton-line skeleton-small"
-                    ></div>
+            console.warn(
+                "AFC Portal: cannot open lesson without lesson ID."
+            );
 
-                    <div
-                        class="skeleton-line skeleton-title"
-                    ></div>
+            return;
 
-                    <div
-                        class="skeleton-line skeleton-text"
-                    ></div>
+        }
+
+
+        window.location.href =
+            "lessons.html?id=" +
+            encodeURIComponent(id);
+
+    }
+
+
+    function goBackToLessons() {
+
+        window.location.href =
+            "lessons.html";
+
+    }
+
+
+    /* ========================================================
+       LESSON HUB STATE
+       ======================================================== */
+
+    function renderHubSkeleton() {
+
+        const page =
+            $("lessonsHub");
+
+
+        if (!page) {
+
+            return;
+
+        }
+
+
+        page.innerHTML = `
+
+            <div class="skeleton-heading">
+
+                <div class="skeleton-line skeleton-small"></div>
+
+                <div class="skeleton-line skeleton-title"></div>
+
+                <div class="skeleton-line skeleton-text wide"></div>
+
+            </div>
+
+
+            <div class="lesson-featured-skeleton">
+
+                <div class="skeleton-line skeleton-badge"></div>
+
+                <div class="skeleton-line skeleton-feature-title"></div>
+
+                <div class="skeleton-line skeleton-text wide"></div>
+
+                <div class="skeleton-line skeleton-button"></div>
+
+            </div>
+
+
+            <div class="lesson-skeleton-grid">
+
+                <div class="lesson-card-skeleton">
+
+                    <div class="skeleton-line skeleton-small"></div>
+
+                    <div class="skeleton-line skeleton-card-title"></div>
+
+                    <div class="skeleton-line skeleton-text short"></div>
 
                 </div>
 
 
-                <div class="lesson-featured-skeleton">
+                <div class="lesson-card-skeleton">
 
-                    <div
-                        class="skeleton-line skeleton-badge"
-                    ></div>
+                    <div class="skeleton-line skeleton-small"></div>
 
-                    <div
-                        class="skeleton-line skeleton-feature-title"
-                    ></div>
+                    <div class="skeleton-line skeleton-card-title"></div>
 
-                    <div
-                        class="skeleton-line skeleton-text wide"
-                    ></div>
-
-                    <div
-                        class="skeleton-line skeleton-text medium"
-                    ></div>
-
-                    <div
-                        class="skeleton-button"
-                    ></div>
-
-                </div>
-
-
-                <div class="lesson-skeleton-grid">
-
-                    ${
-                        Array(4)
-                            .fill("")
-                            .map(
-                                function () {
-
-                                    return `
-
-                                        <div
-                                            class="lesson-card-skeleton"
-                                        >
-
-                                            <div
-                                                class="skeleton-line skeleton-small"
-                                            ></div>
-
-                                            <div
-                                                class="skeleton-line skeleton-card-title"
-                                            ></div>
-
-                                            <div
-                                                class="skeleton-line skeleton-text"
-                                            ></div>
-
-                                            <div
-                                                class="skeleton-line skeleton-text short"
-                                            ></div>
-
-                                        </div>
-
-                                    `;
-
-                                }
-                            )
-                            .join("")
-                    }
+                    <div class="skeleton-line skeleton-text short"></div>
 
                 </div>
 
@@ -515,16 +664,210 @@ const LessonsPage = (function () {
 
 
     /* ========================================================
-       EMPTY STATE
+       HUB ELEMENT FINDERS
        ======================================================== */
 
-    function renderEmpty() {
+    function getHubContainer() {
 
-        return `
+        return (
+            $("lessonsHub") ||
+            $("lessonsPage") ||
+            $("lessonHub")
+        );
 
-            <div class="lesson-state">
+    }
 
-                <div class="lesson-state-icon">
+
+    function getFeaturedContainer() {
+
+        return (
+            $("featuredLesson") ||
+            $("lessonFeatured") ||
+            $("currentLesson")
+        );
+
+    }
+
+
+    function getHistoryContainer() {
+
+        return (
+            $("lessonsGrid") ||
+            $("lessonHistory") ||
+            $("lessonsHistory")
+        );
+
+    }
+
+
+    /* ========================================================
+       FEATURED LESSON
+       ======================================================== */
+
+    function renderFeaturedLesson(lesson) {
+
+        const container =
+            getFeaturedContainer();
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        const lessonId =
+            escapeHtml(
+                getLessonId(
+                    lesson
+                )
+            );
+
+
+        const title =
+            escapeHtml(
+                getLessonTitle(
+                    lesson
+                )
+            );
+
+
+        const description =
+            escapeHtml(
+                getLessonDescription(
+                    lesson
+                )
+            );
+
+
+        const week =
+            escapeHtml(
+                getLessonWeek(
+                    lesson
+                )
+            );
+
+
+        const date =
+            escapeHtml(
+                formatLessonDate(
+                    firstAvailable(
+                        lesson.lesson_date,
+                        lesson.published_at,
+                        lesson.date
+                    )
+                )
+            );
+
+
+        container.innerHTML = `
+
+            <div class="lesson-featured-content">
+
+                <div class="lesson-featured-top">
+
+                    <span class="lesson-current-badge">
+
+                        <span class="status-dot"></span>
+
+                        Current Lesson
+
+                    </span>
+
+                    ${
+                        week
+                            ? `
+                                <span class="lesson-featured-week">
+                                    ${week}
+                                </span>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+
+                <h2>
+                    ${title}
+                </h2>
+
+
+                <p>
+                    ${description}
+                </p>
+
+
+                <div class="lesson-featured-meta">
+
+                    ${
+                        date
+                            ? `
+                                <span>
+
+                                    <span
+                                        data-lucide="calendar-days"
+                                    ></span>
+
+                                    ${date}
+
+                                </span>
+                            `
+                            : ""
+                    }
+
+                    <span>
+
+                        <span
+                            data-lucide="book-open"
+                        ></span>
+
+                        Weekly Lesson
+
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="lesson-start-button"
+                    data-open-lesson="${lessonId}"
+                >
+
+                    <span>
+                        Start Reading
+                    </span>
+
+                    <span
+                        data-lucide="arrow-right"
+                    ></span>
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="lesson-featured-art"
+                aria-hidden="true"
+            >
+
+                <div
+                    class="lesson-featured-glow"
+                ></div>
+
+                <div
+                    class="lesson-art-circle circle-one"
+                ></div>
+
+                <div
+                    class="lesson-art-circle circle-two"
+                ></div>
+
+                <div
+                    class="lesson-art-book"
+                >
 
                     <span
                         data-lucide="book-open"
@@ -532,1153 +875,222 @@ const LessonsPage = (function () {
 
                 </div>
 
-
-                <h2>
-                    No lessons yet
-                </h2>
-
-
-                <p>
-                    Published lessons will appear here
-                    when they become available.
-                </p>
-
             </div>
 
         `;
 
-    }
 
-
-    /* ========================================================
-       ERROR STATE
-       ======================================================== */
-
-    function renderError(message) {
-
-        return `
-
-            <div
-                class="lesson-state lesson-state-error"
-            >
-
-                <div class="lesson-state-icon">
-
-                    <span
-                        data-lucide="triangle-alert"
-                    ></span>
-
-                </div>
-
-
-                <h2>
-                    Unable to load lessons
-                </h2>
-
-
-                <p>
-                    ${escapeHtml(
-                        message ||
-                        "Something went wrong while loading the lessons."
-                    )}
-                </p>
-
-
-                <button
-                    type="button"
-                    class="lesson-retry-button"
-                    id="retryLessonsButton"
-                >
-
-                    <span
-                        data-lucide="rotate-cw"
-                    ></span>
-
-                    <span>
-                        Try Again
-                    </span>
-
-                </button>
-
-            </div>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       LESSON CARD
-       ======================================================== */
-
-    function renderLessonCard(lesson) {
-
-        const lessonId =
-            getLessonId(
-                lesson
+        const button =
+            container.querySelector(
+                "[data-open-lesson]"
             );
 
 
-        return `
+        if (button) {
 
-            <article class="lesson-card">
+            button.addEventListener(
+                "click",
+                function () {
 
-                <div class="lesson-card-top">
-
-                    <span class="lesson-card-week">
-
-                        ${
-                            lesson.week_number
-                                ? `Week ${escapeHtml(
-                                    lesson.week_number
-                                )}`
-                                : "Weekly Lesson"
-                        }
-
-                    </span>
-
-
-                    <span class="lesson-card-type">
-
-                        ${escapeHtml(
-                            lesson.lesson_type ||
-                            "Youth Lesson"
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                <div class="lesson-card-body">
-
-                    <h3>
-
-                        ${escapeHtml(
-                            lesson.title ||
-                            "Untitled Lesson"
-                        )}
-
-                    </h3>
-
-
-                    <p>
-
-                        ${escapeHtml(
-                            lesson.description ||
-                            "Open this lesson to begin reading."
-                        )}
-
-                    </p>
-
-                </div>
-
-
-                <div class="lesson-card-footer">
-
-                    <span class="lesson-card-date">
-
-                        ${escapeHtml(
-                            formatDate(
-                                lesson.lesson_date
-                            )
-                        )}
-
-                    </span>
-
-
-                    <button
-                        type="button"
-                        class="lesson-card-button"
-                        data-open-lesson="${escapeHtml(
-                            lessonId
-                        )}"
-                    >
-
-                        <span>
-                            Read lesson
-                        </span>
-
-                        <span
-                            data-lucide="arrow-up-right"
-                        ></span>
-
-                    </button>
-
-                </div>
-
-            </article>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       LESSON HUB
-       ======================================================== */
-
-    function renderHub(lessonList) {
-
-        if (
-            !Array.isArray(
-                lessonList
-            ) ||
-            !lessonList.length
-        ) {
-
-            return renderEmpty();
-
-        }
-
-
-        const sorted =
-            sortLessons(
-                lessonList
-            );
-
-
-        const featured =
-            sorted[0];
-
-
-        const previous =
-            sorted.slice(1);
-
-
-        const featuredId =
-            getLessonId(
-                featured
-            );
-
-
-        return `
-
-            <div class="lessons-page">
-
-
-                <header class="lesson-page-heading">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            Weekly Lessons
-                        </span>
-
-
-                        <h1>
-                            Grow in God's Word.
-                        </h1>
-
-
-                        <p>
-                            Read, reflect and keep growing
-                            in your walk with Christ.
-                        </p>
-
-                    </div>
-
-                </header>
-
-
-                <article class="lesson-featured">
-
-                    <div
-                        class="lesson-featured-glow"
-                    ></div>
-
-
-                    <div class="lesson-featured-content">
-
-
-                        <div class="lesson-featured-top">
-
-                            <span
-                                class="lesson-current-badge"
-                            >
-
-                                <span
-                                    class="status-dot"
-                                ></span>
-
-                                Current lesson
-
-                            </span>
-
-
-                            ${
-                                featured.week_number
-                                    ? `
-
-                                        <span
-                                            class="lesson-featured-week"
-                                        >
-
-                                            Week ${escapeHtml(
-                                                featured.week_number
-                                            )}
-
-                                        </span>
-
-                                    `
-                                    : ""
-                            }
-
-                        </div>
-
-
-                        <h2>
-
-                            ${escapeHtml(
-                                featured.title ||
-                                "Weekly Lesson"
-                            )}
-
-                        </h2>
-
-
-                        <p>
-
-                            ${escapeHtml(
-                                featured.description ||
-                                "Start reading this week's lesson."
-                            )}
-
-                        </p>
-
-
-                        <div class="lesson-featured-meta">
-
-
-                            ${
-                                featured.lesson_type
-                                    ? `
-
-                                        <span>
-
-                                            <span
-                                                data-lucide="book-open"
-                                            ></span>
-
-                                            ${escapeHtml(
-                                                featured.lesson_type
-                                            )}
-
-                                        </span>
-
-                                    `
-                                    : ""
-                            }
-
-
-                            ${
-                                featured.lesson_date
-                                    ? `
-
-                                        <span>
-
-                                            <span
-                                                data-lucide="calendar-days"
-                                            ></span>
-
-                                            ${escapeHtml(
-                                                formatDate(
-                                                    featured.lesson_date
-                                                )
-                                            )}
-
-                                        </span>
-
-                                    `
-                                    : ""
-                            }
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="lesson-start-button"
-                            data-open-lesson="${escapeHtml(
-                                featuredId
-                            )}"
-                        >
-
-                            <span>
-                                Start reading
-                            </span>
-
-
-                            <span
-                                data-lucide="arrow-right"
-                            ></span>
-
-                        </button>
-
-                    </div>
-
-
-                    <div
-                        class="lesson-featured-art"
-                        aria-hidden="true"
-                    >
-
-                        <div
-                            class="lesson-art-circle circle-one"
-                        ></div>
-
-                        <div
-                            class="lesson-art-circle circle-two"
-                        ></div>
-
-
-                        <div class="lesson-art-book">
-
-                            <span
-                                data-lucide="book-open"
-                            ></span>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <section class="lessons-history">
-
-
-                    <div
-                        class="lessons-section-heading"
-                    >
-
-                        <div>
-
-                            <span class="eyebrow">
-                                Library
-                            </span>
-
-
-                            <h2>
-                                Previous lessons
-                            </h2>
-
-                        </div>
-
-
-                        ${
-                            previous.length
-                                ? `
-
-                                    <span class="lesson-count">
-
-                                        ${previous.length}
-
-                                        ${
-                                            previous.length === 1
-                                                ? "lesson"
-                                                : "lessons"
-                                        }
-
-                                    </span>
-
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-
-                    ${
-                        previous.length
-                            ? `
-
-                                <div class="lessons-grid">
-
-                                    ${previous
-                                        .map(
-                                            renderLessonCard
-                                        )
-                                        .join("")
-                                    }
-
-                                </div>
-
-                            `
-                            : `
-
-                                <div
-                                    class="lessons-empty-library"
-                                >
-
-                                    <span
-                                        data-lucide="book-open"
-                                    ></span>
-
-                                    <span>
-                                        Previous lessons will appear here.
-                                    </span>
-
-                                </div>
-
-                            `
-                    }
-
-                </section>
-
-            </div>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       CONTENT FORMATTER
-       ======================================================== */
-
-    function formatContent(content) {
-
-        if (!content) {
-
-            return "";
-
-        }
-
-
-        const safe =
-            escapeHtml(
-                content
-            );
-
-
-        return safe
-
-            .split(
-                /\n\s*\n/
-            )
-
-            .map(
-                function (paragraph) {
-
-                    const cleaned =
-                        paragraph
-                            .trim()
-                            .replace(
-                                /\n/g,
-                                "<br>"
-                            );
-
-
-                    if (!cleaned) {
-
-                        return "";
-
-                    }
-
-
-                    return `
-
-                        <p>
-                            ${cleaned}
-                        </p>
-
-                    `;
-
-                }
-            )
-
-            .join("");
-
-    }
-
-
-    /* ========================================================
-       LESSON READER
-       ======================================================== */
-
-    function renderReader(data) {
-
-        const lesson =
-            data.lesson || {};
-
-
-        const sections =
-            Array.isArray(
-                data.sections
-            )
-                ? data.sections
-                : [];
-
-
-        return `
-
-            <article class="lesson-reader">
-
-
-                <div
-                    class="lesson-reader-topbar"
-                >
-
-                    <button
-                        type="button"
-                        id="backToLessonsButton"
-                        class="lesson-back-button"
-                    >
-
-                        <span
-                            data-lucide="arrow-left"
-                        ></span>
-
-                        <span>
-                            All lessons
-                        </span>
-
-                    </button>
-
-
-                    <span
-                        class="lesson-reader-label"
-                    >
-                        Reading
-                    </span>
-
-                </div>
-
-
-                <header
-                    class="lesson-reader-header"
-                >
-
-
-                    <div
-                        class="lesson-reader-badges"
-                    >
-
-                        ${
-                            lesson.week_number
-                                ? `
-
-                                    <span
-                                        class="reader-badge"
-                                    >
-
-                                        Week ${escapeHtml(
-                                            lesson.week_number
-                                        )}
-
-                                    </span>
-
-                                `
-                                : ""
-                        }
-
-
-                        ${
-                            lesson.lesson_type
-                                ? `
-
-                                    <span
-                                        class="reader-badge muted"
-                                    >
-
-                                        ${escapeHtml(
-                                            lesson.lesson_type
-                                        )}
-
-                                    </span>
-
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-
-                    <h1>
-
-                        ${escapeHtml(
-                            lesson.title ||
-                            "Weekly Lesson"
-                        )}
-
-                    </h1>
-
-
-                    ${
-                        lesson.description
-                            ? `
-
-                                <p
-                                    class="lesson-reader-description"
-                                >
-
-                                    ${escapeHtml(
-                                        lesson.description
-                                    )}
-
-                                </p>
-
-                            `
-                            : ""
-                    }
-
-
-                    <div
-                        class="lesson-reader-meta"
-                    >
-
-                        ${
-                            lesson.lesson_date
-                                ? `
-
-                                    <span>
-
-                                        <span
-                                            data-lucide="calendar-days"
-                                        ></span>
-
-                                        ${escapeHtml(
-                                            formatDate(
-                                                lesson.lesson_date
-                                            )
-                                        )}
-
-                                    </span>
-
-                                `
-                                : ""
-                        }
-
-
-                        ${
-                            sections.length
-                                ? `
-
-                                    <span>
-
-                                        <span
-                                            data-lucide="book-open"
-                                        ></span>
-
-                                        ${sections.length}
-
-                                        ${
-                                            sections.length === 1
-                                                ? "section"
-                                                : "sections"
-                                        }
-
-                                    </span>
-
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </header>
-
-
-                <!-- Reading Progress -->
-
-                <div
-                    class="reading-progress-track"
-                >
-
-                    <div
-                        class="reading-progress-value"
-                        id="readingProgressBar"
-                    ></div>
-
-                </div>
-
-
-                <div
-                    class="lesson-reader-layout"
-                >
-
-
-                    <main
-                        class="lesson-reading-content"
-                    >
-
-                        ${
-                            sections.length
-                                ? sections
-                                    .map(
-                                        function (
-                                            section,
-                                            index
-                                        ) {
-
-                                            return `
-
-                                                <section
-                                                    class="lesson-reading-section"
-                                                    id="lesson-section-${index + 1}"
-                                                >
-
-                                                    <div
-                                                        class="section-number"
-                                                    >
-
-                                                        ${escapeHtml(
-                                                            section.section_number ||
-                                                            index + 1
-                                                        )}
-
-                                                    </div>
-
-
-                                                    <div
-                                                        class="section-main"
-                                                    >
-
-                                                        ${
-                                                            section.title
-                                                                ? `
-
-                                                                    <h2>
-
-                                                                        ${escapeHtml(
-                                                                            section.title
-                                                                        )}
-
-                                                                    </h2>
-
-                                                                `
-                                                                : ""
-                                                        }
-
-
-                                                        <div
-                                                            class="section-text"
-                                                        >
-
-                                                            ${formatContent(
-                                                                section.content
-                                                            )}
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </section>
-
-                                            `;
-
-                                        }
-                                    )
-                                    .join("")
-
-                                : `
-
-                                    <div
-                                        class="lesson-no-content"
-                                    >
-
-                                        <span
-                                            data-lucide="book-open"
-                                        ></span>
-
-
-                                        <h2>
-                                            Lesson content is coming soon
-                                        </h2>
-
-
-                                        <p>
-                                            This lesson has been published,
-                                            but its reading sections are
-                                            not available yet.
-                                        </p>
-
-                                    </div>
-
-                                `
-                        }
-
-                    </main>
-
-
-                    <aside
-                        class="lesson-reader-sidebar"
-                    >
-
-
-                        <div
-                            class="reader-sidebar-card"
-                        >
-
-                            <span
-                                class="reader-sidebar-icon"
-                            >
-
-                                <span
-                                    data-lucide="sparkles"
-                                ></span>
-
-                            </span>
-
-
-                            <h3>
-                                Read with purpose
-                            </h3>
-
-
-                            <p>
-                                Take your time. Think about
-                                what God is teaching you and
-                                how you can apply it.
-                            </p>
-
-                        </div>
-
-
-                        ${
-                            sections.length
-                                ? `
-
-                                    <div
-                                        class="reader-section-list"
-                                    >
-
-                                        <span
-                                            class="reader-sidebar-heading"
-                                        >
-                                            In this lesson
-                                        </span>
-
-
-                                        ${sections
-                                            .map(
-                                                function (
-                                                    section,
-                                                    index
-                                                ) {
-
-                                                    return `
-
-                                                        <a
-                                                            href="#lesson-section-${index + 1}"
-                                                            class="reader-section-link"
-                                                        >
-
-                                                            <span>
-
-                                                                ${index + 1}
-
-                                                            </span>
-
-
-                                                            <strong>
-
-                                                                ${escapeHtml(
-                                                                    section.title ||
-                                                                    "Section " +
-                                                                    (index + 1)
-                                                                )}
-
-                                                            </strong>
-
-                                                        </a>
-
-                                                    `;
-
-                                                }
-                                            )
-                                            .join("")
-                                        }
-
-                                    </div>
-
-                                `
-                                : ""
-                        }
-
-                    </aside>
-
-                </div>
-
-
-                <!-- Completion Card -->
-
-                <section
-                    class="lesson-completion-card"
-                >
-
-                    <div
-                        class="completion-icon"
-                    >
-
-                        <span
-                            data-lucide="check"
-                        ></span>
-
-                    </div>
-
-
-                    <div
-                        class="completion-copy"
-                    >
-
-                        <span class="eyebrow">
-                            Finished reading?
-                        </span>
-
-
-                        <h2>
-                            Take a moment to reflect.
-                        </h2>
-
-
-                        <p>
-                            Once you've carefully read the lesson,
-                            continue to the reflection step.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="lessonReadCompleteButton"
-                        class="lesson-complete-button"
-                    >
-
-                        <span>
-                            I've read this lesson
-                        </span>
-
-
-                        <span
-                            data-lucide="arrow-right"
-                        ></span>
-
-                    </button>
-
-                </section>
-
-
-            </article>
-
-        `;
-
-    }
-
-
-    /* ========================================================
-       READING PROGRESS
-       ======================================================== */
-
-    function removeProgressListener() {
-
-        if (
-            progressHandler
-        ) {
-
-            window.removeEventListener(
-                "scroll",
-                progressHandler
-            );
-
-
-            progressHandler =
-                null;
-
-        }
-
-    }
-
-
-    function initialiseReadingProgress() {
-
-        removeProgressListener();
-
-
-        const bar =
-            $("readingProgressBar");
-
-
-        if (!bar) {
-
-            return;
-
-        }
-
-
-        progressHandler =
-            function () {
-
-                const scrollTop =
-                    window.scrollY || 0;
-
-
-                const documentHeight =
-                    document.documentElement
-                        .scrollHeight;
-
-
-                const viewport =
-                    window.innerHeight;
-
-
-                const available =
-                    documentHeight -
-                    viewport;
-
-
-                let progress =
-                    available > 0
-                        ? (
-                            scrollTop /
-                            available
-                        ) * 100
-                        : 0;
-
-
-                progress =
-                    Math.max(
-                        0,
-                        Math.min(
-                            100,
-                            progress
-                        )
+                    openLesson(
+                        button.dataset.openLesson
                     );
 
+                }
+            );
 
-                bar.style.width =
-                    `${progress}%`;
-
-            };
-
-
-        window.addEventListener(
-            "scroll",
-            progressHandler,
-            {
-                passive: true
-            }
-        );
+        }
 
 
-        progressHandler();
+        refreshIcons();
 
     }
 
 
     /* ========================================================
-       HUB EVENTS
+       LESSON HISTORY
        ======================================================== */
 
-    function bindHubEvents(container) {
+    function renderLessonHistory(lessons) {
+
+        const container =
+            getHistoryContainer();
+
 
         if (!container) {
 
             return;
 
         }
+
+
+        if (
+            !lessons ||
+            lessons.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="lesson-state">
+
+                    <div class="lesson-state-icon">
+
+                        <span
+                            data-lucide="book-open"
+                        ></span>
+
+                    </div>
+
+                    <h2>
+                        No lessons yet
+                    </h2>
+
+                    <p>
+                        There are no published lessons available at the moment.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            refreshIcons();
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            lessons
+                .map(
+                    function (lesson) {
+
+                        const lessonId =
+                            escapeHtml(
+                                getLessonId(
+                                    lesson
+                                )
+                            );
+
+
+                        const title =
+                            escapeHtml(
+                                getLessonTitle(
+                                    lesson
+                                )
+                            );
+
+
+                        const description =
+                            escapeHtml(
+                                getLessonDescription(
+                                    lesson
+                                )
+                            );
+
+
+                        const week =
+                            escapeHtml(
+                                getLessonWeek(
+                                    lesson
+                                )
+                            );
+
+
+                        const type =
+                            escapeHtml(
+                                getLessonType(
+                                    lesson
+                                )
+                            );
+
+
+                        const date =
+                            escapeHtml(
+                                formatLessonDate(
+                                    firstAvailable(
+                                        lesson.lesson_date,
+                                        lesson.published_at,
+                                        lesson.date
+                                    )
+                                )
+                            );
+
+
+                        return `
+
+                            <article class="lesson-card">
+
+                                <div class="lesson-card-top">
+
+                                    <span class="lesson-card-week">
+
+                                        ${
+                                            week ||
+                                            "Lesson"
+                                        }
+
+                                    </span>
+
+
+                                    <span class="lesson-card-type">
+
+                                        ${type}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="lesson-card-body">
+
+                                    <h3>
+                                        ${title}
+                                    </h3>
+
+
+                                    <p>
+                                        ${description}
+                                    </p>
+
+                                </div>
+
+
+                                <div class="lesson-card-footer">
+
+                                    <span class="lesson-card-date">
+
+                                        ${date}
+
+                                    </span>
+
+
+                                    <button
+                                        type="button"
+                                        class="lesson-card-button"
+                                        data-open-lesson="${lessonId}"
+                                    >
+
+                                        <span>
+                                            Read Lesson
+                                        </span>
+
+                                        <span
+                                            data-lucide="arrow-up-right"
+                                        ></span>
+
+                                    </button>
+
+                                </div>
+
+                            </article>
+
+                        `;
+
+                    }
+                )
+                .join("");
 
 
         container
@@ -1692,28 +1104,8 @@ const LessonsPage = (function () {
                         "click",
                         function () {
 
-                            const lessonId =
-                                String(
-                                    button.getAttribute(
-                                        "data-open-lesson"
-                                    ) || ""
-                                ).trim();
-
-
-                            if (!lessonId) {
-
-                                console.error(
-                                    "[LESSONS] No lesson ID found."
-                                );
-
-                                return;
-
-                            }
-
-
                             openLesson(
-                                lessonId,
-                                container
+                                button.dataset.openLesson
                             );
 
                         }
@@ -1729,22 +1121,419 @@ const LessonsPage = (function () {
 
 
     /* ========================================================
-       ERROR EVENTS
+       LESSON COUNT
        ======================================================== */
 
-    function bindErrorEvents(container) {
+    function updateLessonCount(count) {
 
-        if (!container) {
+        const elements =
+            document.querySelectorAll(
+                ".lesson-count"
+            );
+
+
+        elements.forEach(
+            function (element) {
+
+                element.textContent =
+                    count +
+                    (
+                        count === 1
+                            ? " lesson"
+                            : " lessons"
+                    );
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       HUB ERROR
+       ======================================================== */
+
+    function renderHubError() {
+
+        const hub =
+            getHubContainer();
+
+
+        if (!hub) {
 
             return;
 
         }
 
 
-        const retry =
-            container.querySelector(
-                "#retryLessonsButton"
+        hub.innerHTML = `
+
+            <div class="lesson-state">
+
+                <div class="lesson-state-icon">
+
+                    <span
+                        data-lucide="wifi-off"
+                    ></span>
+
+                </div>
+
+
+                <h2>
+                    Unable to load lessons
+                </h2>
+
+
+                <p>
+                    We couldn't connect to the lesson library right now.
+                    Please try again.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="lesson-retry-button"
+                    id="retryLessonsButton"
+                >
+
+                    <span
+                        data-lucide="refresh-cw"
+                    ></span>
+
+                    Try Again
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retryButton =
+            $("retryLessonsButton");
+
+
+        if (retryButton) {
+
+            retryButton.addEventListener(
+                "click",
+                function () {
+
+                    loadLessonsHub();
+
+                }
             );
+
+        }
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       LOAD LESSONS HUB
+       ======================================================== */
+
+    async function loadLessonsHub() {
+
+        const hub =
+            getHubContainer();
+
+
+        if (!hub) {
+
+            return;
+
+        }
+
+
+        try {
+
+            if (
+                !window.API ||
+                typeof window.API.get !== "function"
+            ) {
+
+                throw new Error(
+                    "The API connection layer is not available."
+                );
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * GET LESSON LIST
+             * ------------------------------------------------
+             */
+
+            const response =
+                await window.API.get(
+                    "getLessons"
+                );
+
+
+            let lessons =
+                normalizeLessonList(
+                    response
+                );
+
+
+            /*
+             * ------------------------------------------------
+             * ONLY PUBLISHED LESSONS
+             * ------------------------------------------------
+             */
+
+            lessons =
+                lessons.filter(
+                    isPublishedLesson
+                );
+
+
+            /*
+             * ------------------------------------------------
+             * SORT
+             * ------------------------------------------------
+             */
+
+            sortLessonsNewestFirst(
+                lessons
+            );
+
+
+            updateLessonCount(
+                lessons.length
+            );
+
+
+            /*
+             * ------------------------------------------------
+             * NO LESSONS
+             * ------------------------------------------------
+             */
+
+            if (
+                lessons.length === 0
+            ) {
+
+                renderLessonHistory(
+                    []
+                );
+
+                const featured =
+                    getFeaturedContainer();
+
+
+                if (featured) {
+
+                    featured.innerHTML = `
+
+                        <div class="lesson-state">
+
+                            <div class="lesson-state-icon">
+
+                                <span
+                                    data-lucide="book-open"
+                                ></span>
+
+                            </div>
+
+                            <h2>
+                                No current lesson
+                            </h2>
+
+                            <p>
+                                A new lesson will appear here when it is published.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                refreshIcons();
+
+                return;
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * CURRENT LESSON
+             * ------------------------------------------------
+             */
+
+            const currentLesson =
+                lessons[0];
+
+
+            renderFeaturedLesson(
+                currentLesson
+            );
+
+
+            /*
+             * ------------------------------------------------
+             * HISTORY
+             * ------------------------------------------------
+             *
+             * Do not duplicate the featured lesson.
+             */
+
+            const historyLessons =
+                lessons.slice(1);
+
+
+            renderLessonHistory(
+                historyLessons
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "AFC Portal: unable to load lessons.",
+                error
+            );
+
+
+            renderHubError();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       READER CONTAINERS
+       ======================================================== */
+
+    function getReaderContainer() {
+
+        return (
+            $("lessonReader") ||
+            $("lessonReaderPage") ||
+            $("lessonContent")
+        );
+
+    }
+
+
+    /* ========================================================
+       READER SKELETON
+       ======================================================== */
+
+    function renderReaderSkeleton() {
+
+        const reader =
+            getReaderContainer();
+
+
+        if (!reader) {
+
+            return;
+
+        }
+
+
+        reader.innerHTML = `
+
+            <div class="lesson-state">
+
+                <div class="lesson-state-icon">
+
+                    <span
+                        data-lucide="book-open"
+                    ></span>
+
+                </div>
+
+                <p>
+                    Loading lesson...
+                </p>
+
+            </div>
+
+        `;
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       READER ERROR
+       ======================================================== */
+
+    function renderReaderError(message) {
+
+        const reader =
+            getReaderContainer();
+
+
+        if (!reader) {
+
+            return;
+
+        }
+
+
+        reader.innerHTML = `
+
+            <div class="lesson-state">
+
+                <div class="lesson-state-icon">
+
+                    <span
+                        data-lucide="wifi-off"
+                    ></span>
+
+                </div>
+
+
+                <h2>
+                    Unable to open lesson
+                </h2>
+
+
+                <p>
+                    ${
+                        escapeHtml(
+                            message ||
+                            "The lesson could not be loaded right now."
+                        )
+                    }
+                </p>
+
+
+                <button
+                    type="button"
+                    class="lesson-retry-button"
+                    id="retryLessonReader"
+                >
+
+                    <span
+                        data-lucide="refresh-cw"
+                    ></span>
+
+                    Try Again
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retry =
+            $("retryLessonReader");
 
 
         if (retry) {
@@ -1753,9 +1542,7 @@ const LessonsPage = (function () {
                 "click",
                 function () {
 
-                    render(
-                        container
-                    );
+                    loadLessonReader();
 
                 }
             );
@@ -1769,10 +1556,167 @@ const LessonsPage = (function () {
 
 
     /* ========================================================
-       READER EVENTS
+       READER DATA NORMALIZATION
        ======================================================== */
 
-    function bindReaderEvents(container) {
+    function normalizeReaderResponse(response) {
+
+        /*
+         * Expected backend structure:
+         *
+         * {
+         *     success: true,
+         *     data: {
+         *         lesson: {...},
+         *         sections: [...],
+         *         reflection_questions: [...]
+         *     }
+         * }
+         *
+         * Also support:
+         *
+         * {
+         *     lesson: {...},
+         *     sections: [...],
+         *     reflection_questions: [...]
+         * }
+         */
+
+        let data =
+            response &&
+            response.data !== undefined
+                ? response.data
+                : response;
+
+
+        if (!data || typeof data !== "object") {
+
+            return {
+                lesson: null,
+                sections: [],
+                reflection_questions: []
+            };
+
+        }
+
+
+        return {
+
+            lesson:
+                data.lesson ||
+                null,
+
+            sections:
+                Array.isArray(
+                    data.sections
+                )
+                    ? data.sections
+                    : [],
+
+            reflection_questions:
+                Array.isArray(
+                    data.reflection_questions
+                )
+                    ? data.reflection_questions
+                    : []
+
+        };
+
+    }
+
+
+    /* ========================================================
+       SECTION CONTENT
+       ======================================================== */
+
+    function renderSectionText(section) {
+
+        const rawContent =
+            firstAvailable(
+                section && section.content,
+                section && section.text,
+                section && section.body,
+                section && section.description
+            );
+
+
+        if (!rawContent) {
+
+            return `
+                <p>
+                    This section does not have content yet.
+                </p>
+            `;
+
+        }
+
+
+        /*
+         * If the backend provides HTML,
+         * preserve paragraphs safely.
+         *
+         * We intentionally do not blindly inject
+         * arbitrary HTML from unknown fields.
+         *
+         * Plain lesson text is converted into paragraphs.
+         */
+
+        const text =
+            cleanText(
+                rawContent
+            );
+
+
+        /*
+         * Detect basic HTML content.
+         */
+
+        if (
+            /<p[\s>]/i.test(text) ||
+            /<br\s*\/?>/i.test(text)
+        ) {
+
+            return text;
+
+        }
+
+
+        return text
+            .split(
+                /\n\s*\n/
+            )
+            .map(
+                function (paragraph) {
+
+                    return `
+                        <p>
+                            ${escapeHtml(
+                                paragraph
+                            ).replace(
+                                /\n/g,
+                                "<br>"
+                            )}
+                        </p>
+                    `;
+
+                }
+            )
+            .join("");
+
+    }
+
+
+    /* ========================================================
+       READER SECTION LIST
+       ======================================================== */
+
+    function renderReaderSidebar(
+        sections
+    ) {
+
+        const container =
+            $("readerSectionList");
+
 
         if (!container) {
 
@@ -1781,48 +1725,428 @@ const LessonsPage = (function () {
         }
 
 
-        const back =
-            container.querySelector(
-                "#backToLessonsButton"
-            );
+        if (
+            !sections ||
+            sections.length === 0
+        ) {
 
+            container.innerHTML = "";
 
-        const complete =
-            container.querySelector(
-                "#lessonReadCompleteButton"
-            );
-
-
-        if (back) {
-
-            back.addEventListener(
-                "click",
-                function () {
-
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-
-
-                    render(
-                        container
-                    );
-
-                }
-            );
+            return;
 
         }
 
 
-        if (complete) {
+        container.innerHTML =
+            `
 
-            complete.addEventListener(
+                <span class="reader-sidebar-heading">
+                    In this lesson
+                </span>
+
+            ` +
+
+            sections
+                .map(
+                    function (section, index) {
+
+                        const sectionId =
+                            "lesson-section-" +
+                            index;
+
+
+                        const title =
+                            firstAvailable(
+                                section.title,
+                                section.heading,
+                                "Section " +
+                                (index + 1)
+                            );
+
+
+                        return `
+
+                            <a
+                                href="#${sectionId}"
+                                class="reader-section-link"
+                            >
+
+                                <span>
+                                    ${index + 1}
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        title
+                                    )}
+                                </strong>
+
+                            </a>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+    }
+
+
+    /* ========================================================
+       READER SECTIONS
+       ======================================================== */
+
+    function renderReaderSections(
+        sections
+    ) {
+
+        const container =
+            $("lessonReadingContent");
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        if (
+            !sections ||
+            sections.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="lesson-no-content">
+
+                    <span
+                        data-lucide="book-open"
+                    ></span>
+
+                    <h2>
+                        No lesson content yet
+                    </h2>
+
+                    <p>
+                        This lesson has not been given any reading sections yet.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            refreshIcons();
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            sections
+                .map(
+                    function (section, index) {
+
+                        const title =
+                            firstAvailable(
+                                section.title,
+                                section.heading,
+                                "Section " +
+                                (index + 1)
+                            );
+
+
+                        return `
+
+                            <section
+                                class="lesson-reading-section"
+                                id="lesson-section-${index}"
+                            >
+
+                                <div
+                                    class="section-number"
+                                >
+
+                                    ${index + 1}
+
+                                </div>
+
+
+                                <div class="section-main">
+
+                                    <h2>
+                                        ${escapeHtml(
+                                            title
+                                        )}
+                                    </h2>
+
+
+                                    <div class="section-text">
+
+                                        ${renderSectionText(
+                                            section
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        refreshIcons();
+
+    }
+
+
+    /* ========================================================
+       READER HEADER
+       ======================================================== */
+
+    function renderReaderHeader(
+        lesson
+    ) {
+
+        const titleElement =
+            $("lessonReaderTitle");
+
+
+        const descriptionElement =
+            $("lessonReaderDescription");
+
+
+        const weekElement =
+            $("lessonReaderWeek");
+
+
+        const typeElement =
+            $("lessonReaderType");
+
+
+        const dateElement =
+            $("lessonReaderDate");
+
+
+        if (titleElement) {
+
+            titleElement.textContent =
+                getLessonTitle(
+                    lesson
+                );
+
+        }
+
+
+        if (descriptionElement) {
+
+            descriptionElement.textContent =
+                getLessonDescription(
+                    lesson
+                );
+
+        }
+
+
+        if (weekElement) {
+
+            weekElement.textContent =
+                getLessonWeek(
+                    lesson
+                );
+
+            weekElement.hidden =
+                !getLessonWeek(
+                    lesson
+                );
+
+        }
+
+
+        if (typeElement) {
+
+            typeElement.textContent =
+                getLessonType(
+                    lesson
+                );
+
+        }
+
+
+        if (dateElement) {
+
+            const date =
+                formatLessonDate(
+                    firstAvailable(
+                        lesson.lesson_date,
+                        lesson.published_at,
+                        lesson.date
+                    )
+                );
+
+
+            dateElement.textContent =
+                date;
+
+
+            dateElement.hidden =
+                !date;
+
+        }
+
+
+        /*
+         * Fallback support if the HTML contains
+         * a generic reader header but different IDs.
+         */
+
+        const genericTitle =
+            document.querySelector(
+                ".lesson-reader-header h1"
+            );
+
+
+        if (
+            !titleElement &&
+            genericTitle
+        ) {
+
+            genericTitle.textContent =
+                getLessonTitle(
+                    lesson
+                );
+
+        }
+
+
+        const genericDescription =
+            document.querySelector(
+                ".lesson-reader-description"
+            );
+
+
+        if (
+            !descriptionElement &&
+            genericDescription
+        ) {
+
+            genericDescription.textContent =
+                getLessonDescription(
+                    lesson
+                );
+
+        }
+
+    }
+
+
+    /* ========================================================
+       COMPLETION CARD
+       ======================================================== */
+
+    function renderCompletionCard(
+        lesson,
+        reflectionQuestions
+    ) {
+
+        const container =
+            $("lessonCompletion");
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        const hasReflection =
+            Array.isArray(
+                reflectionQuestions
+            ) &&
+            reflectionQuestions.length > 0;
+
+
+        container.innerHTML = `
+
+            <div class="lesson-completion-card">
+
+                <div class="completion-icon">
+
+                    <span
+                        data-lucide="check-check"
+                    ></span>
+
+                </div>
+
+
+                <div class="completion-copy">
+
+                    <span class="eyebrow">
+
+                        Lesson Complete
+
+                    </span>
+
+
+                    <h2>
+                        I've read this lesson
+                    </h2>
+
+
+                    <p>
+                        ${
+                            hasReflection
+                                ? "Mark this lesson as read and continue to the reflection."
+                                : "Mark this lesson as read when you are finished."
+                        }
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="lesson-complete-button"
+                    id="lessonCompleteButton"
+                >
+
+                    <span>
+                        I've read this lesson
+                    </span>
+
+                    <span
+                        data-lucide="check"
+                    ></span>
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        const button =
+            $("lessonCompleteButton");
+
+
+        if (button) {
+
+            button.addEventListener(
                 "click",
                 function () {
 
                     handleLessonCompletion(
-                        currentLessonId
+                        lesson,
+                        reflectionQuestions,
+                        button
                     );
 
                 }
@@ -1831,199 +2155,54 @@ const LessonsPage = (function () {
         }
 
 
-        /*
-         * Sidebar navigation.
-         */
-
-        container
-            .querySelectorAll(
-                ".reader-section-link"
-            )
-            .forEach(
-                function (link) {
-
-                    link.addEventListener(
-                        "click",
-                        function (event) {
-
-                            event.preventDefault();
-
-
-                            const href =
-                                link.getAttribute(
-                                    "href"
-                                ) || "";
-
-
-                            const targetId =
-                                href.replace(
-                                    "#",
-                                    ""
-                                );
-
-
-                            const target =
-                                document.getElementById(
-                                    targetId
-                                );
-
-
-                            if (target) {
-
-                                target.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start"
-                                });
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-
         refreshIcons();
 
     }
 
 
     /* ========================================================
-       LESSON COMPLETION
+       COMPLETION
        ======================================================== */
 
-    function handleLessonCompletion(lessonId) {
+    async function handleLessonCompletion(
+        lesson,
+        reflectionQuestions,
+        button
+    ) {
 
-        console.log(
-            "[LESSONS] Lesson completed:",
-            lessonId
-        );
-
-
-        /*
-         * Phase 4B will replace this with:
-         *
-         * 1. Check login status
-         * 2. Redirect/login if necessary
-         * 3. Load reflection questions
-         * 4. Submit reflection
-         * 5. Unlock quiz
-         */
-
-        alert(
-            "Great! The reflection step will be connected in Phase 4B."
-        );
-
-    }
-
-
-    /* ========================================================
-       RENDER LESSON HUB
-       ======================================================== */
-
-    async function render(container) {
-
-        if (!container) {
+        if (!button) {
 
             return;
 
         }
 
 
-        currentContainer =
-            container;
-
-
-        removeProgressListener();
-
-
-        currentLessonId =
-            null;
-
-
         /*
-         * Show local skeleton immediately.
+         * ----------------------------------------------------
+         * AUTH CHECK
+         * ----------------------------------------------------
          */
 
-        container.innerHTML =
-            renderLoading();
+        if (!isLoggedIn()) {
+
+            const returnUrl =
+                window.location.href;
 
 
-        refreshIcons();
-
-
-        /*
-         * PRESERVED GLOBAL LOADER.
-         */
-
-        showGlobalLoader(
-            "Loading weekly lessons..."
-        );
-
-
-        try {
-
-            lessons =
-                await fetchLessons();
-
-
-            container.innerHTML =
-                renderHub(
-                    lessons
+            window.location.href =
+                "login.html?return=" +
+                encodeURIComponent(
+                    returnUrl
                 );
 
 
-            bindHubEvents(
-                container
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "[LESSONS LOAD ERROR]",
-                error
-            );
-
-
-            container.innerHTML =
-                renderError(
-                    error?.message ||
-                    "Unable to load lessons."
-                );
-
-
-            bindErrorEvents(
-                container
-            );
-
-
-        } finally {
-
-            /*
-             * Always hide the global loader.
-             */
-
-            hideGlobalLoader();
+            return;
 
         }
 
-    }
-
-
-    /* ========================================================
-       OPEN LESSON
-       ======================================================== */
-
-    async function openLesson(
-        lessonId,
-        container
-    ) {
 
         if (
-            !lessonId ||
-            !container
+            handleLessonCompletion.isRunning
         ) {
 
             return;
@@ -2031,101 +2210,602 @@ const LessonsPage = (function () {
         }
 
 
-        currentContainer =
-            container;
+        handleLessonCompletion.isRunning =
+            true;
 
 
-        currentLessonId =
-            String(
-                lessonId
-            ).trim();
+        const originalHtml =
+            button.innerHTML;
 
 
-        removeProgressListener();
+        button.disabled =
+            true;
 
 
-        /*
-         * Show local skeleton.
-         */
-
-        container.innerHTML =
-            renderLoading();
-
-
-        refreshIcons();
-
-
-        /*
-         * PRESERVED GLOBAL LOADER.
-         */
-
-        showGlobalLoader(
-            "Opening lesson..."
+        button.setAttribute(
+            "aria-busy",
+            "true"
         );
+
+
+        button.innerHTML = `
+
+            <span class="button-spinner"></span>
+
+            <span>
+                Saving...
+            </span>
+
+        `;
 
 
         try {
 
-            const data =
-                await fetchLesson(
-                    currentLessonId
+            /*
+             * ------------------------------------------------
+             * SAVE COMPLETION
+             * ------------------------------------------------
+             *
+             * The backend completion function may be
+             * introduced/connected during the next phase.
+             *
+             * For now, prefer the central API when available.
+             */
+
+            const lessonId =
+                getLessonId(
+                    lesson
                 );
 
 
-            console.log(
-                "[LESSONS] Lesson response:",
-                data
-            );
+            if (
+                window.API &&
+                typeof window.API.post === "function"
+            ) {
+
+                try {
+
+                    await window.API.post(
+                        "completeLesson",
+                        {
+                            lesson_id:
+                                lessonId
+                        }
+                    );
+
+                } catch (completionError) {
+
+                    /*
+                     * If completion endpoint is not yet
+                     * available, do not destroy the reader.
+                     *
+                     * The next phase can connect the
+                     * exact completion endpoint.
+                     */
+
+                    console.warn(
+                        "AFC Portal: lesson completion endpoint unavailable.",
+                        completionError
+                    );
+
+                }
+
+            }
 
 
-            container.innerHTML =
-                renderReader(
-                    data
+            /*
+             * ------------------------------------------------
+             * REFLECTION
+             * ------------------------------------------------
+             */
+
+            if (
+                Array.isArray(
+                    reflectionQuestions
+                ) &&
+                reflectionQuestions.length > 0
+            ) {
+
+                sessionStorage.setItem(
+                    "afc_lesson_reflection",
+                    JSON.stringify({
+
+                        lesson:
+                            lesson,
+
+                        reflection_questions:
+                            reflectionQuestions
+
+                    })
                 );
 
 
-            bindReaderEvents(
-                container
+                window.location.href =
+                    "reflection.html?lesson_id=" +
+                    encodeURIComponent(
+                        lessonId
+                    );
+
+
+                return;
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * COMPLETED STATE
+             * ------------------------------------------------
+             */
+
+            button.innerHTML = `
+
+                <span>
+                    Lesson completed
+                </span>
+
+                <span
+                    data-lucide="check-check"
+                ></span>
+
+            `;
+
+
+            button.classList.add(
+                "completed"
             );
 
 
-            initialiseReadingProgress();
-
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+            refreshIcons();
 
 
         } catch (error) {
 
             console.error(
-                "[LESSON OPEN ERROR]",
+                "AFC Portal: lesson completion failed.",
                 error
             );
 
 
-            container.innerHTML =
-                renderError(
-                    error?.message ||
-                    "Unable to load this lesson."
-                );
+            button.innerHTML =
+                originalHtml;
 
 
-            bindErrorEvents(
-                container
+            button.disabled =
+                false;
+
+
+            button.removeAttribute(
+                "aria-busy"
             );
 
 
-        } finally {
+            handleLessonCompletion.isRunning =
+                false;
+
+
+            alert(
+                "Unable to save your lesson completion. Please try again."
+            );
+
+
+            return;
+
+        }
+
+
+        handleLessonCompletion.isRunning =
+            false;
+
+    }
+
+
+    /* ========================================================
+       READING PROGRESS
+       ======================================================== */
+
+    function updateReadingProgress() {
+
+        const track =
+            document.querySelector(
+                ".reading-progress-track"
+            );
+
+
+        const value =
+            document.querySelector(
+                ".reading-progress-value"
+            );
+
+
+        if (!track || !value) {
+
+            return;
+
+        }
+
+
+        const scrollTop =
+            window.scrollY ||
+            document.documentElement.scrollTop;
+
+
+        const documentHeight =
+            document.documentElement.scrollHeight;
+
+
+        const viewportHeight =
+            window.innerHeight;
+
+
+        const scrollable =
+            documentHeight -
+            viewportHeight;
+
+
+        if (
+            scrollable <= 0
+        ) {
+
+            value.style.width =
+                "100%";
+
+            return;
+
+        }
+
+
+        let progress =
+            (
+                scrollTop /
+                scrollable
+            ) *
+            100;
+
+
+        progress =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    progress
+                )
+            );
+
+
+        value.style.width =
+            progress +
+            "%";
+
+    }
+
+
+    function setupReadingProgress() {
+
+        window.addEventListener(
+            "scroll",
+            updateReadingProgress,
+            {
+                passive: true
+            }
+        );
+
+
+        window.addEventListener(
+            "resize",
+            updateReadingProgress
+        );
+
+
+        updateReadingProgress();
+
+    }
+
+
+    /* ========================================================
+       SMOOTH SECTION LINKS
+       ======================================================== */
+
+    function setupReaderSectionLinks() {
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const link =
+                    event.target.closest(
+                        ".reader-section-link"
+                    );
+
+
+                if (!link) {
+
+                    return;
+
+                }
+
+
+                const href =
+                    link.getAttribute(
+                        "href"
+                    );
+
+
+                if (
+                    !href ||
+                    href.charAt(0) !== "#"
+                ) {
+
+                    return;
+
+                }
+
+
+                const target =
+                    document.querySelector(
+                        href
+                    );
+
+
+                if (!target) {
+
+                    return;
+
+                }
+
+
+                event.preventDefault();
+
+
+                target.scrollIntoView({
+
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+
+                });
+
+
+                history.replaceState(
+                    null,
+                    "",
+                    href
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       READER BACK BUTTON
+       ======================================================== */
+
+    function setupBackButton() {
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const button =
+                    event.target.closest(
+                        ".lesson-back-button"
+                    );
+
+
+                if (!button) {
+
+                    return;
+
+                }
+
+
+                event.preventDefault();
+
+
+                goBackToLessons();
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       RENDER COMPLETE READER
+       ======================================================== */
+
+    function renderReader(
+        lesson,
+        sections,
+        reflectionQuestions
+    ) {
+
+        renderReaderHeader(
+            lesson
+        );
+
+
+        renderReaderSections(
+            sections
+        );
+
+
+        renderReaderSidebar(
+            sections
+        );
+
+
+        renderCompletionCard(
+            lesson,
+            reflectionQuestions
+        );
+
+
+        refreshIcons();
+
+
+        requestAnimationFrame(
+            updateReadingProgress
+        );
+
+    }
+
+
+    /* ========================================================
+       LOAD SINGLE LESSON
+       ======================================================== */
+
+    async function loadLessonReader() {
+
+        const lessonId =
+            getLessonIdFromUrl();
+
+
+        if (!lessonId) {
+
+            goBackToLessons();
+
+            return;
+
+        }
+
+
+        const reader =
+            getReaderContainer();
+
+
+        if (!reader) {
+
+            return;
+
+        }
+
+
+        renderReaderSkeleton();
+
+
+        try {
+
+            if (
+                !window.API ||
+                typeof window.API.get !== "function"
+            ) {
+
+                throw new Error(
+                    "The API connection layer is not available."
+                );
+
+            }
+
 
             /*
-             * Always hide the global loader,
-             * whether the request succeeds or fails.
+             * ------------------------------------------------
+             * GET FULL LESSON
+             * ------------------------------------------------
+             *
+             * Backend:
+             *
+             * getLesson
+             *
+             * Expected:
+             *
+             * {
+             *   lesson,
+             *   sections,
+             *   reflection_questions
+             * }
              */
 
-            hideGlobalLoader();
+            const response =
+                await window.API.get(
+                    "getLesson",
+                    {
+                        lesson_id:
+                            lessonId
+                    }
+                );
+
+
+            const data =
+                normalizeReaderResponse(
+                    response
+                );
+
+
+            const lesson =
+                data.lesson;
+
+
+            const sections =
+                data.sections;
+
+
+            const reflectionQuestions =
+                data.reflection_questions;
+
+
+            if (!lesson) {
+
+                throw new Error(
+                    "Lesson was not found."
+                );
+
+            }
+
+
+            /*
+             * ------------------------------------------------
+             * RENDER
+             * ------------------------------------------------
+             */
+
+            renderReader(
+                lesson,
+                sections,
+                reflectionQuestions
+            );
+
+
+            /*
+             * ------------------------------------------------
+             * PAGE TITLE
+             * ------------------------------------------------
+             */
+
+            document.title =
+                getLessonTitle(
+                    lesson
+                ) +
+                " | AFC Isiwu Youth Portal";
+
+
+            /*
+             * ------------------------------------------------
+             * START AT TOP
+             * ------------------------------------------------
+             */
+
+            window.scrollTo(
+                0,
+                0
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "AFC Portal: unable to load lesson reader.",
+                error
+            );
+
+
+            renderReaderError(
+                "The lesson could not be loaded. Please try again."
+            );
 
         }
 
@@ -2133,52 +2813,115 @@ const LessonsPage = (function () {
 
 
     /* ========================================================
-       PUBLIC API
+       PAGE MODE
        ======================================================== */
 
-    return {
+    function isReaderPage() {
 
-        render:
-            render,
+        return !!getLessonIdFromUrl();
 
-        openLesson:
-            openLesson,
+    }
 
-        fetchLessons:
-            fetchLessons,
 
-        fetchLesson:
-            fetchLesson,
+    /* ========================================================
+       INITIALIZE
+       ======================================================== */
 
-        reload:
-            function () {
+    async function initializeLessonsPage() {
 
-                if (
-                    currentContainer
-                ) {
+        console.log(
+            "AFC Portal: initializing lessons page..."
+        );
 
-                    render(
-                        currentContainer
-                    );
 
-                }
+        try {
+
+            setupReadingProgress();
+
+            setupReaderSectionLinks();
+
+            setupBackButton();
+
+
+            if (
+                isReaderPage()
+            ) {
+
+                /*
+                 * Single lesson reader.
+                 */
+
+                await loadLessonReader();
+
+            } else {
+
+                /*
+                 * Lessons hub.
+                 */
+
+                await loadLessonsHub();
 
             }
 
-    };
+
+            refreshIcons();
+
+
+            console.log(
+                "AFC Portal: lessons page initialized."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "AFC Portal: lessons initialization failed.",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* ========================================================
+       DOM READY
+       ======================================================== */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeLessonsPage
+        );
+
+    } else {
+
+        initializeLessonsPage();
+
+    }
+
+
+    /* ========================================================
+       PUBLIC METHODS
+       ======================================================== */
+
+    window.openLesson =
+        openLesson;
+
+
+    window.loadLessonsHub =
+        loadLessonsHub;
+
+
+    window.loadLessonReader =
+        loadLessonReader;
+
+
+    window.updateReadingProgress =
+        updateReadingProgress;
 
 
 })();
-
-
-/* ============================================================
-   GLOBAL EXPORT
-   ============================================================ */
-
-window.LessonsPage =
-    LessonsPage;
-
-
-console.log(
-    "AFC Isiu Youth Portal Lessons controller loaded."
-);
