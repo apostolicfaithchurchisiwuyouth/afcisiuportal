@@ -1,7 +1,7 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   APP.JS
-   PHASE A — APPLICATION FOUNDATION
+   FILE: app.js
+   PHASE A + PHASE B FOUNDATION
    ============================================================ */
 
 (function () {
@@ -15,25 +15,35 @@
 
     const state = {
 
-        authenticated: false,
+        authenticated:
+            false,
 
-        currentPage: "home",
+        currentPage:
+            "home",
 
-        currentLesson: null,
+        currentLesson:
+            null,
 
-        currentQuiz: null,
+        currentQuiz:
+            null,
 
-        lessons: [],
+        lessons:
+            [],
 
-        notifications: [],
+        notifications:
+            [],
 
-        settings: {},
+        settings:
+            {},
 
-        token: null,
+        token:
+            null,
 
-        user: null,
+        user:
+            null,
 
-        loading: false
+        loading:
+            false
 
     };
 
@@ -50,14 +60,15 @@
 
 
     /* ========================================================
-       LUCIDE ICON SYSTEM
+       LUCIDE
        ======================================================== */
 
     function refreshIcons() {
 
         if (
             window.lucide &&
-            typeof window.lucide.createIcons === "function"
+            typeof window.lucide.createIcons ===
+                "function"
         ) {
 
             window.lucide.createIcons();
@@ -75,7 +86,9 @@
 
         if (!element) return;
 
-        element.classList.remove("hidden");
+        element.classList.remove(
+            "hidden"
+        );
 
     }
 
@@ -84,7 +97,9 @@
 
         if (!element) return;
 
-        element.classList.add("hidden");
+        element.classList.add(
+            "hidden"
+        );
 
     }
 
@@ -93,14 +108,20 @@
        LOADING
        ======================================================== */
 
-    function setLoading(isLoading) {
+    function setLoading(
+        isLoading
+    ) {
 
-        state.loading = Boolean(isLoading);
+        state.loading =
+            Boolean(isLoading);
+
 
         const loader =
             $("global-loading");
 
+
         if (!loader) return;
+
 
         if (state.loading) {
 
@@ -127,11 +148,14 @@
         const container =
             $("toast-container");
 
+
         if (!container) return;
 
 
         const toast =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         toast.className =
@@ -151,34 +175,56 @@
         );
 
 
-        setTimeout(function () {
+        requestAnimationFrame(
+            function () {
 
-            toast.style.opacity =
-                "0";
+                toast.style.opacity =
+                    "1";
 
-            toast.style.transform =
-                "translateY(10px)";
+                toast.style.transform =
+                    "translateY(0)";
+
+            }
+        );
 
 
-            setTimeout(function () {
+        setTimeout(
+            function () {
 
-                toast.remove();
+                toast.style.opacity =
+                    "0";
 
-            }, 250);
+                toast.style.transform =
+                    "translateY(10px)";
 
-        }, 3000);
+
+                setTimeout(
+                    function () {
+
+                        toast.remove();
+
+                    },
+                    250
+                );
+
+            },
+            3000
+        );
 
     }
 
 
     /* ========================================================
-       MODAL SYSTEM
+       MODAL
        ======================================================== */
 
-    function openModal(options = {}) {
+    function openModal(
+        options = {}
+    ) {
 
         const root =
             $("modal-root");
+
 
         if (!root) return;
 
@@ -209,13 +255,19 @@
                     class="modal"
                     role="dialog"
                     aria-modal="true"
+                    aria-labelledby="modal-title"
                 >
 
                     <div class="modal-header">
 
-                        <h2>
-                            ${escapeHtml(title)}
+                        <h2 id="modal-title">
+
+                            ${escapeHtml(
+                                title
+                            )}
+
                         </h2>
+
 
                         <button
                             type="button"
@@ -300,6 +352,31 @@
 
         }
 
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+
+        setTimeout(
+            function () {
+
+                const firstInput =
+                    root.querySelector(
+                        "input, select, button"
+                    );
+
+
+                if (firstInput) {
+
+                    firstInput.focus();
+
+                }
+
+            },
+            50
+        );
+
     }
 
 
@@ -308,9 +385,17 @@
         const root =
             $("modal-root");
 
+
         if (!root) return;
 
-        root.innerHTML = "";
+
+        root.innerHTML =
+            "";
+
+
+        document.body.classList.remove(
+            "modal-open"
+        );
 
     }
 
@@ -319,14 +404,31 @@
        ESCAPE HTML
        ======================================================== */
 
-    function escapeHtml(value) {
+    function escapeHtml(
+        value
+    ) {
 
         return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
 
     }
 
@@ -335,7 +437,9 @@
        NAVIGATION
        ======================================================== */
 
-    function navigateTo(page) {
+    function navigateTo(
+        page
+    ) {
 
         if (!page) return;
 
@@ -365,19 +469,21 @@
             .querySelectorAll(
                 "[data-page]"
             )
-            .forEach(function (item) {
+            .forEach(
+                function (item) {
 
-                const page =
-                    item.dataset.page;
+                    const page =
+                        item.dataset.page;
 
 
-                item.classList.toggle(
-                    "active",
-                    page ===
-                    state.currentPage
-                );
+                    item.classList.toggle(
+                        "active",
+                        page ===
+                            state.currentPage
+                    );
 
-            });
+                }
+            );
 
     }
 
@@ -391,8 +497,13 @@
         const sidebar =
             $("sidebar");
 
+
         const overlay =
             $("sidebar-overlay");
+
+
+        const menuButton =
+            $("menu-button");
 
 
         if (sidebar) {
@@ -412,6 +523,16 @@
 
         }
 
+
+        if (menuButton) {
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+        }
+
     }
 
 
@@ -420,8 +541,13 @@
         const sidebar =
             $("sidebar");
 
+
         const overlay =
             $("sidebar-overlay");
+
+
+        const menuButton =
+            $("menu-button");
 
 
         if (sidebar) {
@@ -441,6 +567,16 @@
 
         }
 
+
+        if (menuButton) {
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+
     }
 
 
@@ -452,6 +588,7 @@
 
         const container =
             $("page-container");
+
 
         if (!container) return;
 
@@ -527,9 +664,26 @@
         container
     ) {
 
+        const firstName =
+            state.user &&
+            (
+                state.user.first_name ||
+                state.user.full_name ||
+                ""
+            );
+
+
+        const welcomeText =
+            state.authenticated &&
+            firstName
+                ? `Welcome back, ${escapeHtml(firstName)}`
+                : "Welcome to AFC Isiwu Youth Portal";
+
+
         container.innerHTML = `
 
             <section>
+
 
                 <div style="
                     margin-bottom: 24px;
@@ -540,8 +694,15 @@
                         color: var(--ink-muted);
                         margin-bottom: 5px;
                     ">
-                        Welcome to
+
+                        ${
+                            state.authenticated
+                                ? "Good to see you"
+                                : "AFC Isiwu Youth"
+                        }
+
                     </p>
+
 
                     <h1 style="
                         font-size: clamp(
@@ -551,19 +712,25 @@
                         );
                         color: var(--brand-dark);
                     ">
-                        AFC Isiwu Youth Portal
+
+                        ${welcomeText}
+
                     </h1>
+
 
                     <p style="
                         margin-top: 8px;
                         color: var(--ink-soft);
                         font-size: 14px;
                     ">
-                        Your place to learn,
-                        connect and grow.
+
+                        Learn, connect and grow
+                        in Christ.
+
                     </p>
 
                 </div>
+
 
 
                 <div style="
@@ -602,22 +769,29 @@
                             "
                         ></i>
 
+
                         <h3 style="
                             font-size: 16px;
                             margin-bottom: 5px;
                         ">
+
                             Weekly Lessons
+
                         </h3>
+
 
                         <p style="
                             font-size: 12px;
                             color: var(--ink-muted);
                         ">
+
                             Read this week's
                             lesson.
+
                         </p>
 
                     </button>
+
 
 
                     <button
@@ -642,24 +816,31 @@
                             "
                         ></i>
 
+
                         <h3 style="
                             font-size: 16px;
                             margin-bottom: 5px;
                         ">
+
                             Gallery
+
                         </h3>
+
 
                         <p style="
                             font-size: 12px;
                             color: var(--ink-muted);
                         ">
+
                             Explore our memories.
+
                         </p>
 
                     </button>
 
 
                 </div>
+
 
             </section>
 
@@ -691,14 +872,19 @@
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Learn & Grow
+
                     </p>
+
 
                     <h1 style="
                         font-size: 1.8rem;
                         margin-top: 4px;
                     ">
+
                         Weekly Lessons
+
                     </h1>
 
                 </div>
@@ -722,17 +908,23 @@
                         "
                     ></i>
 
+
                     <h3>
+
                         Lessons are coming here.
+
                     </h3>
+
 
                     <p style="
                         margin-top: 6px;
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         The lessons API will be
                         connected in the next phase.
+
                     </p>
 
                 </div>
@@ -764,14 +956,19 @@
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Memories
+
                     </p>
+
 
                     <h1 style="
                         font-size: 1.8rem;
                         margin-top: 4px;
                     ">
+
                         Gallery
+
                     </h1>
 
                 </div>
@@ -795,18 +992,24 @@
                         "
                     ></i>
 
+
                     <h3>
+
                         Gallery is ready.
+
                     </h3>
+
 
                     <p style="
                         margin-top: 6px;
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Gallery data will be
                         connected to Google Sheets
                         through the API.
+
                     </p>
 
                 </div>
@@ -826,6 +1029,155 @@
         container
     ) {
 
+        if (
+            !state.authenticated
+        ) {
+
+            container.innerHTML = `
+
+                <section>
+
+                    <div style="
+                        margin-bottom: 24px;
+                    ">
+
+                        <p style="
+                            color: var(--ink-muted);
+                            font-size: 13px;
+                        ">
+
+                            Account
+
+                        </p>
+
+
+                        <h1 style="
+                            font-size: 1.8rem;
+                            margin-top: 4px;
+                        ">
+
+                            Profile
+
+                        </h1>
+
+                    </div>
+
+
+                    <div style="
+                        padding: 30px;
+                        border-radius: 20px;
+                        background: white;
+                        border: 1px solid var(--border);
+                        text-align: center;
+                    ">
+
+                        <i
+                            data-lucide="lock-keyhole"
+                            style="
+                                width: 38px;
+                                height: 38px;
+                                color: var(--brand);
+                                margin-bottom: 12px;
+                            "
+                        ></i>
+
+
+                        <h3>
+                            Login required
+                        </h3>
+
+
+                        <p style="
+                            margin-top: 6px;
+                            color: var(--ink-muted);
+                            font-size: 13px;
+                        ">
+
+                            Please log in to view
+                            your profile.
+
+                        </p>
+
+
+                        <button
+                            type="button"
+                            id="profile-login-button"
+                            style="
+                                margin-top: 18px;
+                                padding: 11px 18px;
+                                border-radius: 12px;
+                                border: 0;
+                                background: var(--brand);
+                                color: white;
+                                cursor: pointer;
+                            "
+                        >
+
+                            <i
+                                data-lucide="log-in"
+                            ></i>
+
+                            <span>
+                                Login
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+            `;
+
+
+            const button =
+                $("profile-login-button");
+
+
+            if (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            window.AUTH &&
+                            typeof AUTH.openLogin ===
+                                "function"
+                        ) {
+
+                            AUTH.openLogin();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            refreshIcons();
+
+            return;
+
+        }
+
+
+        const user =
+            state.user || {};
+
+
+        const fullName =
+            user.full_name ||
+            [
+                user.first_name,
+                user.last_name
+            ]
+                .filter(Boolean)
+                .join(" ") ||
+            "Member";
+
+
         container.innerHTML = `
 
             <section>
@@ -838,14 +1190,19 @@
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Account
+
                     </p>
+
 
                     <h1 style="
                         font-size: 1.8rem;
                         margin-top: 4px;
                     ">
+
                         Profile
+
                     </h1>
 
                 </div>
@@ -856,31 +1213,108 @@
                     border-radius: 20px;
                     background: white;
                     border: 1px solid var(--border);
-                    text-align: center;
                 ">
 
-                    <i
-                        data-lucide="user-round"
-                        style="
-                            width: 38px;
-                            height: 38px;
-                            color: var(--brand);
-                            margin-bottom: 12px;
-                        "
-                    ></i>
+                    <div style="
+                        width: 70px;
+                        height: 70px;
+                        border-radius: 50%;
+                        background: var(--brand);
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 24px;
+                        font-weight: 700;
+                        margin-bottom: 16px;
+                    ">
 
-                    <h3>
-                        Your profile
-                    </h3>
+                        ${escapeHtml(
+                            fullName
+                                .charAt(0)
+                                .toUpperCase()
+                        )}
+
+                    </div>
+
+
+                    <h2>
+
+                        ${escapeHtml(
+                            fullName
+                        )}
+
+                    </h2>
+
 
                     <p style="
-                        margin-top: 6px;
+                        margin-top: 5px;
                         color: var(--ink-muted);
-                        font-size: 13px;
                     ">
-                        Your Google Sheets profile
-                        will appear here.
+
+                        ${escapeHtml(
+                            user.email ||
+                            ""
+                        )}
+
                     </p>
+
+
+                    <div style="
+                        margin-top: 22px;
+                        display: grid;
+                        gap: 10px;
+                    ">
+
+                        <div>
+
+                            <strong>
+                                Phone
+                            </strong>
+
+                            <p>
+                                ${escapeHtml(
+                                    user.phone ||
+                                    "Not provided"
+                                )}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Institution
+                            </strong>
+
+                            <p>
+                                ${escapeHtml(
+                                    user.institution_name ||
+                                    user.institution_id ||
+                                    "Not provided"
+                                )}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Level
+                            </strong>
+
+                            <p>
+                                ${escapeHtml(
+                                    user.level ||
+                                    "Not provided"
+                                )}
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -911,14 +1345,19 @@
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Preferences
+
                     </p>
+
 
                     <h1 style="
                         font-size: 1.8rem;
                         margin-top: 4px;
                     ">
+
                         Settings
+
                     </h1>
 
                 </div>
@@ -942,17 +1381,21 @@
                         "
                     ></i>
 
+
                     <h3>
                         Settings
                     </h3>
+
 
                     <p style="
                         margin-top: 6px;
                         color: var(--ink-muted);
                         font-size: 13px;
                     ">
+
                         Your portal preferences
                         will be managed here.
+
                     </p>
 
                 </div>
@@ -965,7 +1408,7 @@
 
 
     /* ========================================================
-       PAGE BUTTON BINDING
+       PAGE BUTTONS
        ======================================================== */
 
     function bindPageButtons() {
@@ -974,18 +1417,75 @@
             .querySelectorAll(
                 "[data-page]"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                button.onclick =
-                    function () {
+                    button.onclick =
+                        function () {
 
-                        navigateTo(
-                            button.dataset.page
-                        );
+                            navigateTo(
+                                button.dataset.page
+                            );
 
-                    };
+                        };
 
-            });
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       AUTH UI
+       ======================================================== */
+
+    function updateAuthUI() {
+
+        const loginButton =
+            $("sidebar-login-button");
+
+
+        if (!loginButton) {
+            return;
+        }
+
+
+        if (
+            state.authenticated
+        ) {
+
+            loginButton.innerHTML = `
+
+                <i data-lucide="log-out"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            `;
+
+            loginButton.dataset.authAction =
+                "logout";
+
+        } else {
+
+            loginButton.innerHTML = `
+
+                <i data-lucide="log-in"></i>
+
+                <span>
+                    Login
+                </span>
+
+            `;
+
+            loginButton.dataset.authAction =
+                "login";
+
+        }
+
+
+        refreshIcons();
 
     }
 
@@ -996,25 +1496,32 @@
 
     function bindNavigation() {
 
+
         document
             .querySelectorAll(
                 ".nav-item, .bottom-nav-item"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+                    button.addEventListener(
+                        "click",
+                        function () {
 
-                        navigateTo(
-                            button.dataset.page
-                        );
+                            navigateTo(
+                                button.dataset.page
+                            );
 
-                    }
-                );
+                        }
+                    );
 
-            });
+                }
+            );
 
+
+        /* ----------------------------------------------------
+           MENU
+           ---------------------------------------------------- */
 
         const menuButton =
             $("menu-button");
@@ -1024,11 +1531,36 @@
 
             menuButton.addEventListener(
                 "click",
-                openSidebar
+                function () {
+
+                    const sidebar =
+                        $("sidebar");
+
+
+                    if (
+                        sidebar &&
+                        sidebar.classList.contains(
+                            "open"
+                        )
+                    ) {
+
+                        closeSidebar();
+
+                    } else {
+
+                        openSidebar();
+
+                    }
+
+                }
             );
 
         }
 
+
+        /* ----------------------------------------------------
+           CLOSE SIDEBAR
+           ---------------------------------------------------- */
 
         const closeButton =
             $("close-sidebar");
@@ -1044,6 +1576,10 @@
         }
 
 
+        /* ----------------------------------------------------
+           OVERLAY
+           ---------------------------------------------------- */
+
         const overlay =
             $("sidebar-overlay");
 
@@ -1057,6 +1593,10 @@
 
         }
 
+
+        /* ----------------------------------------------------
+           QUICK ACTION
+           ---------------------------------------------------- */
 
         const mainAction =
             $("main-action-button");
@@ -1080,13 +1620,11 @@
                                 gap: 10px;
                             ">
 
+
                                 <button
                                     type="button"
                                     class="sidebar-action"
-                                    onclick="
-                                        window.AFC.navigate('lessons');
-                                        window.AFC.closeModal();
-                                    "
+                                    data-quick-action="lessons"
                                 >
 
                                     <i data-lucide="book-open"></i>
@@ -1101,10 +1639,7 @@
                                 <button
                                     type="button"
                                     class="sidebar-action"
-                                    onclick="
-                                        window.AFC.navigate('gallery');
-                                        window.AFC.closeModal();
-                                    "
+                                    data-quick-action="gallery"
                                 >
 
                                     <i data-lucide="images"></i>
@@ -1119,10 +1654,7 @@
                                 <button
                                     type="button"
                                     class="sidebar-action"
-                                    onclick="
-                                        window.AFC.navigate('profile');
-                                        window.AFC.closeModal();
-                                    "
+                                    data-quick-action="profile"
                                 >
 
                                     <i data-lucide="user-round"></i>
@@ -1133,17 +1665,112 @@
 
                                 </button>
 
+
+                                ${
+                                    state.authenticated
+                                        ? `
+                                            <button
+                                                type="button"
+                                                class="sidebar-action"
+                                                data-quick-action="logout"
+                                            >
+
+                                                <i data-lucide="log-out"></i>
+
+                                                <span>
+                                                    Logout
+                                                </span>
+
+                                            </button>
+                                          `
+                                        : `
+                                            <button
+                                                type="button"
+                                                class="sidebar-action"
+                                                data-quick-action="login"
+                                            >
+
+                                                <i data-lucide="log-in"></i>
+
+                                                <span>
+                                                    Login
+                                                </span>
+
+                                            </button>
+                                          `
+                                }
+
                             </div>
 
                         `
 
                     });
 
+
+                    document
+                        .querySelectorAll(
+                            "[data-quick-action]"
+                        )
+                        .forEach(
+                            function (button) {
+
+                                button.addEventListener(
+                                    "click",
+                                    function () {
+
+                                        const action =
+                                            button.dataset.quickAction;
+
+
+                                        closeModal();
+
+
+                                        if (
+                                            action ===
+                                            "login"
+                                        ) {
+
+                                            AUTH.openLogin();
+
+                                            return;
+
+                                        }
+
+
+                                        if (
+                                            action ===
+                                            "logout"
+                                        ) {
+
+                                            AUTH.logout();
+
+                                            return;
+
+                                        }
+
+
+                                        navigateTo(
+                                            action
+                                        );
+
+                                    }
+                                );
+
+                            }
+                        );
+
+
+                    refreshIcons();
+
                 }
             );
 
         }
 
+
+        /* ----------------------------------------------------
+           NOTIFICATIONS
+           ---------------------------------------------------- */
 
         const notificationButton =
             $("notification-button");
@@ -1155,9 +1782,21 @@
                 "click",
                 function () {
 
-                    showToast(
-                        "Notifications will be available soon."
-                    );
+                    if (
+                        state.authenticated
+                    ) {
+
+                        showToast(
+                            "Notifications will be connected soon."
+                        );
+
+                    } else {
+
+                        showToast(
+                            "Please log in to view notifications."
+                        );
+
+                    }
 
                 }
             );
@@ -1165,24 +1804,158 @@
         }
 
 
-        const sidebarLogin =
+        /* ----------------------------------------------------
+           SIDEBAR LOGIN / LOGOUT
+           ---------------------------------------------------- */
+
+        const sidebarAccount =
             $("sidebar-login-button");
 
 
-        if (sidebarLogin) {
+        if (sidebarAccount) {
 
-            sidebarLogin.addEventListener(
+            sidebarAccount.addEventListener(
                 "click",
                 function () {
 
-                    showToast(
-                        "Login will be connected in Phase B."
-                    );
+                    if (
+                        state.authenticated
+                    ) {
+
+                        if (
+                            window.AUTH &&
+                            typeof AUTH.logout ===
+                                "function"
+                        ) {
+
+                            AUTH.logout();
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (
+                        window.AUTH &&
+                        typeof AUTH.openLogin ===
+                            "function"
+                    ) {
+
+                        closeSidebar();
+
+                        AUTH.openLogin();
+
+                    }
 
                 }
             );
 
         }
+
+    }
+
+
+    /* ========================================================
+       KEYBOARD
+       ======================================================== */
+
+    function bindKeyboard() {
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeModal();
+
+                    closeSidebar();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       AUTH EVENTS
+       ======================================================== */
+
+    function bindAuthEvents() {
+
+        window.addEventListener(
+            "afc:authenticated",
+            function (event) {
+
+                const detail =
+                    event.detail || {};
+
+
+                state.authenticated =
+                    true;
+
+
+                state.user =
+                    detail.user ||
+                    null;
+
+
+                state.token =
+                    detail.token ||
+                    null;
+
+
+                updateAuthUI();
+
+
+                renderPage();
+
+
+                updateNavigation();
+
+
+                refreshIcons();
+
+            }
+        );
+
+
+        window.addEventListener(
+            "afc:loggedout",
+            function () {
+
+                state.authenticated =
+                    false;
+
+
+                state.user =
+                    null;
+
+
+                state.token =
+                    null;
+
+
+                updateAuthUI();
+
+
+                renderPage();
+
+
+                updateNavigation();
+
+
+                refreshIcons();
+
+            }
+        );
 
     }
 
@@ -1194,54 +1967,55 @@
     window.AFC = {
 
         state:
-
             state,
 
         navigate:
-
             navigateTo,
 
         showLoading:
-
             function () {
 
-                setLoading(true);
+                setLoading(
+                    true
+                );
 
             },
 
         hideLoading:
-
             function () {
 
-                setLoading(false);
+                setLoading(
+                    false
+                );
 
             },
 
         toast:
-
             showToast,
 
         modal:
-
             openModal,
 
         closeModal:
-
             closeModal,
 
         closeSidebar:
-
             closeSidebar,
 
         icons:
+            refreshIcons,
 
-            refreshIcons
+        updateAuthUI:
+            updateAuthUI,
+
+        render:
+            renderPage
 
     };
 
 
     /* ========================================================
-       INITIALIZE APPLICATION
+       INITIALIZE
        ======================================================== */
 
     function init() {
@@ -1254,10 +2028,19 @@
         bindNavigation();
 
 
+        bindKeyboard();
+
+
+        bindAuthEvents();
+
+
         renderPage();
 
 
         updateNavigation();
+
+
+        updateAuthUI();
 
 
         refreshIcons();
@@ -1293,54 +2076,3 @@
 
 
 })();
-
-
-document.addEventListener(
-    "afc:authenticated",
-    function (event) {
-
-        console.log(
-            "User authenticated:",
-            event.detail.user
-        );
-
-
-        /*
-         * Re-render the application.
-         *
-         * Use your existing render/init
-         * function here.
-         */
-
-        if (
-            typeof renderApp ===
-            "function"
-        ) {
-
-            renderApp();
-
-        }
-
-    }
-);
-
-document.addEventListener(
-    "afc:loggedout",
-    function () {
-
-        console.log(
-            "User logged out."
-        );
-
-
-        if (
-            typeof renderApp ===
-            "function"
-        ) {
-
-            renderApp();
-
-        }
-
-    }
-);
