@@ -260,6 +260,366 @@
 
 
     /* ========================================================
+       HOME LESSON PREVIEW
+    ======================================================== */
+
+    function escapeHomeHtml(value) {
+
+        return String(
+            value || ""
+        )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+    }
+
+
+    function getHomeResponseData(response) {
+
+        if (!response) {
+
+            return null;
+
+        }
+
+
+        if (
+            response.data !== undefined
+        ) {
+
+            return response.data;
+
+        }
+
+
+        return response;
+    }
+
+
+    function formatHomeLessonDate(value) {
+
+        if (!value) {
+
+            return "";
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return String(value);
+
+        }
+
+
+        return date.toLocaleDateString(
+            "en-NG",
+            {
+                day:
+                    "numeric",
+
+                month:
+                    "short",
+
+                year:
+                    "numeric"
+            }
+        );
+    }
+
+
+    function sortHomeLessons(lessonList) {
+
+        return [
+            ...lessonList
+        ]
+
+        .sort(
+            function (a, b) {
+
+                const aDate =
+                    new Date(
+                        a.lesson_date ||
+                        a.published_at ||
+                        0
+                    );
+
+
+                const bDate =
+                    new Date(
+                        b.lesson_date ||
+                        b.published_at ||
+                        0
+                    );
+
+
+                return (
+                    bDate -
+                    aDate
+                );
+
+            }
+        );
+
+    }
+
+
+    async function loadCurrentLessonPreview() {
+
+        const container =
+            $("currentLesson");
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        /*
+         * Show loading state.
+         */
+
+        container.innerHTML = `
+            <div class="lesson-preview-loading">
+
+                <span>
+                    Loading current lesson...
+                </span>
+
+            </div>
+        `;
+
+
+        try {
+
+            if (
+                !window.API ||
+                typeof window.API.get !==
+                    "function"
+            ) {
+
+                throw new Error(
+                    "The API connection is not available."
+                );
+
+            }
+
+
+            const response =
+                await window.API.get(
+                    "getLessons"
+                );
+
+
+            const data =
+                getHomeResponseData(
+                    response
+                );
+
+
+            if (
+                !Array.isArray(data) ||
+                data.length === 0
+            ) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+
+                        <div class="empty-state-icon">
+
+                            <span
+                                data-lucide="book-open"
+                            ></span>
+
+                        </div>
+
+                        <p>
+                            No lesson is available yet.
+                        </p>
+
+                    </div>
+                `;
+
+
+                refreshHomeIcons();
+
+                return;
+
+            }
+
+
+            const sortedLessons =
+                sortHomeLessons(
+                    data
+                );
+
+
+            const lesson =
+                sortedLessons[0];
+
+
+            const weekText =
+                lesson.week_number
+                    ? `Week ${escapeHomeHtml(
+                        lesson.week_number
+                    )}`
+                    : "Current Lesson";
+
+
+            const lessonType =
+                lesson.lesson_type ||
+                "Youth Lesson";
+
+
+            const description =
+                lesson.description ||
+                "Start reading this week's lesson.";
+
+
+            const date =
+                lesson.lesson_date
+                    ? formatHomeLessonDate(
+                        lesson.lesson_date
+                    )
+                    : "";
+
+
+            container.innerHTML = `
+                <div class="home-lesson-preview">
+
+                    <div
+                        class="
+                            home-lesson-preview-meta
+                        "
+                    >
+
+                        <span
+                            class="
+                                home-lesson-preview-week
+                            "
+                        >
+                            ${weekText}
+                        </span>
+
+
+                        <span
+                            class="
+                                home-lesson-preview-type
+                            "
+                        >
+                            ${escapeHomeHtml(
+                                lessonType
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <h4>
+                        ${escapeHomeHtml(
+                            lesson.title ||
+                            "Untitled Lesson"
+                        )}
+                    </h4>
+
+
+                    <p>
+                        ${escapeHomeHtml(
+                            description
+                        )}
+                    </p>
+
+
+                    ${
+                        date
+                            ? `
+                                <small
+                                    class="
+                                        home-lesson-preview-date
+                                    "
+                                >
+                                    ${escapeHomeHtml(
+                                        date
+                                    )}
+                                </small>
+                            `
+                            : ""
+                    }
+
+                </div>
+            `;
+
+
+            refreshHomeIcons();
+
+
+        } catch (error) {
+
+            console.error(
+                "AFC Portal: unable to load lesson preview.",
+                error
+            );
+
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div class="empty-state-icon">
+
+                        <span
+                            data-lucide="book-open"
+                        ></span>
+
+                    </div>
+
+                    <p>
+                        Unable to load the current lesson.
+                    </p>
+
+                </div>
+            `;
+
+
+            refreshHomeIcons();
+
+        }
+
+    }
+
+
+    /* ========================================================
        6. CREATE AVATAR CONTENT
     ======================================================== */
 
@@ -1634,19 +1994,21 @@
        20. INITIALIZE
     ======================================================== */
 
-    function initializeHome() {
+function initializeHome() {
 
-        setupNavigation();
+    setupNavigation();
 
-        setupLogoutButtons();
+    setupLogoutButtons();
 
-        setupAuthListeners();
+    setupAuthListeners();
 
-        updatePersonalizedHome();
+    updatePersonalizedHome();
 
-        refreshHomeIcons();
+    loadCurrentLessonPreview();
 
-    }
+    refreshHomeIcons();
+
+}
 
 
     /* ========================================================
@@ -1693,7 +2055,9 @@
 
     window.updatePersonalizedHome =
         updatePersonalizedHome;
-
+ 
+   window.loadCurrentLessonPreview =
+    loadCurrentLessonPreview;
 
     window.performPortalLogout =
         performLogout;
