@@ -4189,42 +4189,150 @@
        INITIALIZE
        ======================================================== */
 
-    function initializeHome() {
+   async function initializeHome() {
 
-        console.log(
-            "AFC Portal: initializing homepage..."
+    console.log(
+        "AFC Portal: initializing homepage..."
+    );
+
+
+    /*
+     * --------------------------------------------------------
+     * SHOW GLOBAL LOADER
+     * --------------------------------------------------------
+     */
+
+    if (
+        window.AFC_Loader &&
+        typeof window.AFC_Loader.show === "function"
+    ) {
+
+        window.AFC_Loader.show(
+            "Preparing your dashboard..."
         );
 
+    }
+
+
+    try {
+
+        /*
+         * ----------------------------------------------------
+         * BASIC PAGE SETUP
+         * ----------------------------------------------------
+         */
 
         setupNavigation();
 
-
         setupLogoutButtons();
 
-
         setupAuthListeners();
+
+
+        /*
+         * ----------------------------------------------------
+         * AUTHENTICATION / PERSONALIZATION
+         * ----------------------------------------------------
+         */
+
+        if (
+            window.AFC_Loader &&
+            typeof window.AFC_Loader.setMessage === "function"
+        ) {
+
+            window.AFC_Loader.setMessage(
+                "Checking your account..."
+            );
+
+        }
 
 
         updatePersonalizedHome();
 
 
         /*
-         * Load the current lesson into
-         * #currentLesson on index.html.
+         * ----------------------------------------------------
+         * CURRENT LESSON PREVIEW
+         * ----------------------------------------------------
+         *
+         * This is the important part.
+         *
+         * We wait for the lesson preview to finish loading
+         * before hiding the global loader.
          */
 
-        loadCurrentLessonPreview();
+        if (
+            typeof loadCurrentLessonPreview === "function"
+        ) {
 
+            if (
+                window.AFC_Loader &&
+                typeof window.AFC_Loader.setMessage === "function"
+            ) {
+
+                window.AFC_Loader.setMessage(
+                    "Loading this week's lesson..."
+                );
+
+            }
+
+
+            await loadCurrentLessonPreview();
+
+        }
+
+
+        /*
+         * ----------------------------------------------------
+         * ICONS
+         * ----------------------------------------------------
+         */
 
         refreshHomeIcons();
 
+
+        /*
+         * ----------------------------------------------------
+         * FINISHED
+         * ----------------------------------------------------
+         */
 
         console.log(
             "AFC Portal: homepage initialized."
         );
 
+
+    } catch (error) {
+
+        console.error(
+            "AFC Portal: homepage initialization failed.",
+            error
+        );
+
+
+    } finally {
+
+        /*
+         * ----------------------------------------------------
+         * ALWAYS HIDE GLOBAL LOADER
+         * ----------------------------------------------------
+         *
+         * Even if something fails, we don't want the user
+         * permanently trapped behind the loader.
+         */
+
+        if (
+            window.AFC_Loader &&
+            typeof window.AFC_Loader.hide === "function"
+        ) {
+
+            window.AFC_Loader.hide();
+
+        }
+
     }
 
+}
 
     /* ========================================================
        DOM READY
