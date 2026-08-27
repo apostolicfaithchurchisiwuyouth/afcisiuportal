@@ -1,1275 +1,1762 @@
-/**
- * ============================================================
- * AFC ISIU YOUTH PORTAL V2
- * 10D — AUTHENTICATION FRONTEND LOGIC
- * ============================================================
- *
- * Works with:
- *
- * 02_Router.gs
- * 03_Auth.gs
- * 10B API CONNECTION LAYER
- *
- * Backend action names:
- *
- * register
- * login
- * getinstitutions
- *
- * ============================================================
- */
-
-"use strict";
-
-
 /* ============================================================
-   1. DOM ELEMENTS
+   AFC ISIU YOUTH PORTAL V2
+   FILE: js/auth.js
+   PURPOSE: Authentication UI Controller
+   PHASE B-2
    ============================================================ */
 
-const loginView =
-    document.getElementById("loginView");
+(function () {
 
-const registerView =
-    document.getElementById("registerView");
-
-const loginForm =
-    document.getElementById("loginForm");
-
-const registerForm =
-    document.getElementById("registerForm");
-
-const showRegisterButton =
-    document.getElementById("showRegisterButton");
-
-const showLoginButton =
-    document.getElementById("showLoginButton");
-
-const loginButton =
-    document.getElementById("loginButton");
-
-const registerButton =
-    document.getElementById("registerButton");
-
-const loginMessage =
-    document.getElementById("loginMessage");
-
-const registerMessage =
-    document.getElementById("registerMessage");
-
-const institutionSelect =
-    document.getElementById("institution");
-
-
-/* ============================================================
-   2. SWITCH LOGIN / REGISTER
-   ============================================================ */
-
-function showLogin() {
-
-    if (loginView) {
-        loginView.classList.add("active");
-    }
-
-    if (registerView) {
-        registerView.classList.remove("active");
-    }
-
-    clearMessage(loginMessage);
-    clearMessage(registerMessage);
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
-
-
-function showRegister() {
-
-    if (registerView) {
-        registerView.classList.add("active");
-    }
-
-    if (loginView) {
-        loginView.classList.remove("active");
-    }
-
-    clearMessage(loginMessage);
-    clearMessage(registerMessage);
-
-    loadInstitutions();
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
-
-
-if (showRegisterButton) {
-
-    showRegisterButton.addEventListener(
-        "click",
-        showRegister
-    );
-
-}
-
-
-if (showLoginButton) {
-
-    showLoginButton.addEventListener(
-        "click",
-        showLogin
-    );
-
-}
-
-
-/* ============================================================
-   3. MESSAGE HELPERS
-   ============================================================ */
-
-function showMessage(
-    element,
-    message,
-    type = "error"
-) {
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        message || "";
-
-    element.className =
-        "form-message";
-
-    if (message) {
-
-        element.classList.add(
-            type
-        );
-
-    }
-
-}
-
-
-function clearMessage(element) {
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        "";
-
-    element.className =
-        "form-message";
-
-}
-
-
-/* ============================================================
-   4. BUTTON LOADING
-   ============================================================ */
-
-function setButtonLoading(
-    button,
-    loading,
-    loadingText
-) {
-
-    if (!button) {
-        return;
-    }
-
-
-    if (loading) {
-
-        button.classList.add(
-            "loading"
-        );
-
-        button.disabled =
-            true;
-
-
-        button.dataset.originalText =
-            button.querySelector(
-                ".button-text"
-            )?.textContent ||
-            "";
-
-
-        if (loadingText) {
-
-            const text =
-                button.querySelector(
-                    ".button-text"
-                );
-
-            if (text) {
-
-                text.textContent =
-                    loadingText;
-
-            }
-
-        }
-
-
-    } else {
-
-        button.classList.remove(
-            "loading"
-        );
-
-        button.disabled =
-            false;
-
-
-        const text =
-            button.querySelector(
-                ".button-text"
-            );
-
-
-        if (text) {
-
-            text.textContent =
-                button.dataset.originalText ||
-                "";
-
-        }
-
-    }
-
-}
-
-
-/* ============================================================
-   5. PASSWORD VISIBILITY
-   ============================================================ */
-
-function setupPasswordToggles() {
-
-    const buttons =
-        document.querySelectorAll(
-            ".password-toggle"
-        );
-
-
-    buttons.forEach(function(button) {
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                const targetId =
-                    button.dataset.passwordTarget;
-
-
-                const input =
-                    document.getElementById(
-                        targetId
-                    );
-
-
-                if (!input) {
-                    return;
-                }
-
-
-                const eyeOpen =
-                    button.querySelector(
-                        ".eye-open"
-                    );
-
-
-                const eyeClosed =
-                    button.querySelector(
-                        ".eye-closed"
-                    );
-
-
-                if (
-                    input.type ===
-                    "password"
-                ) {
-
-                    input.type =
-                        "text";
-
-
-                    button.setAttribute(
-                        "aria-label",
-                        "Hide password"
-                    );
-
-
-                    button.setAttribute(
-                        "title",
-                        "Hide password"
-                    );
-
-
-                    eyeOpen?.classList.add(
-                        "hidden"
-                    );
-
-
-                    eyeClosed?.classList.remove(
-                        "hidden"
-                    );
-
-
-                } else {
-
-                    input.type =
-                        "password";
-
-
-                    button.setAttribute(
-                        "aria-label",
-                        "Show password"
-                    );
-
-
-                    button.setAttribute(
-                        "title",
-                        "Show password"
-                    );
-
-
-                    eyeOpen?.classList.remove(
-                        "hidden"
-                    );
-
-
-                    eyeClosed?.classList.add(
-                        "hidden"
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-}
-
-
-setupPasswordToggles();
-
-
-/* ============================================================
-   6. LOAD INSTITUTIONS
-   ============================================================ */
-
-let institutionsLoaded =
-    false;
-
-
-async function loadInstitutions() {
-
-    if (
-        !institutionSelect ||
-        institutionsLoaded
-    ) {
-
-        return;
-
-    }
-
-
-    institutionSelect.innerHTML =
-        '<option value="">Loading institutions...</option>';
-
-
-    institutionSelect.disabled =
-        true;
-
-
-    try {
-
-        const result =
-            await API.get(
-                "getinstitutions"
-            );
-
-
-        let institutions =
-            [];
-
-
-        if (
-            Array.isArray(result)
-        ) {
-
-            institutions =
-                result;
-
-        } else if (
-            Array.isArray(
-                result.institutions
-            )
-        ) {
-
-            institutions =
-                result.institutions;
-
-        } else if (
-            result.data &&
-            Array.isArray(
-                result.data.institutions
-            )
-        ) {
-
-            institutions =
-                result.data.institutions;
-
-        } else if (
-            result.data &&
-            Array.isArray(
-                result.data
-            )
-        ) {
-
-            institutions =
-                result.data;
-
-        }
-
-
-        institutionSelect.innerHTML =
-            "";
-
-
-        const defaultOption =
-            document.createElement(
-                "option"
-            );
-
-
-        defaultOption.value =
-            "";
-
-
-        defaultOption.textContent =
-            institutions.length
-                ? "Select your institution"
-                : "No institutions available";
-
-
-        institutionSelect.appendChild(
-            defaultOption
-        );
-
-
-        institutions.forEach(
-            function(institution) {
-
-                const id =
-                    institution.institution_id ||
-                    institution.id ||
-                    "";
-
-
-                const name =
-                    institution.institution_name ||
-                    institution.name ||
-                    institution.title ||
-                    "";
-
-
-                if (
-                    !id ||
-                    !name
-                ) {
-
-                    return;
-
-                }
-
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    id;
-
-
-                option.textContent =
-                    name;
-
-
-                option.dataset.institutionName =
-                    name;
-
-
-                institutionSelect.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        institutionsLoaded =
-            institutions.length > 0;
-
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load institutions:",
-            error
-        );
-
-
-        institutionSelect.innerHTML =
-            '<option value="">Unable to load institutions</option>';
-
-
-        showMessage(
-            registerMessage,
-            "We could not load the institution list. Please refresh the page and try again.",
-            "error"
-        );
-
-
-    } finally {
-
-        institutionSelect.disabled =
-            false;
-
-    }
-
-}
-
-
-/* ============================================================
-   7. VALIDATE EMAIL
-   ============================================================ */
-
-function isValidEmail(
-    email
-) {
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(
-            email
-        );
-
-}
-
-
-/* ============================================================
-   8. LOGIN
-   ============================================================ */
-
-async function handleLogin(
-    event
-) {
-
-    event.preventDefault();
-
-
-    clearMessage(
-        loginMessage
-    );
-
-
-    const emailInput =
-        document.getElementById(
-            "loginEmail"
-        );
-
-
-    const passwordInput =
-        document.getElementById(
-            "loginPassword"
-        );
-
-
-    const email =
-        emailInput
-            ? emailInput.value.trim()
-            : "";
-
-
-    const password =
-        passwordInput
-            ? passwordInput.value
-            : "";
-
-
-    if (!email) {
-
-        showMessage(
-            loginMessage,
-            "Please enter your email address."
-        );
-
-        return;
-
-    }
-
-
-    if (!isValidEmail(email)) {
-
-        showMessage(
-            loginMessage,
-            "Please enter a valid email address."
-        );
-
-        return;
-
-    }
-
-
-    if (!password) {
-
-        showMessage(
-            loginMessage,
-            "Please enter your password."
-        );
-
-        return;
-
-    }
-
-
-    /* --------------------------------------------------------
-       START LOGIN LOADING
-       -------------------------------------------------------- */
-
-    setButtonLoading(
-        loginButton,
-        true,
-        "Signing in..."
-    );
-
-
-    try {
-
-        const result =
-            await API.post(
-                "login",
-                {
-
-                    email:
-                        email,
-
-                    password:
-                        password,
-
-                    device_info:
-                        navigator.userAgent
-
-                }
-            );
-
-
-        console.log(
-            "LOGIN RESULT:",
-            result
-        );
-
-
-/* ========================================================
-   SAVE AUTHENTICATION
-   ======================================================== */
-
-const loginData =
-    result && result.data
-        ? result.data
-        : result;
-
-
-if (
-    loginData &&
-    loginData.user &&
-    loginData.session
-) {
-
-    try {
-
-        AUTH.save(
-            loginData
-        );
-
-        console.log(
-            "10D: Authentication saved successfully."
-        );
-
-    } catch (error) {
-
-        console.error(
-            "10D: Unable to save authentication:",
-            error
-        );
-
-        showMessage(
-            loginMessage,
-            "Login succeeded, but we could not save your session. Please try again."
-        );
-
-        setButtonLoading(
-            loginButton,
-            false
-        );
-
-        return;
-
-    }
-
-} else {
-
-    console.error(
-        "10D: Invalid login response:",
-        result
-    );
-
-    showMessage(
-        loginMessage,
-        "Login response was incomplete. Please try again."
-    );
-
-    setButtonLoading(
-        loginButton,
-        false
-    );
-
-    return;
-
-}
-
-
-        /* ----------------------------------------------------
-           SUCCESS MESSAGE
-           ---------------------------------------------------- */
-
-        showMessage(
-            loginMessage,
-            result.message ||
-            "Login successful.",
-            "success"
-        );
-
-
-        /* ----------------------------------------------------
-           REDIRECT TO DASHBOARD
-           ----------------------------------------------------
-           
-           THIS IS THE IMPORTANT CHANGE.
-           
-           Successful authentication now goes to:
-           
-           index.html
-           
-           instead of:
-           
-           index.html
-           
-           ---------------------------------------------------- */
-
-        setTimeout(
-            function() {
-
-                window.location.href =
-                    "index.html";
-
-            },
-            700
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "LOGIN ERROR:",
-            error
-        );
-
-
-        showMessage(
-            loginMessage,
-            error.message ||
-            "Unable to log in. Please try again."
-        );
-
-
-        setButtonLoading(
-            loginButton,
-            false
-        );
-
-    }
-
-}
-
-
-if (loginForm) {
-
-    loginForm.addEventListener(
-        "submit",
-        handleLogin
-    );
-
-}
-
-
-/* ============================================================
-   9. REGISTER
-   ============================================================ */
-
-async function handleRegistration(
-    event
-) {
-
-    event.preventDefault();
-
-
-    clearMessage(
-        registerMessage
-    );
-
-
-    const firstName =
-        document.getElementById(
-            "firstName"
-        ).value.trim();
-
-
-    const lastName =
-        document.getElementById(
-            "lastName"
-        ).value.trim();
-
-
-    const email =
-        document.getElementById(
-            "registerEmail"
-        ).value.trim();
-
-
-    const phone =
-        document.getElementById(
-            "phone"
-        ).value.trim();
-
-
-    const dateOfBirth =
-        document.getElementById(
-            "dateOfBirth"
-        ).value;
-
-
-    const institutionId =
-        document.getElementById(
-            "institution"
-        ).value;
-
-
-    const course =
-        document.getElementById(
-            "course"
-        ).value.trim();
-
-
-    const level =
-        document.getElementById(
-            "level"
-        ).value;
-
-
-    const gender =
-        document.getElementById(
-            "gender"
-        ).value;
-
-
-    const password =
-        document.getElementById(
-            "registerPassword"
-        ).value;
-
-
-    const confirmPassword =
-        document.getElementById(
-            "confirmPassword"
-        ).value;
+    "use strict";
 
 
     /* ========================================================
-       VALIDATION
+       AUTH CONTROLLER
        ======================================================== */
 
-    if (!firstName) {
+    const Auth = {
 
-        showMessage(
-            registerMessage,
-            "Please enter your first name."
-        );
 
-        return;
+        /* ====================================================
+           INITIALIZE
+           ==================================================== */
 
-    }
+        init() {
 
+            console.log(
+                "AFC Authentication initializing..."
+            );
 
-    if (!lastName) {
 
-        showMessage(
-            registerMessage,
-            "Please enter your last name."
-        );
+            this.bindEvents();
 
-        return;
+            this.showLogin();
 
-    }
 
+        },
 
-    if (!email) {
 
-        showMessage(
-            registerMessage,
-            "Please enter your email address."
-        );
+        /* ====================================================
+           BIND EVENTS
+           ==================================================== */
 
-        return;
+        bindEvents() {
 
-    }
+            document.addEventListener(
+                "click",
+                (event) => {
 
+                    const target =
+                        event.target.closest(
+                            "[data-auth-action]"
+                        );
 
-    if (!isValidEmail(email)) {
 
-        showMessage(
-            registerMessage,
-            "Please enter a valid email address."
-        );
+                    if (!target) {
+                        return;
+                    }
 
-        return;
 
-    }
+                    const action =
+                        target.dataset.authAction;
 
 
-    if (!dateOfBirth) {
+                    switch (action) {
 
-        showMessage(
-            registerMessage,
-            "Please enter your date of birth."
-        );
+                        case "login":
+                            this.showLogin();
+                            break;
 
-        return;
 
-    }
+                        case "register":
+                            this.showRegister();
+                            break;
 
 
-    if (!institutionId) {
+                        case "logout":
+                            this.logout();
+                            break;
 
-        showMessage(
-            registerMessage,
-            "Please select your school or institution."
-        );
 
-        return;
+                        case "close":
+                            this.close();
+                            break;
 
-    }
-
-
-    if (!level) {
-
-        showMessage(
-            registerMessage,
-            "Please select your level."
-        );
-
-        return;
-
-    }
-
-
-    if (!password) {
-
-        showMessage(
-            registerMessage,
-            "Please create a password."
-        );
-
-        return;
-
-    }
-
-
-    if (password.length < 8) {
-
-        showMessage(
-            registerMessage,
-            "Your password must contain at least 8 characters."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        password !==
-        confirmPassword
-    ) {
-
-        showMessage(
-            registerMessage,
-            "Your passwords do not match."
-        );
-
-        return;
-
-    }
-
-
-    /* --------------------------------------------------------
-       GET SELECTED INSTITUTION
-       -------------------------------------------------------- */
-
-    const selectedInstitution =
-        institutionSelect.options[
-            institutionSelect.selectedIndex
-        ];
-
-
-    const institutionName =
-        selectedInstitution?.dataset
-            ?.institutionName ||
-        selectedInstitution?.textContent ||
-        "";
-
-
-    /* --------------------------------------------------------
-       START REGISTRATION LOADING
-       -------------------------------------------------------- */
-
-    setButtonLoading(
-        registerButton,
-        true,
-        "Creating account..."
-    );
-
-
-    try {
-
-        const result =
-            await API.post(
-                "register",
-                {
-
-                    first_name:
-                        firstName,
-
-                    last_name:
-                        lastName,
-
-                    email:
-                        email,
-
-                    phone:
-                        phone,
-
-                    password:
-                        password,
-
-                    confirm_password:
-                        confirmPassword,
-
-                    date_of_birth:
-                        dateOfBirth,
-
-                    institution_id:
-                        institutionId,
-
-                    institution_name:
-                        institutionName,
-
-                    course:
-                        course,
-
-                    level:
-                        level,
-
-                    gender:
-                        gender,
-
-                    language:
-                        "en",
-
-                    theme:
-                        "system"
+                    }
 
                 }
             );
 
 
-        console.log(
-            "REGISTRATION RESULT:",
-            result
-        );
+            document.addEventListener(
+                "submit",
+                (event) => {
+
+                    if (
+                        event.target.id ===
+                        "afc-login-form"
+                    ) {
+
+                        event.preventDefault();
+
+                        this.login(
+                            event.target
+                        );
+
+                    }
 
 
-        showMessage(
-            registerMessage,
-            result.message ||
-            "Your account has been created successfully.",
-            "success"
-        );
+                    if (
+                        event.target.id ===
+                        "afc-register-form"
+                    ) {
 
+                        event.preventDefault();
 
-        /* ----------------------------------------------------
-           CLEAR PASSWORD FIELDS
-           ---------------------------------------------------- */
+                        this.register(
+                            event.target
+                        );
 
-        const registerPasswordInput =
-            document.getElementById(
-                "registerPassword"
+                    }
+
+                }
             );
 
 
-        const confirmPasswordInput =
-            document.getElementById(
-                "confirmPassword"
-            );
+            document.addEventListener(
+                "click",
+                (event) => {
+
+                    const button =
+                        event.target.closest(
+                            "[data-password-toggle]"
+                        );
 
 
-        if (registerPasswordInput) {
-
-            registerPasswordInput.value =
-                "";
-
-        }
+                    if (!button) {
+                        return;
+                    }
 
 
-        if (confirmPasswordInput) {
-
-            confirmPasswordInput.value =
-                "";
-
-        }
+                    const inputId =
+                        button.dataset.passwordToggle;
 
 
-        /* ----------------------------------------------------
-           RETURN TO LOGIN
-           ---------------------------------------------------- */
-
-        setTimeout(
-            function() {
-
-                showLogin();
+                    const input =
+                        document.getElementById(
+                            inputId
+                        );
 
 
-                const loginEmail =
-                    document.getElementById(
-                        "loginEmail"
+                    if (!input) {
+                        return;
+                    }
+
+
+                    this.togglePassword(
+                        input,
+                        button
                     );
 
-
-                if (loginEmail) {
-
-                    loginEmail.value =
-                        email;
-
-                    loginEmail.focus();
-
                 }
+            );
+
+        },
 
 
-                setButtonLoading(
-                    registerButton,
-                    false
+        /* ====================================================
+           SHOW LOGIN
+           ==================================================== */
+
+        showLogin() {
+
+            const container =
+                document.getElementById(
+                    "auth-screen"
                 );
 
 
-            },
-            1200
+            if (!container) {
+                return;
+            }
+
+
+            container.innerHTML =
+                this.loginTemplate();
+
+
+            container.classList.remove(
+                "hidden"
+            );
+
+
+            document.body.classList.add(
+                "auth-open"
+            );
+
+
+            this.refreshIcons();
+
+        },
+
+
+        /* ====================================================
+           SHOW REGISTER
+           ==================================================== */
+
+        async showRegister() {
+
+            const container =
+                document.getElementById(
+                    "auth-screen"
+                );
+
+
+            if (!container) {
+                return;
+            }
+
+
+            container.innerHTML =
+                this.registerTemplate();
+
+
+            container.classList.remove(
+                "hidden"
+            );
+
+
+            document.body.classList.add(
+                "auth-open"
+            );
+
+
+            this.refreshIcons();
+
+
+            await this.loadInstitutions();
+
+        },
+
+
+        /* ====================================================
+           CLOSE AUTH
+           ==================================================== */
+
+        close() {
+
+            const container =
+                document.getElementById(
+                    "auth-screen"
+                );
+
+
+            if (!container) {
+                return;
+            }
+
+
+            container.classList.add(
+                "hidden"
+            );
+
+
+            document.body.classList.remove(
+                "auth-open"
+            );
+
+        },
+
+
+        /* ====================================================
+           LOGIN
+           ==================================================== */
+
+        async login(form) {
+
+            const email =
+                form.email.value.trim();
+
+
+            const password =
+                form.password.value;
+
+
+            const button =
+                form.querySelector(
+                    "[type='submit']"
+                );
+
+
+            const error =
+                document.getElementById(
+                    "auth-error"
+                );
+
+
+            this.clearMessage();
+
+
+            if (!email) {
+
+                this.showError(
+                    "Please enter your email address."
+                );
+
+                return;
+
+            }
+
+
+            if (!password) {
+
+                this.showError(
+                    "Please enter your password."
+                );
+
+                return;
+
+            }
+
+
+            this.setLoading(
+                button,
+                true,
+                "Signing in..."
+            );
+
+
+            try {
+
+                const deviceInfo =
+                    this.getDeviceInfo();
+
+
+                const result =
+                    await AFC.AuthAPI.login(
+                        email,
+                        password,
+                        deviceInfo
+                    );
+
+
+                if (!result.success) {
+
+                    this.showError(
+                        result.message ||
+                        "Unable to sign in."
+                    );
+
+
+                    return;
+
+                }
+
+
+                /*
+                 * IMPORTANT
+                 *
+                 * No localStorage.
+                 *
+                 * The token exists only in
+                 * the current application
+                 * runtime.
+                 */
+
+                const loginData =
+                    result.data;
+
+
+                if (
+                    !loginData ||
+                    !loginData.session ||
+                    !loginData.session.token
+                ) {
+
+                    this.showError(
+                        "Login succeeded, but no session was returned."
+                    );
+
+
+                    return;
+
+                }
+
+
+                this.createSession(
+                    loginData
+                );
+
+
+            } catch (exception) {
+
+                console.error(
+                    "Login error:",
+                    exception
+                );
+
+
+                this.showError(
+                    "Something went wrong while signing in. Please try again."
+                );
+
+
+            } finally {
+
+                this.setLoading(
+                    button,
+                    false,
+                    "Sign in"
+                );
+
+            }
+
+        },
+
+
+        /* ====================================================
+           CREATE APPLICATION SESSION
+           ==================================================== */
+
+        createSession(
+            loginData
+        ) {
+
+            /*
+             * Make sure the global application
+             * state exists.
+             */
+
+            if (
+                !window.AFC_APP ||
+                !window.AFC_APP.state
+            ) {
+
+                console.error(
+                    "AFC application state was not found."
+                );
+
+
+                this.showError(
+                    "The application could not initialize your session."
+                );
+
+
+                return;
+
+            }
+
+
+            const state =
+                window.AFC_APP.state;
+
+
+            state.authenticated =
+                true;
+
+
+            state.token =
+                loginData.session.token;
+
+
+            state.user =
+                loginData.user || null;
+
+
+            state.session =
+                loginData.session;
+
+
+            /*
+             * Close authentication UI.
+             */
+
+            this.close();
+
+
+            /*
+             * Notify the application.
+             */
+
+            document.dispatchEvent(
+                new CustomEvent(
+                    "afc:authenticated",
+                    {
+                        detail: {
+                            user:
+                                state.user,
+
+                            session:
+                                state.session
+                        }
+                    }
+                )
+            );
+
+
+            /*
+             * Refresh icons after
+             * the main application renders.
+             */
+
+            setTimeout(() => {
+
+                this.refreshIcons();
+
+            }, 50);
+
+
+        },
+
+
+        /* ====================================================
+           LOGOUT
+           ==================================================== */
+
+        async logout() {
+
+            const state =
+                window.AFC_APP &&
+                window.AFC_APP.state;
+
+
+            if (!state) {
+                return;
+            }
+
+
+            const token =
+                state.token;
+
+
+            try {
+
+                if (token) {
+
+                    await AFC.AuthAPI.logout(
+                        token
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+            }
+
+
+            /*
+             * Clear runtime session.
+             *
+             * Nothing is stored in localStorage.
+             */
+
+            state.authenticated =
+                false;
+
+
+            state.token =
+                null;
+
+
+            state.user =
+                null;
+
+
+            state.session =
+                null;
+
+
+            document.dispatchEvent(
+                new CustomEvent(
+                    "afc:loggedout"
+                )
+            );
+
+
+            this.showLogin();
+
+        },
+
+
+        /* ====================================================
+           LOAD INSTITUTIONS
+           ==================================================== */
+
+        async loadInstitutions() {
+
+            const select =
+                document.getElementById(
+                    "register-institution"
+                );
+
+
+            if (!select) {
+                return;
+            }
+
+
+            try {
+
+                const result =
+                    await AFC.PublicAPI
+                        .getInstitutions();
+
+
+                if (!result.success) {
+
+                    select.innerHTML =
+                        `
+                        <option value="">
+                            Unable to load institutions
+                        </option>
+                        `;
+
+                    return;
+
+                }
+
+
+                const institutions =
+                    result.data || [];
+
+
+                if (
+                    institutions.length ===
+                    0
+                ) {
+
+                    select.innerHTML =
+                        `
+                        <option value="">
+                            No institutions available
+                        </option>
+                        `;
+
+                    return;
+
+                }
+
+
+                select.innerHTML =
+                    `
+                    <option value="">
+                        Select your institution
+                    </option>
+                    `;
+
+
+                institutions.forEach(
+                    (institution) => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            institution.institution_id;
+
+
+                        option.textContent =
+                            institution.institution_name;
+
+
+                        select.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Institution loading error:",
+                    error
+                );
+
+
+                select.innerHTML =
+                    `
+                    <option value="">
+                        Unable to load institutions
+                    </option>
+                    `;
+
+            }
+
+        },
+
+
+        /* ====================================================
+           REGISTER
+           ==================================================== */
+
+        async register(form) {
+
+            this.clearMessage();
+
+
+            const data = {
+
+                first_name:
+                    form.first_name.value.trim(),
+
+                last_name:
+                    form.last_name.value.trim(),
+
+                email:
+                    form.email.value.trim(),
+
+                phone:
+                    form.phone.value.trim(),
+
+                password:
+                    form.password.value,
+
+                confirm_password:
+                    form.confirm_password.value,
+
+                date_of_birth:
+                    form.date_of_birth.value,
+
+                institution_id:
+                    form.institution_id.value,
+
+                course:
+                    form.course.value.trim(),
+
+                level:
+                    form.level.value,
+
+                gender:
+                    form.gender.value,
+
+                language:
+                    "en",
+
+                theme:
+                    "system"
+
+            };
+
+
+            const button =
+                form.querySelector(
+                    "[type='submit']"
+                );
+
+
+            this.setLoading(
+                button,
+                true,
+                "Creating account..."
+            );
+
+
+            try {
+
+                const result =
+                    await AFC.AuthAPI.register(
+                        data
+                    );
+
+
+                if (!result.success) {
+
+                    this.showError(
+                        result.message ||
+                        "Unable to create your account."
+                    );
+
+
+                    return;
+
+                }
+
+
+                /*
+                 * Registration succeeded.
+                 *
+                 * The backend currently returns
+                 * the created user but does not
+                 * automatically create a session.
+                 *
+                 * Therefore we take the user to
+                 * login.
+                 */
+
+                this.showSuccess(
+                    "Your account has been created successfully. Please sign in."
+                );
+
+
+                setTimeout(() => {
+
+                    this.showLogin();
+
+                    const emailInput =
+                        document.querySelector(
+                            "#afc-login-form input[name='email']"
+                        );
+
+
+                    if (emailInput) {
+
+                        emailInput.value =
+                            data.email;
+
+                    }
+
+                }, 900);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration error:",
+                    error
+                );
+
+
+                this.showError(
+                    "Something went wrong while creating your account."
+                );
+
+
+            } finally {
+
+                this.setLoading(
+                    button,
+                    false,
+                    "Create account"
+                );
+
+            }
+
+        },
+
+
+        /* ====================================================
+           PASSWORD TOGGLE
+           ==================================================== */
+
+        togglePassword(
+            input,
+            button
+        ) {
+
+            const isPassword =
+                input.type ===
+                "password";
+
+
+            input.type =
+                isPassword
+                    ? "text"
+                    : "password";
+
+
+            button.innerHTML =
+                isPassword
+                    ? '<i data-lucide="eye-off"></i>'
+                    : '<i data-lucide="eye"></i>';
+
+
+            this.refreshIcons();
+
+        },
+
+
+        /* ====================================================
+           LOADING STATE
+           ==================================================== */
+
+        setLoading(
+            button,
+            loading,
+            text
+        ) {
+
+            if (!button) {
+                return;
+            }
+
+
+            if (loading) {
+
+                button.disabled =
+                    true;
+
+
+                button.dataset.originalText =
+                    button.innerHTML;
+
+
+                button.innerHTML =
+                    `
+                    <span class="afc-spinner"></span>
+                    <span>${text}</span>
+                    `;
+
+            } else {
+
+                button.disabled =
+                    false;
+
+
+                button.innerHTML =
+                    button.dataset.originalText ||
+                    text;
+
+            }
+
+        },
+
+
+        /* ====================================================
+           ERROR
+           ==================================================== */
+
+        showError(message) {
+
+            const element =
+                document.getElementById(
+                    "auth-error"
+                );
+
+
+            if (!element) {
+                return;
+            }
+
+
+            element.innerHTML =
+                `
+                <i data-lucide="circle-alert"></i>
+                <span>${this.escapeHTML(message)}</span>
+                `;
+
+
+            element.classList.remove(
+                "hidden"
+            );
+
+
+            this.refreshIcons();
+
+        },
+
+
+        /* ====================================================
+           SUCCESS
+           ==================================================== */
+
+        showSuccess(message) {
+
+            const element =
+                document.getElementById(
+                    "auth-error"
+                );
+
+
+            if (!element) {
+                return;
+            }
+
+
+            element.innerHTML =
+                `
+                <i data-lucide="circle-check"></i>
+                <span>${this.escapeHTML(message)}</span>
+                `;
+
+
+            element.dataset.type =
+                "success";
+
+
+            element.classList.remove(
+                "hidden"
+            );
+
+
+            this.refreshIcons();
+
+        },
+
+
+        /* ====================================================
+           CLEAR MESSAGE
+           ==================================================== */
+
+        clearMessage() {
+
+            const element =
+                document.getElementById(
+                    "auth-error"
+                );
+
+
+            if (!element) {
+                return;
+            }
+
+
+            element.classList.add(
+                "hidden"
+            );
+
+
+            element.innerHTML =
+                "";
+
+
+            delete element.dataset.type;
+
+        },
+
+
+        /* ====================================================
+           DEVICE INFORMATION
+           ==================================================== */
+
+        getDeviceInfo() {
+
+            const platform =
+                navigator.platform ||
+                "Unknown";
+
+
+            const userAgent =
+                navigator.userAgent ||
+                "Unknown";
+
+
+            return (
+                platform +
+                " | " +
+                userAgent
+            ).substring(
+                0,
+                500
+            );
+
+        },
+
+
+        /* ====================================================
+           REFRESH LUCIDE
+           ==================================================== */
+
+        refreshIcons() {
+
+            if (
+                window.lucide &&
+                typeof window.lucide.createIcons ===
+                "function"
+            ) {
+
+                window.lucide.createIcons();
+
+            }
+
+        },
+
+
+        /* ====================================================
+           ESCAPE HTML
+           ==================================================== */
+
+        escapeHTML(value) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        },
+
+
+        /* ====================================================
+           LOGIN TEMPLATE
+           ==================================================== */
+
+        loginTemplate() {
+
+            return `
+
+            <div class="afc-auth-shell">
+
+                <div class="afc-auth-card">
+
+                    <div class="afc-auth-brand">
+
+                        <div class="afc-auth-logo">
+                            <i data-lucide="church"></i>
+                        </div>
+
+                        <div>
+
+                            <p class="afc-auth-kicker">
+                                AFC ISIU YOUTH
+                            </p>
+
+                            <h1>
+                                Welcome back
+                            </h1>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="afc-auth-subtitle">
+                        Sign in to continue to your youth portal.
+                    </p>
+
+
+                    <div
+                        id="auth-error"
+                        class="afc-auth-message hidden"
+                        role="alert"
+                    ></div>
+
+
+                    <form
+                        id="afc-login-form"
+                        novalidate
+                    >
+
+                        <div class="afc-field">
+
+                            <label for="login-email">
+                                Email address
+                            </label>
+
+                            <div class="afc-input-wrap">
+
+                                <i
+                                    data-lucide="mail"
+                                    class="afc-input-icon"
+                                ></i>
+
+                                <input
+                                    id="login-email"
+                                    type="email"
+                                    name="email"
+                                    autocomplete="email"
+                                    placeholder="you@example.com"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="afc-field">
+
+                            <label for="login-password">
+                                Password
+                            </label>
+
+                            <div class="afc-input-wrap">
+
+                                <i
+                                    data-lucide="lock-keyhole"
+                                    class="afc-input-icon"
+                                ></i>
+
+                                <input
+                                    id="login-password"
+                                    type="password"
+                                    name="password"
+                                    autocomplete="current-password"
+                                    placeholder="Enter your password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="afc-password-toggle"
+                                    data-password-toggle="login-password"
+                                    aria-label="Show password"
+                                >
+                                    <i data-lucide="eye"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="afc-auth-submit"
+                        >
+
+                            <span>
+                                Sign in
+                            </span>
+
+                            <i data-lucide="arrow-right"></i>
+
+                        </button>
+
+                    </form>
+
+
+                    <div class="afc-auth-divider">
+
+                        <span>
+                            New here?
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="afc-auth-secondary"
+                        data-auth-action="register"
+                    >
+
+                        Create an account
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+            `;
+
+        },
+
+
+        /* ====================================================
+           REGISTER TEMPLATE
+           ==================================================== */
+
+        registerTemplate() {
+
+            return `
+
+            <div class="afc-auth-shell afc-auth-register-shell">
+
+                <div class="afc-auth-card afc-auth-register-card">
+
+                    <div class="afc-auth-top">
+
+                        <button
+                            type="button"
+                            class="afc-icon-button"
+                            data-auth-action="close"
+                            aria-label="Back"
+                        >
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+
+                        <span>
+                            Create account
+                        </span>
+
+                    </div>
+
+
+                    <div class="afc-auth-heading">
+
+                        <div class="afc-auth-logo">
+                            <i data-lucide="user-plus"></i>
+                        </div>
+
+                        <h1>
+                            Join the portal
+                        </h1>
+
+                        <p>
+                            Create your account to access lessons, quizzes and youth resources.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="auth-error"
+                        class="afc-auth-message hidden"
+                        role="alert"
+                    ></div>
+
+
+                    <form
+                        id="afc-register-form"
+                        novalidate
+                    >
+
+                        <div class="afc-form-grid">
+
+
+                            <div class="afc-field">
+
+                                <label for="register-first-name">
+                                    First name
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="user"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-first-name"
+                                        type="text"
+                                        name="first_name"
+                                        autocomplete="given-name"
+                                        placeholder="First name"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-last-name">
+                                    Last name
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="user"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-last-name"
+                                        type="text"
+                                        name="last_name"
+                                        autocomplete="family-name"
+                                        placeholder="Last name"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field afc-field-full">
+
+                                <label for="register-email">
+                                    Email address
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="mail"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-email"
+                                        type="email"
+                                        name="email"
+                                        autocomplete="email"
+                                        placeholder="you@example.com"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-phone">
+                                    Phone number
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="phone"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-phone"
+                                        type="tel"
+                                        name="phone"
+                                        autocomplete="tel"
+                                        placeholder="Phone number"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-dob">
+                                    Date of birth
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="cake"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-dob"
+                                        type="date"
+                                        name="date_of_birth"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field afc-field-full">
+
+                                <label for="register-institution">
+                                    School / Institution
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="graduation-cap"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <select
+                                        id="register-institution"
+                                        name="institution_id"
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Loading institutions...
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-course">
+                                    Course
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="book-open"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-course"
+                                        type="text"
+                                        name="course"
+                                        placeholder="Course / programme"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-level">
+                                    Level
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="layers"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <select
+                                        id="register-level"
+                                        name="level"
+                                        required
+                                    >
+
+                                        <option value="">
+                                            Select level
+                                        </option>
+
+                                        <option value="SS1">
+                                            SS1
+                                        </option>
+
+                                        <option value="SS2">
+                                            SS2
+                                        </option>
+
+                                        <option value="SS3">
+                                            SS3
+                                        </option>
+
+                                        <option value="100">
+                                            100 Level
+                                        </option>
+
+                                        <option value="200">
+                                            200 Level
+                                        </option>
+
+                                        <option value="300">
+                                            300 Level
+                                        </option>
+
+                                        <option value="400">
+                                            400 Level
+                                        </option>
+
+                                        <option value="500">
+                                            500 Level
+                                        </option>
+
+                                        <option value="Graduate">
+                                            Graduate
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-gender">
+                                    Gender
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="circle-user"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <select
+                                        id="register-gender"
+                                        name="gender"
+                                    >
+
+                                        <option value="">
+                                            Select gender
+                                        </option>
+
+                                        <option value="Male">
+                                            Male
+                                        </option>
+
+                                        <option value="Female">
+                                            Female
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-password">
+                                    Password
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="lock-keyhole"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-password"
+                                        type="password"
+                                        name="password"
+                                        autocomplete="new-password"
+                                        placeholder="Minimum 8 characters"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="afc-password-toggle"
+                                        data-password-toggle="register-password"
+                                        aria-label="Show password"
+                                    >
+                                        <i data-lucide="eye"></i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="afc-field">
+
+                                <label for="register-confirm-password">
+                                    Confirm password
+                                </label>
+
+                                <div class="afc-input-wrap">
+
+                                    <i
+                                        data-lucide="shield-check"
+                                        class="afc-input-icon"
+                                    ></i>
+
+                                    <input
+                                        id="register-confirm-password"
+                                        type="password"
+                                        name="confirm_password"
+                                        autocomplete="new-password"
+                                        placeholder="Repeat password"
+                                        required
+                                    >
+
+                                    <button
+                                        type="button"
+                                        class="afc-password-toggle"
+                                        data-password-toggle="register-confirm-password"
+                                        aria-label="Show password"
+                                    >
+                                        <i data-lucide="eye"></i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="afc-auth-submit"
+                        >
+
+                            <span>
+                                Create account
+                            </span>
+
+                            <i data-lucide="user-plus"></i>
+
+                        </button>
+
+
+                    </form>
+
+
+                    <p class="afc-auth-footnote">
+
+                        Already have an account?
+
+                        <button
+                            type="button"
+                            class="afc-auth-link"
+                            data-auth-action="login"
+                        >
+                            Sign in
+                        </button>
+
+                    </p>
+
+
+                </div>
+
+            </div>
+
+            `;
+
+        }
+
+    };
+
+
+    /* ========================================================
+       EXPORT
+       ======================================================== */
+
+    window.AFC_AUTH =
+        Auth;
+
+
+    /* ========================================================
+       INITIALIZE AFTER DOM
+       ======================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => Auth.init()
         );
 
+    } else {
 
-    } catch (error) {
-
-        console.error(
-            "REGISTRATION ERROR:",
-            error
-        );
-
-
-        showMessage(
-            registerMessage,
-            error.message ||
-            "Unable to create your account. Please try again."
-        );
-
-
-        setButtonLoading(
-            registerButton,
-            false
-        );
+        Auth.init();
 
     }
 
-}
 
-
-if (registerForm) {
-
-    registerForm.addEventListener(
-        "submit",
-        handleRegistration
-    );
-
-}
-
-
-
-/* ============================================================
-   11. INITIAL PAGE STATE
-   ============================================================ */
-
-function initializeAuthPage() {
-
-    /*
-     * Do not activate loading states
-     * during page initialization.
-     */
-
-    showLogin();
-
-
-    /*
-     * Load institutions so they are
-     * available when registration opens.
-     */
-
-    loadInstitutions();
-
-}
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeAuthPage
-);
-
-
-/* ============================================================
-   12. DEBUG LOG
-   ============================================================ */
-
-console.log(
-    "AFC Isiu Youth Portal — 10D Authentication loaded."
-);
+})();
