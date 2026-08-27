@@ -1,64 +1,16 @@
 /* ============================================================
    AFC ISIU YOUTH PORTAL V2
-   GLOBAL APPLICATION STYLES
-   PHASE A
+   FILE: app.css
+   PURPOSE: Global application styling
    ============================================================ */
 
 
 /* ============================================================
-   ROOT
+   GLOBAL
    ============================================================ */
-
-:root {
-
-    --afc-purple-deep: #0a0016;
-
-    --afc-purple-dark: #14001f;
-
-    --afc-purple: #4a0754;
-
-    --afc-purple-light: #84258f;
-
-    --afc-white: #ffffff;
-
-    --afc-text: #17121b;
-
-    --afc-muted: #746b78;
-
-    --afc-border: #ece7ef;
-
-    --afc-surface: #ffffff;
-
-    --afc-background: #faf8fb;
-
-    --font-display:
-        "Bricolage Grotesque",
-        sans-serif;
-
-    --font-body:
-        "DM Sans",
-        sans-serif;
-
-}
-
-
-/* ============================================================
-   RESET
-   ============================================================ */
-
-*,
-*::before,
-*::after {
-
-    box-sizing: border-box;
-
-}
-
 
 html {
-
     scroll-behavior: smooth;
-
 }
 
 
@@ -66,24 +18,23 @@ body {
 
     margin: 0;
 
-    padding: 0;
-
     min-height: 100vh;
 
     background:
-        var(--afc-background);
+        radial-gradient(
+            circle at top right,
+            rgba(74, 7, 84, 0.25),
+            transparent 35%
+        ),
+        #0a0016;
 
-    color:
-        var(--afc-text);
+    color: #ffffff;
 
     font-family:
-        var(--font-body);
+        'DM Sans',
+        sans-serif;
 
-    -webkit-font-smoothing:
-        antialiased;
-
-    text-rendering:
-        optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
 
 }
 
@@ -105,17 +56,20 @@ button {
 }
 
 
-img {
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
 
-    max-width: 100%;
+    outline: 2px solid rgba(255,255,255,0.7);
 
-    display: block;
+    outline-offset: 2px;
 
 }
 
 
 /* ============================================================
-   TYPOGRAPHY
+   HEADINGS
    ============================================================ */
 
 h1,
@@ -125,60 +79,9 @@ h4,
 h5,
 h6 {
 
-    margin: 0;
-
     font-family:
-        var(--font-display);
-
-}
-
-
-p {
-
-    margin: 0;
-
-}
-
-
-/* ============================================================
-   APP
-   ============================================================ */
-
-#app {
-
-    min-height: 100vh;
-
-}
-
-
-/* ============================================================
-   PAGE
-   ============================================================ */
-
-.portal-page {
-
-    min-height: 100vh;
-
-    width: 100%;
-
-}
-
-
-/* ============================================================
-   ACCESSIBILITY
-   ============================================================ */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-
-    outline:
-        2px solid var(--afc-purple-light);
-
-    outline-offset:
-        2px;
+        'Bricolage Grotesque',
+        sans-serif;
 
 }
 
@@ -203,7 +106,7 @@ select:focus-visible {
 
 ::-webkit-scrollbar-thumb {
 
-    background: #d8d0dc;
+    background: rgba(255,255,255,0.15);
 
     border-radius: 999px;
 
@@ -212,7 +115,317 @@ select:focus-visible {
 
 ::-webkit-scrollbar-thumb:hover {
 
-    background: #b9aebe;
+    background: rgba(255,255,255,0.25);
+
+}
+
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+.portal-shell {
+
+    min-height: 100vh;
+
+    display: flex;
+
+}
+
+
+.portal-main {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.portal-content {
+
+    width: 100%;
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 24px;
+
+}
+
+
+@media (max-width: 640px) {
+
+    .portal-content {
+
+        padding: 16px;
+
+    }
+
+}
+
+
+/* ============================================================
+   GLASS CARD
+   ============================================================ */
+
+.portal-card {
+
+    background:
+        rgba(255,255,255,0.045);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    border-radius: 20px;
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+}
+
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.portal-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding:
+        0 18px;
+
+    border-radius: 12px;
+
+    border: 1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            #4a0754,
+            #64106f
+        );
+
+    color: white;
+
+    font-weight: 600;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.portal-button:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 10px 30px
+        rgba(74,7,84,0.35);
+
+}
+
+
+.portal-button:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
+.portal-button:disabled {
+
+    opacity: .5;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+
+}
+
+
+/* ============================================================
+   SECONDARY BUTTON
+   ============================================================ */
+
+.portal-button-secondary {
+
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid rgba(255,255,255,0.10);
+
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.portal-input {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    padding:
+        0 14px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid rgba(255,255,255,0.10);
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color: white;
+
+}
+
+
+.portal-input::placeholder {
+
+    color:
+        rgba(255,255,255,0.35);
+
+}
+
+
+.portal-input:focus {
+
+    border-color:
+        rgba(255,255,255,0.30);
+
+    background:
+        rgba(255,255,255,0.07);
+
+}
+
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+
+.mobile-nav {
+
+    position: fixed;
+
+    left: 12px;
+
+    right: 12px;
+
+    bottom: 12px;
+
+    z-index: 100;
+
+    height: 68px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(20,0,31,0.92);
+
+    border:
+        1px solid rgba(255,255,255,0.10);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+        0 15px 50px
+        rgba(0,0,0,0.35);
+
+}
+
+
+@media (min-width: 768px) {
+
+    .mobile-nav {
+
+        display: none;
+
+    }
+
+}
+
+
+/* ============================================================
+   DESKTOP SIDEBAR
+   ============================================================ */
+
+.desktop-sidebar {
+
+    width: 260px;
+
+    flex-shrink: 0;
+
+    min-height: 100vh;
+
+    position: sticky;
+
+    top: 0;
+
+    height: 100vh;
+
+    overflow-y: auto;
+
+    background:
+        rgba(10,0,22,0.85);
+
+    border-right:
+        1px solid rgba(255,255,255,0.07);
+
+}
+
+
+@media (max-width: 767px) {
+
+    .desktop-sidebar {
+
+        display: none;
+
+    }
+
+}
+
+
+/* ============================================================
+   MOBILE CONTENT SPACE
+   ============================================================ */
+
+@media (max-width: 767px) {
+
+    .portal-main {
+
+        padding-bottom: 90px;
+
+    }
 
 }
 
@@ -235,10 +448,10 @@ select:focus-visible {
 
     justify-content: center;
 
-    padding: 1rem;
+    padding: 20px;
 
     background:
-        rgba(10, 0, 22, 0.55);
+        rgba(0,0,0,0.70);
 
     backdrop-filter:
         blur(8px);
@@ -246,34 +459,27 @@ select:focus-visible {
 }
 
 
-.modal-container {
+.modal-panel {
 
     width: 100%;
 
-    max-height: 90vh;
-
-    overflow: hidden;
-
-    background:
-        var(--afc-white);
-
-    border:
-        1px solid rgba(255,255,255,0.5);
-
-    border-radius:
-        1.25rem;
-
-    box-shadow:
-        0 24px 80px rgba(10, 0, 22, 0.25);
-
-}
-
-
-.modal-content {
+    max-width: 520px;
 
     max-height: 90vh;
 
     overflow-y: auto;
+
+    border-radius: 24px;
+
+    background:
+        #160020;
+
+    border:
+        1px solid rgba(255,255,255,0.10);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,0.5);
 
 }
 
@@ -282,186 +488,85 @@ select:focus-visible {
    TOAST
    ============================================================ */
 
-#toast-root {
+.portal-toast {
 
-    position: fixed;
+    min-width: 260px;
 
-    top: 1rem;
+    max-width: 360px;
 
-    right: 1rem;
+    padding: 14px 16px;
 
-    z-index: 2000;
+    border-radius: 14px;
 
-    display: flex;
+    background:
+        rgba(25,0,35,0.95);
 
-    flex-direction: column;
+    border:
+        1px solid rgba(255,255,255,0.10);
 
-    gap: 0.75rem;
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,0.35);
 
-    width: min(
-        calc(100% - 2rem),
-        380px
-    );
-
-    pointer-events: none;
+    animation:
+        toastIn .25s ease;
 
 }
 
 
-.portal-toast {
+@keyframes toastIn {
 
-    pointer-events: auto;
+    from {
 
-    padding: 0.9rem 1rem;
+        opacity: 0;
 
-    border-radius: 0.9rem;
+        transform:
+            translateY(-10px);
 
-    background: white;
+    }
 
-    border:
-        1px solid var(--afc-border);
+    to {
 
-    box-shadow:
-        0 12px 35px rgba(10, 0, 22, 0.12);
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
 
 }
 
 
 /* ============================================================
-   LOADER
+   LOADING
    ============================================================ */
 
-.loader-backdrop {
+.portal-spinner {
 
-    position: fixed;
+    width: 24px;
 
-    inset: 0;
-
-    z-index: 3000;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-        rgba(10, 0, 22, 0.35);
-
-    backdrop-filter:
-        blur(5px);
-
-}
-
-
-.loader-card {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 0.75rem;
-
-    padding:
-        0.9rem 1.1rem;
-
-    border-radius:
-        1rem;
-
-    background:
-        white;
-
-    box-shadow:
-        0 15px 50px rgba(10, 0, 22, 0.18);
-
-}
-
-
-.loader-spinner {
-
-    width: 1.25rem;
-
-    height: 1.25rem;
+    height: 24px;
 
     border:
-        2px solid #ddd4e1;
+        3px solid rgba(255,255,255,0.15);
 
     border-top-color:
-        var(--afc-purple);
+        white;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     animation:
-        portal-spin 0.75s linear infinite;
+        portalSpin .7s linear infinite;
 
 }
 
 
-@keyframes portal-spin {
+@keyframes portalSpin {
 
     to {
 
         transform:
             rotate(360deg);
-
-    }
-
-}
-
-
-/* ============================================================
-   MOBILE SAFE AREA
-   ============================================================ */
-
-@supports (
-    padding: env(safe-area-inset-bottom)
-) {
-
-    .mobile-safe-bottom {
-
-        padding-bottom:
-            env(safe-area-inset-bottom);
-
-    }
-
-}
-
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-@media (max-width: 640px) {
-
-    #toast-root {
-
-        top: 0.75rem;
-
-        right: 0.75rem;
-
-        width:
-            calc(100% - 1.5rem);
-
-    }
-
-    .modal-backdrop {
-
-        align-items:
-            flex-end;
-
-        padding:
-            0.75rem;
-
-    }
-
-    .modal-container {
-
-        max-height:
-            92vh;
-
-        border-radius:
-            1.25rem;
 
     }
 
