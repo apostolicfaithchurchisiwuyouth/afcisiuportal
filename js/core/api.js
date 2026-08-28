@@ -28,7 +28,7 @@
          */
 
         BASE_URL:
-            "https://script.google.com/macros/s/AKfycbyt9ATaXy8u-5kQ9OZFzblzhkMk9W1qo8TjaXSl3wE/dev"
+            "https://script.google.com/macros/s/AKfycbzZsyCnWVrcVryBkm2KjPYYy10dQQ5_nDh-vwMcPhCBo4XEYmXTbcYKTedihXDMe7Ij/exec"
 
     };
 
