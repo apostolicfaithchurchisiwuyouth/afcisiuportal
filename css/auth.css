@@ -1074,3 +1074,226 @@
     }
 
 }
+
+
+/* ============================================================
+   SIDEBAR STRUCTURE
+   ============================================================ */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   SIDEBAR HEADER
+   ============================================================ */
+
+.sidebar-header {
+    flex: 0 0 auto;
+}
+
+
+/* ============================================================
+   SCROLLABLE SIDEBAR CONTENT
+   ============================================================ */
+
+.sidebar-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 12px 14px 16px;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+}
+
+
+/* Optional scrollbar styling */
+
+.sidebar-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+}
+
+
+/* ============================================================
+   SIDEBAR NAV
+   ============================================================ */
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+/* ============================================================
+   SIDEBAR ACCOUNT — FIXED AT BOTTOM
+   ============================================================ */
+
+.sidebar-account {
+    flex: 0 0 auto;
+
+    padding: 14px;
+
+    border-top: 1px solid var(--border);
+
+    background: inherit;
+
+    position: relative;
+
+    z-index: 10;
+}
+
+
+/* ============================================================
+   LOGIN / LOGOUT BUTTON
+   ============================================================ */
+
+.sidebar-login-button {
+    width: 100%;
+
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    background: var(--surface, #ffffff);
+
+    color: var(--ink, #17121c);
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.sidebar-login-button:hover {
+    transform: translateY(-1px);
+
+    border-color: var(--brand);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+
+.sidebar-login-button:active {
+    transform: scale(0.98);
+}
+
+
+/* ============================================================
+   LOGIN ICON
+   ============================================================ */
+
+.sidebar-login-icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--brand);
+
+    color: #ffffff;
+}
+
+
+.sidebar-login-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* ============================================================
+   LOGIN TEXT
+   ============================================================ */
+
+.sidebar-login-text {
+    flex: 1;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+/* ============================================================
+   ARROW
+   ============================================================ */
+
+.sidebar-login-arrow {
+    width: 17px;
+    height: 17px;
+
+    opacity: 0.55;
+
+    flex: 0 0 auto;
+}
+
+
+/* ============================================================
+   MOBILE SIDEBAR
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        height: 100dvh;
+        max-height: 100dvh;
+    }
+
+    .sidebar-scroll {
+        padding-bottom: 10px;
+    }
+
+    .sidebar-account {
+        padding:
+            12px
+            14px
+            calc(
+                12px +
+                env(safe-area-inset-bottom)
+            );
+    }
+
+    .sidebar-login-button {
+        min-height: 54px;
+    }
+
+}
